@@ -3,7 +3,7 @@ import { ChangeEventHandler } from 'react';
 
 interface InputProps {
   id: string;
-  placeholder: string;
+  placeholder?: string;
   type: string;
   label?: string;
   size?: string;
@@ -14,7 +14,7 @@ interface InputProps {
 function Input({ id, label, placeholder, size, type, value, onChange }: InputProps) {
   return (
     <Container>
-      <Label htmlFor={id}>{label}</Label>
+      {label && <Label htmlFor={id}>{label}</Label>}
       <InputContainer id={id} placeholder={placeholder} type={type} sz={size} value={value} onChange={onChange} />
     </Container>
   );
@@ -23,6 +23,7 @@ function Input({ id, label, placeholder, size, type, value, onChange }: InputPro
 const defaultProps = {
   label: '',
   size: 'large',
+  placeholder: '',
 };
 
 Input.defaultProps = defaultProps;
@@ -46,9 +47,17 @@ const InputContainer = styled.input<{ sz: string | undefined }>`
       height: 40px;
     `}
 
+  ${({ sz }) =>
+    sz === 'medium' &&
+    css`
+      width: 245px;
+      height: 40px;
+    `}
+  
   border: lightgray 1px solid;
   border-radius: 5px;
   padding-left: 15px;
+  font-size: 16px;
 
   &::placeholder {
     font-size: 16px;
