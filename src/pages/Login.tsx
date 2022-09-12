@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
-import ConfirmBtn from 'components/atoms/ConfirmBtn';
+import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
+  const [id, setId] = useState<string>('');
+  const [pw, setPw] = useState<string>('');
   const [idError, setIdError] = useState<boolean>(false);
   const [pwError, setPwError] = useState<boolean>(false);
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     try {
       // TODO axios 사용하여 로그인 api 요청하기
       // const res = await axios.get();
@@ -30,11 +33,27 @@ function Login() {
   return (
     <Container>
       <Logo src="/logo/logo.png" alt="logo" />
-      <Input id="id" placeholder="아이디" size="large" type="text" />
-      <ErrorMessage visible={idError}>가입된 유저가 아닙니다.</ErrorMessage>
-      <Input id="password" placeholder="비밀번호" size="large" type="password" />
-      <ErrorMessage visible={pwError}>비밀번호를 다시 확인해주세요.</ErrorMessage>
-      <ConfirmBtn value="로그인" onClick={handleLogin} />
+      <form onSubmit={handleLogin}>
+        <Input
+          id="id"
+          placeholder="아이디"
+          size="large"
+          type="text"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+        />
+        <ErrorMessage visible={idError}>가입된 유저가 아닙니다.</ErrorMessage>
+        <Input
+          id="password"
+          placeholder="비밀번호"
+          size="large"
+          type="password"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+        />
+        <ErrorMessage visible={pwError}>비밀번호를 다시 확인해주세요.</ErrorMessage>
+        <SubmitBtn value="로그인" />
+      </form>
       <LinkContainer>
         <Link to="/register">회원가입</Link>
         <Link to="#findId">아이디 찾기</Link>
