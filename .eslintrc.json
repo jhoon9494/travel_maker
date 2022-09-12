@@ -25,6 +25,7 @@
     "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
     "import/no-unresolved": 0,
     "import/prefer-default-export": 0,
+    "@typescript-eslint/no-empty-function": 0,
     "import/extensions": [
       "error",
       "ignorePackages",
