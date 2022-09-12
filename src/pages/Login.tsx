@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import ConfirmBtn from 'components/atoms/ConfirmBtn';
@@ -6,15 +7,33 @@ import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
+  const [idError, setIdError] = useState<boolean>(false);
+  const [pwError, setPwError] = useState<boolean>(false);
 
-  const handleLogin = (): void => {
-    navigate('/');
+  const handleLogin = async () => {
+    try {
+      // TODO axios 사용하여 로그인 api 요청하기
+      // const res = await axios.get();
+      throw new Error();
+      navigate('/');
+      // if(res.ok){
+      //   setIdError(false)
+      //   setPwError(false)
+      // }
+    } catch (e) {
+      // TODO 아이디 오류시
+      setIdError(true);
+      // TODO 비밀번호 오류시
+      setPwError(true);
+    }
   };
   return (
     <Container>
       <Logo src="/logo/logo.png" alt="logo" />
       <Input id="id" placeholder="아이디" size="large" type="text" />
+      <ErrorMessage visible={idError}>가입된 유저가 아닙니다.</ErrorMessage>
       <Input id="password" placeholder="비밀번호" size="large" type="password" />
+      <ErrorMessage visible={pwError}>비밀번호를 다시 확인해주세요.</ErrorMessage>
       <ConfirmBtn value="로그인" onClick={handleLogin} />
       <LinkContainer>
         <Link to="/register">회원가입</Link>
@@ -45,4 +64,12 @@ const LinkContainer = styled.div`
   width: 400px;
   display: flex;
   justify-content: space-around;
+`;
+
+const ErrorMessage = styled.div<{ visible: boolean }>`
+  width: 400px;
+  color: #ff2f2f;
+  font-size: 12px;
+  padding-left: 5px;
+  visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
 `;
