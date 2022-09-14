@@ -16,6 +16,10 @@ function Navbar() {
       alert(e);
     }
   };
+
+  const handleBurgerBar = () => {
+    console.log(1);
+  };
   return (
     <Container>
       <Link to="/">
@@ -31,7 +35,7 @@ function Navbar() {
           size="medium"
         />
       </form>
-      <MenuBtn>
+      <MenuBtn onClick={handleBurgerBar}>
         <HamburgerMenu />
       </MenuBtn>
     </Container>
