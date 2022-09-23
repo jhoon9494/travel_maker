@@ -24,10 +24,16 @@ const travelData: UserData = {
     { placeName: '해운대', tips: '바다는 역시 해운대' },
   ],
   title: '부산 여행',
-  content: `가면 갈수록 매력이 넘치는 도시 부산은 서울에서 KTX를 타면 2시간 30분이면 도착할 수 있습니다. 관광명소들을 지하철, 버스 등 대중교통을 차고 투어할 수 있도록 교통편이 편리하게 잘 되어있죠.
+  content: `가면 갈수록 매력이 넘치는 도시 부산은 서울에서 KTX를 타면 2시간 30분이면 도착할 수 있습니다.
+  관광명소들을 지하철, 버스 등 대중교통을 차고 투어할 수 있도록 교통편이 편리하게 잘 되어있죠.
 
-  해운대 바다를 구경하고 달맞이 공원까지 산책하기, 더베이 101과 광안리 해변에서 야경 감상하기, 남포동 시장의 다양한 볼거리 구경하기, 영도 다리에서 멍하니 경치 감상하기 등 혼자서도 즐길 거리가 많은 곳이랍니다.
-  깡통시장, 국제시장, 자갈치 시장 등 다양한 먹거리를 즐길 수 있으니, 혼행이 처음이신 분들도 쉽게 다녀오실 수 있을거예요 :)`,
+    1. 해운대 바다를 구경하고 달맞이 공원까지 산책하기
+    2.더베이 101과 광안리 해변에서 야경 감상하기 
+    3.남포동 시장의 다양한 볼거리 구경하기 
+    4.영도 다리에서 멍하니 경치 감상하기
+
+  이외에도 깡통시장, 국제시장, 자갈치 시장 등 다양한 먹거리를 즐길 수 있으니, 
+  혼행이 처음이신 분들도 쉽게 다녀오실 수 있을거예요 :)`,
 
   hashTags: ['#부산', '#해운대', '#바다'],
   score: {
@@ -79,18 +85,17 @@ function DetailPage() {
         <span>돌아가기</span>
       </BackSpace>
       <DataContainer>
-        {/* TODO 이미지 슬라이더 만들기(인디케이터 표시) */}
         <PostContainer>
           <ImgSlider img={data.img} />
           {/* TODO 좋아요 api 요청할 때 필요한 데이터 넘겨줘야하고 관련데이터 타입 정하기 */}
           <HeartBtn heartNum={data.heart} />
           {data.recommendRoutes.length !== 0 ? <Route routes={data.recommendRoutes} /> : null}
-          <p>user_id</p>
-          <h2>{data.title}</h2>
-          <p>{data.content}</p>
+          <TextArea>{data.content}</TextArea>
         </PostContainer>
 
         <SideContainer>
+          <p style={{ marginLeft: '5px', marginBottom: '10px' }}>user_id</p>
+          <h2 style={{ marginLeft: '5px' }}>{data.title}</h2>
           <ScoreBox>
             <Score title="추천도" score={data.score.recommend} />
             <Score title="감성" score={data.score.emotion} />
@@ -105,7 +110,7 @@ function DetailPage() {
 export default DetailPage;
 
 const Container = styled.div`
-  height: 100vh;
+  min-height: 100vh;
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -128,23 +133,22 @@ const DataContainer = styled.div`
 
 const PostContainer = styled.div`
   width: 550px;
+`;
 
-  /* FIXME 임시 코드, 나중에 수정하고 지우기 */
-  > p,
-  h2 {
-    margin: 11px 0;
-  }
+const TextArea = styled.div`
+  white-space: pre-wrap;
+  padding: 10px;
 `;
 
 const SideContainer = styled.div`
   width: 285px;
+  padding: 15px;
 `;
 
 const ScoreBox = styled.div`
   width: 100%;
   height: 85px;
-  padding: 15px;
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-around;
 `;

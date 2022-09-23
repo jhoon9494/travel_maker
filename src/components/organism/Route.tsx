@@ -18,18 +18,16 @@ function Route({ routes }: IProps) {
       {routes?.map((route, index) => {
         return (
           <Fragment key={`${route.placeName}-key`}>
-            <CheckPoint>
+            <CheckPoint
+              onMouseEnter={(e: MouseEvent<HTMLElement>) => {
+                setCurrPlace(e.currentTarget.innerText);
+              }}
+              onMouseLeave={() => {
+                setCurrPlace('');
+              }}
+            >
               <CheckPointIcon src="/icons/finished-icon.jpeg" alt="checkpoint" />
-              <PlaceName
-                onMouseEnter={(e: MouseEvent<HTMLSpanElement>) => {
-                  setCurrPlace(e.currentTarget.innerText);
-                }}
-                onMouseLeave={() => {
-                  setCurrPlace('');
-                }}
-              >
-                {route.placeName}
-              </PlaceName>
+              <PlaceName>{route.placeName}</PlaceName>
               <TipsContainer hide={currPlace !== route.placeName}>{route.tips}</TipsContainer>
             </CheckPoint>
             {index !== routes.length - 1 && <span>..........</span>}
@@ -46,8 +44,8 @@ const RoutesContainer = styled.div`
   width: 550px;
   height: 100px;
   border-radius: 5px;
-  background-color: ${GlobalColor.mainColor};
-  margin: 36px 0;
+  border: 1px solid lightgray;
+  margin: 20px 0 30px;
   display: flex;
   align-items: center;
   padding: 10px 20px;
@@ -77,7 +75,7 @@ const TipsContainer = styled.div<{ hide: boolean }>`
   padding: 10px;
   border-radius: 5px;
   top: 63px;
-  background-color: lightblue;
+  background-color: ${GlobalColor.mainColor};
   opacity: ${({ hide }) => (hide ? 0 : 1)};
   visibility: ${({ hide }) => (hide ? 'hidden' : 'visible')};
   transition: all 0.3s ease;
