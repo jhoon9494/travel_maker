@@ -34,4 +34,8 @@ ul,
 ol {
   list-style: none;
 }
+input::placeholder,textarea::placeholder {
+  color: #999999;
+  
+}
 `;

@@ -5,17 +5,16 @@ import styled from 'styled-components';
 function Layout() {
   const location = useLocation();
   return (
-    <Container>
+    <Wrapper>
       {location.pathname !== '/login' && location.pathname !== '/register' && <Navbar />}
       <Outlet />
-    </Container>
+    </Wrapper>
   );
 }
 
 export default Layout;
 
-const Container = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
 `;
