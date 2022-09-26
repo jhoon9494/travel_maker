@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
-import ImgPreviewerList from 'components/atoms/ImgPreviewerList';
+import ImgPreviewerList from 'components/organism/ImgPreviewerList';
 import Input from 'components/atoms/Input';
 
 type PreviewImgType = {
