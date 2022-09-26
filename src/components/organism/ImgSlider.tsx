@@ -16,6 +16,7 @@ function ImgSlider({ img }: IProps) {
   // 이미지를 좌우로 이동시키기 위한 state
   const [dist, setDist] = useState<number>(0);
   const [imgIndex, setImgIndex] = useState<number>(0);
+
   const handleLeftClick = () => {
     // 이미지 슬라이더 이동거리 관련 set함수
     setDist((currDist) => {
@@ -32,6 +33,7 @@ function ImgSlider({ img }: IProps) {
       return currIndex - 1;
     });
   };
+
   const handleRightClick = () => {
     // 이미지 슬라이더 이동거리 관련 set함수
     setDist((currDist) => {
@@ -48,15 +50,16 @@ function ImgSlider({ img }: IProps) {
       return currIndex + 1;
     });
   };
+
   return (
     <ImgViewer>
-      <LeftBtn onClick={handleLeftClick} />
+      {imgIndex !== 0 && <LeftBtn onClick={handleLeftClick} />}
       <ImgContainer length={img.length} dist={dist}>
         {img.map((image) => {
-          return <Img src={image.src} alt={image.alt} key={`${image.alt}-key`} />;
+          return <Img src={image.src} alt={image.alt} key={image.alt} />;
         })}
       </ImgContainer>
-      <RightBtn onClick={handleRightClick} />
+      {imgIndex !== img.length - 1 && <RightBtn onClick={handleRightClick} />}
       <ImgIndicator count={img.length} selectedIndex={imgIndex} />
     </ImgViewer>
   );

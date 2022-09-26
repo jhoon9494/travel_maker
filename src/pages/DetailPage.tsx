@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BiArrowBack } from 'react-icons/bi';
 import Score from 'components/atoms/ScoreBox';
+import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgSlider from 'components/organism/ImgSlider';
 import HeartBtn from 'components/atoms/HeartBtn';
 import Route from 'components/organism/Route';
@@ -19,9 +19,16 @@ const travelData: UserData = {
     },
   ],
   recommendRoutes: [
-    { placeName: '동대구역', tips: 'ktx 쾌적해요' },
+    {
+      placeName: '동대구역',
+      tips: 'ktx 쾌적해ktx 쾌적해요ktx 쾌적해요ktx 쾌적해요ktx 쾌적해요ktx 쾌적해요ktx 쾌적해요요',
+    },
     { placeName: '부산역', tips: '부산역에서 사진찍기' },
     { placeName: '해운대', tips: '바다는 역시 해운대' },
+    { placeName: '해운대1', tips: '' },
+    { placeName: '해운대2', tips: '' },
+    { placeName: '해운대3', tips: '' },
+    { placeName: '해운대4', tips: '' },
   ],
   title: '부산 여행',
   content: `가면 갈수록 매력이 넘치는 도시 부산은 서울에서 KTX를 타면 2시간 30분이면 도착할 수 있습니다.
@@ -79,11 +86,8 @@ function DetailPage() {
   };
 
   return (
-    <Container>
-      <BackSpace onClick={handleBackSpace}>
-        <BiArrowBack />
-        <span>돌아가기</span>
-      </BackSpace>
+    <Wrapper>
+      <BackSpaceBtn onClick={handleBackSpace} />
       <DataContainer>
         <PostContainer>
           <ImgSlider img={data.img} />
@@ -103,36 +107,28 @@ function DetailPage() {
           </ScoreBox>
         </SideContainer>
       </DataContainer>
-    </Container>
+    </Wrapper>
   );
 }
 
 export default DetailPage;
 
-const Container = styled.div`
-  min-height: 100vh;
+const Wrapper = styled.div`
   background-color: white;
   display: flex;
   flex-direction: column;
-`;
-
-const BackSpace = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 20px 0 0 50px;
-
-  cursor: pointer;
 `;
 
 const DataContainer = styled.div`
   display: flex;
   padding: 20px 50px 50px;
   width: 100%;
-  height: 100%;
 `;
 
 const PostContainer = styled.div`
   width: 550px;
+  /* 여행 추천 경로의 팁을 띄우기 위해 포지션 지정 */
+  position: relative;
 `;
 
 const TextArea = styled.div`
