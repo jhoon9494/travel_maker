@@ -5,6 +5,7 @@ import Home from 'pages/Home';
 import Login from 'pages/Login';
 import Register from 'pages/Register';
 import DetailPage from 'pages/DetailPage';
+import Upload from 'pages/Upload';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/detail" element={<DetailPage />} />
+            <Route path="/upload" element={<Upload />} />
           </Route>
         </Routes>
       </BrowserRouter>
