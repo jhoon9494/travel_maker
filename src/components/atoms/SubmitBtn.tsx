@@ -11,7 +11,7 @@ export default function SubmitBtn({ value }: ButtonProps) {
 
 const ButtonContainer = styled.button`
   width: 400px;
-  height: 60px;
+  height: 45px;
   margin: 17px 0;
   color: white;
   font-size: 20px;
