@@ -21,7 +21,11 @@ const BackSpace = styled.div`
   align-items: center;
   margin-top: 20px;
   margin-left: 50px;
-  width: 75px;
+  width: 80px;
 
   cursor: pointer;
+
+  > span {
+    margin-left: 5px;
+  }
 `;

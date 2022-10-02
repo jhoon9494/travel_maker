@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, Dispatch, SetStateAction, MouseEvent, MouseEventHandler, useEffect } from 'react';
+import { useState, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { BsFillPlusCircleFill } from 'react-icons/bs';
 import { AiFillMinusCircle } from 'react-icons/ai';
 import { GlobalColor } from '../../styles/GlobalColor';
@@ -12,15 +12,13 @@ type PreviewImgType = {
 interface IProps {
   selectImg: Dispatch<SetStateAction<PreviewImgType | null>>;
   setImgFiles: Dispatch<SetStateAction<File[]>>;
-  clicked: boolean;
+  previewImgs: PreviewImgType[];
+  setPreviewImgs: Dispatch<SetStateAction<PreviewImgType[]>>;
 }
 
-function ImgPreviewer({ selectImg, clicked, setImgFiles }: IProps) {
+function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: IProps) {
   // 이미지 삭제를 위한 state
   const [currImg, setCurrImg] = useState<string>('');
-
-  const [previewImgs, setPreviewImgs] = useState<PreviewImgType[]>([]);
-
   const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (files) {
@@ -41,12 +39,6 @@ function ImgPreviewer({ selectImg, clicked, setImgFiles }: IProps) {
   const handleImgClick = (img: PreviewImgType) => {
     selectImg(img);
   };
-  // TODO 제출했을 때 blob url를 제거하기 위해서 불리언 값을 보내고 되는지 확인해봤는데 잘 동작함. 제출할때 이런식으로 하면 될듯
-  if (clicked) {
-    previewImgs.forEach((img) => {
-      URL.revokeObjectURL(img.src);
-    });
-  }
   const handleDeleteImg = (index: number) => {
     // FIXME setPreviewImgs로 splice를 실행할 경우 set함수가 두 번 실행되어 의도대로 동작하지 않음.
     // 깊은 복사를 통해 임시로 동작하도록 만들어두었으나, 더 좋은 방법이 있다면 해당 방법으로 수정 필요.
@@ -146,6 +138,10 @@ const AddImg = styled.div`
 const PlusBtn = styled(BsFillPlusCircleFill)`
   font-size: 48px;
   color: ${GlobalColor.mainColor};
+
+  :hover {
+    color: ${GlobalColor.hoverColor};
+  }
 `;
 
 const MinusBtn = styled.div<{ hide: boolean }>`
