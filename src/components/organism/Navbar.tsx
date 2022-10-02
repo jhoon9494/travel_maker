@@ -2,10 +2,15 @@ import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
+import SideBar from 'components/organism/SideBar';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 function Navbar() {
+  // 검색 부분
   const [search, setSearch] = useState<string>('');
+
+  // 햄버거바 부분
+  const [sideOpen, setSideOpen] = useState(false);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -17,9 +22,6 @@ function Navbar() {
     }
   };
 
-  const handleBurgerBar = () => {
-    console.log(1);
-  };
   return (
     <Container>
       <Link to="/">
@@ -35,9 +37,10 @@ function Navbar() {
           size="medium"
         />
       </form>
-      <MenuBtn onClick={handleBurgerBar}>
-        <HamburgerMenu />
+      <MenuBtn onClick={() => setSideOpen(true)}>
+        <HamburgerIcon />
       </MenuBtn>
+      <SideBar open={sideOpen} setOpen={setSideOpen} />
     </Container>
   );
 }
@@ -47,13 +50,16 @@ export default Navbar;
 const Container = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 65px;
   background-color: white;
+  position: relative;
 
   > form {
-    flex-grow: 1;
-    margin-left: 160px;
+    margin: 0 auto;
+  }
+
+  > a {
+    position: absolute;
   }
 `;
 
@@ -64,10 +70,11 @@ const Logo = styled.img`
 `;
 
 const MenuBtn = styled.button`
-  margin-right: 50px;
+  position: absolute;
+  right: 20px;
 `;
 
-const HamburgerMenu = styled(GiHamburgerMenu)`
+const HamburgerIcon = styled(GiHamburgerMenu)`
   width: 35px;
   height: 35px;
 `;
