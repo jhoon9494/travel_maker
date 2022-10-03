@@ -38,6 +38,7 @@ const Container = styled.div<{ open: boolean }>`
   display: flex;
   flex-direction: column;
   padding: 20px;
+  box-shadow: -5px 0px 10px 1px #aaaaaa;
 `;
 
 const CloseBtn = styled.button`

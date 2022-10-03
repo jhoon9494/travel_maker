@@ -33,6 +33,7 @@ function Register() {
         <Logo src="/logo/logo.png" alt="logo" />
       </Link>
       <form onSubmit={handleRegister}>
+        {/* TODO 아이디 중복조회 API 요청 버튼 만들기 */}
         <ValidateInput
           id="id"
           label="아이디"
@@ -64,7 +65,6 @@ function Register() {
           value={phone}
           onChange={(e) => {
             // 하이픈 자동입력
-            // TODO 불필요하면 제거
             const phoneNumber: string[] = [];
             phoneNumber.push(e.target.value);
             if (
@@ -109,7 +109,7 @@ function Register() {
 export default Register;
 
 const Container = styled.div`
-  height: 100vh;
+  height: 100%;
   background-color: white;
   display: flex;
   flex-direction: column;
