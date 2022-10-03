@@ -14,6 +14,7 @@ interface IProps {
 function Route({ routes }: IProps) {
   const [currPlace, setCurrPlace] = useState<string>('');
   const [containerLeftDist, setContainerLeftDist] = useState<number>(0);
+  const [tipsTopDist, setTipsTopDist] = useState<number>(0);
   const [tipsLeftDist, setTipsLeftDist] = useState<number>(0);
   return (
     <RoutesContainer
@@ -28,6 +29,7 @@ function Route({ routes }: IProps) {
               onMouseEnter={(e: MouseEvent<HTMLElement>) => {
                 setCurrPlace(e.currentTarget.innerText);
                 setTipsLeftDist(e.currentTarget.getBoundingClientRect().left);
+                setTipsTopDist(e.currentTarget.offsetTop);
               }}
               onMouseLeave={() => {
                 setCurrPlace('');
@@ -35,7 +37,11 @@ function Route({ routes }: IProps) {
             >
               <CheckPointIcon src="/icons/finished-icon.jpeg" alt="checkpoint" />
               <PlaceName>{route.placeName}</PlaceName>
-              <TipsContainer hide={currPlace !== route.placeName} leftDist={tipsLeftDist - containerLeftDist}>
+              <TipsContainer
+                hide={currPlace !== route.placeName}
+                leftDist={tipsLeftDist - containerLeftDist}
+                topDist={tipsTopDist + 65}
+              >
                 {route.tips ? route.tips : '작성하신 꿀팁이 없어요 😭'}
               </TipsContainer>
             </CheckPoint>
@@ -80,12 +86,12 @@ const PlaceName = styled.span`
   min-width: 60px;
 `;
 
-const TipsContainer = styled.div<{ hide: boolean; leftDist: number }>`
+const TipsContainer = styled.div<{ hide: boolean; leftDist: number; topDist: number }>`
   position: absolute;
   width: 200px;
   padding: 10px;
   border-radius: 5px;
-  top: 64.5%;
+  top: ${({ topDist }) => topDist}px;
   left: ${({ leftDist }) => leftDist}px;
   background-color: ${GlobalColor.mainColor};
   opacity: ${({ hide }) => (hide ? 0 : 1)};
