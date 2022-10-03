@@ -3,13 +3,8 @@ import styled from 'styled-components';
 import { LeftBtn, RightBtn } from '../atoms/ArrowBtn';
 import ImgIndicator from '../atoms/ImgIndicator';
 
-type ImgType = {
-  src: string;
-  alt: string;
-};
-
 interface IProps {
-  img: ImgType[];
+  img: string[];
 }
 
 function ImgSlider({ img }: IProps) {
@@ -55,8 +50,8 @@ function ImgSlider({ img }: IProps) {
     <ImgViewer>
       {imgIndex !== 0 && <LeftBtn onClick={handleLeftClick} />}
       <ImgContainer length={img.length} dist={dist}>
-        {img.map((image) => {
-          return <Img src={image.src} alt={image.alt} key={image.alt} />;
+        {img.map((image, index) => {
+          return <Img src={image} alt={`${index + 1}번째 그림`} key={`${image.slice(0, 5)}-${index + 1}-key`} />;
         })}
       </ImgContainer>
       {imgIndex !== img.length - 1 && <RightBtn onClick={handleRightClick} />}
