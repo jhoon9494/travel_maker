@@ -15,19 +15,21 @@ function Login() {
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      // TODO axios 사용하여 로그인 api 요청하기
-      // const res = await axios.get();
-      throw new Error();
-      navigate('/');
-      // if(res.ok){
-      //   setIdError(false)
-      //   setPwError(false)
-      // }
+      setIdError(false);
+      setPwError(false);
+      const res = await axios.post('http://localhost:8888/api/login', { id: id, password: pw });
+      
+      if (res.data === 'OK') {
+        navigate('/');
+      }
     } catch (e) {
-      // TODO 아이디 오류시
-      setIdError(true);
-      // TODO 비밀번호 오류시
-      setPwError(true);
+      if (e.response.data.code === "USER_NOT_FOUND") {
+        setIdError(true);
+      }
+      if (e.response.data.code === "INVALID_PASSWORD") {
+        setPwError(true);
+      }
+      
     }
   };
   return (
