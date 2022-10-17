@@ -1,11 +1,12 @@
 import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import SideBar from 'components/organism/SideBar';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 function Navbar() {
+  const navigate = useNavigate();
   // 검색 부분
   const [search, setSearch] = useState<string>('');
 
@@ -14,17 +15,18 @@ function Navbar() {
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      // TODO axios 사용하여 검색 api 요청하기
-      console.log(search);
-    } catch (e) {
-      alert(e);
+    if (search[0] === '#') {
+      navigate(`/explore/${search.split('#')[1]}`);
+    } else {
+      navigate(`/explore/${search}`);
     }
+
+    setSearch('');
   };
 
   return (
     <Container>
-      <Link to="/">
+      <Link to="/main">
         <Logo src="/logo/logo.png" alt="logo" />
       </Link>
       <form onSubmit={handleSearch}>

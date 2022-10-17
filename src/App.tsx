@@ -6,7 +6,8 @@ import Login from 'pages/Login';
 import Register from 'pages/Register';
 import DetailPage from 'pages/DetailPage';
 import Upload from 'pages/Upload';
-import HashtagList from 'pages/HashtagList';
+import Hashtag from 'pages/Hashtag';
+import Explore from 'pages/Explore';
 
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/detail/:id" element={<DetailPage />} />
             <Route path="/upload" element={<Upload />} />
-            <Route path="/hashtag/:tag" element={<HashtagList />} />
+            <Route path="/hashtag/:tag" element={<Hashtag />} />
+            <Route path="/explore/:result" element={<Explore />} />
             {/* TODO 404 Not Found 페이지 만들기 */}
           </Route>
         </Routes>
