@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, FormEvent, KeyboardEvent, useEffect } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgPreviewerList from 'components/organism/ImgPreviewerList';
@@ -22,7 +22,8 @@ type TipsType = {
 
 function Upload() {
   const navigate = useNavigate();
-  // TODO 수정하기로 들어온 경우 Path값으로 게시글 id를 가지고 인식해서 기존 작성된 게시글 정보를 api 요청해서 가져온 후 setState로 상태 변경시키기
+  // TODO 수정하기로 들어온 경우 useParams id값으로 게시글 인식해서 기존 작성된 게시글 정보를 api 요청해서 가져온 후 각 업로드 set함수에 반영하기
+
   // 이미지 파일 및 미리보기 부분
   const [imgFiles, setImgFiles] = useState<File[]>([]);
   const [previewImg, setPreviewImg] = useState<PreviewImgType | null>(null);
@@ -52,16 +53,19 @@ function Upload() {
   // 여행 추천점수 안내 부분
   const [scoreHover, setScoreHover] = useState(false);
 
+  // 해시태그 부분
+  const [hashtag, setHashtag] = useState<string[]>([]);
+
   useEffect(() => {
     // 파일업로드 첫번째 페이지에서 돌아가기 클릭 시 동작
     if (confirmResult) {
-      navigate('/');
+      navigate(-1);
     }
   }, [confirmResult, navigate]);
 
+  // TODO 경고창 커스텀화
   const handleTipSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     // 추천 여행지 장소명 중복검사
     if (tipsList.some((t) => t.placeName === placeName)) {
       return alert('이미 등록된 장소입니다. 다시 확인해주세요!');
@@ -83,6 +87,16 @@ function Upload() {
     }
   };
 
+  const handleNextStep = () => {
+    setPage(2);
+    // 해시태그 추출 부분
+    content.split(/(#[^\s#]+)/g).forEach((str) => {
+      if (str[0] === '#') {
+        setHashtag((prev) => [...prev, str]);
+      }
+    });
+  };
+
   const handleWrite = () => {
     if (imgFiles.length === 0) {
       return alert('이미지를 추가하여 작성해주세요!');
@@ -92,20 +106,9 @@ function Upload() {
       URL.revokeObjectURL(img.src);
     });
 
-    // TODO API 요청하는 코드 작성해야 함.
-    return console.log(imgFiles, title, content, recommend, emotion, revisit, tipsList);
+    // TODO API 요청하는 코드 작성하기.
+    return console.log(content, hashtag);
   };
-
-  // TODO 해시태그 관련
-  // const handleHashTag = (e: KeyboardEvent) => {
-  //   if (e.key === '#') {
-  //     console.log('start hashtag');
-  //     console.log(e.currentTarget.innerHTML);
-  //   }
-  //   if (e.key === ' ') {
-  //     console.log(e.currentTarget.innerHTML);
-  //   }
-  // };
 
   return (
     <Wrapper>
@@ -113,7 +116,7 @@ function Upload() {
         <BackSpaceBtn onClick={handleBackSpace} />
         <span style={{ flexGrow: 1 }} />
         {page === 1 ? (
-          <Button type="button" onClick={() => setPage(2)}>
+          <Button type="button" onClick={handleNextStep}>
             다음
           </Button>
         ) : (
@@ -156,8 +159,6 @@ function Upload() {
               height="200"
             />
           </TextContainer>
-
-          {/* TODO 해시태그 컴포넌트 추가 */}
         </div>
       ) : (
         <div style={{ display: 'flex', paddingLeft: '50px' }}>
@@ -206,7 +207,7 @@ function Upload() {
       )}
       {confirmOpen && (
         <Confirm
-          text="현재까지 작성하신 게시글이 삭제됩니다. 돌아가시겠습니까?"
+          text={`현재까지 작성하신 게시글이 삭제됩니다.\n돌아가시겠습니까?`}
           close={setConfirmOpen}
           setResult={setConfirmResult}
           yes="돌아가기"
