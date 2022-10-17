@@ -83,7 +83,7 @@ function DetailPage() {
           {/* TODO 좋아요 클릭 시 받아온 좋아요 데이터에서 +1, -1 해서 다시 넘겨주기 */}
           <HeartBtn heartNum={data.like} />
           {data.recommendRoutes.length !== 0 ? (
-            <TravelTips TravelTips={data.recommendRoutes} />
+            <TravelTips tips={data.recommendRoutes} />
           ) : (
             <div style={{ height: '40px' }} />
           )}

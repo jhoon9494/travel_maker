@@ -2,29 +2,29 @@ import { useState, Fragment, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-type RoutesType = {
+type TipsType = {
   placeName: string;
   tips: string;
 };
 
 interface IProps {
-  routes: RoutesType[] | undefined;
+  tips: TipsType[] | undefined;
 }
 
-function Route({ routes }: IProps) {
+function TravelTips({ tips }: IProps) {
   const [currPlace, setCurrPlace] = useState<string>('');
   const [containerLeftDist, setContainerLeftDist] = useState<number>(0);
   const [tipsTopDist, setTipsTopDist] = useState<number>(0);
   const [tipsLeftDist, setTipsLeftDist] = useState<number>(0);
   return (
-    <RoutesContainer
+    <TravelTipsContainer
       onMouseEnter={(e: MouseEvent<HTMLElement>) => {
         setContainerLeftDist(e.currentTarget.getBoundingClientRect().left);
       }}
     >
-      {routes?.map((route, index) => {
+      {tips?.map((tip, index) => {
         return (
-          <Fragment key={`${route.placeName}-key`}>
+          <Fragment key={`${tip.placeName}-key`}>
             <CheckPoint
               onMouseEnter={(e: MouseEvent<HTMLElement>) => {
                 setCurrPlace(e.currentTarget.innerText);
@@ -36,26 +36,26 @@ function Route({ routes }: IProps) {
               }}
             >
               <CheckPointIcon src="/icons/finished-icon.jpeg" alt="checkpoint" />
-              <PlaceName>{route.placeName}</PlaceName>
+              <PlaceName>{tip.placeName}</PlaceName>
               <TipsContainer
-                hide={currPlace !== route.placeName}
+                hide={currPlace !== tip.placeName}
                 leftDist={tipsLeftDist - containerLeftDist}
                 topDist={tipsTopDist + 65}
               >
-                {route.tips ? route.tips : '작성하신 꿀팁이 없어요 😭'}
+                {tip.tips ? tip.tips : '작성하신 꿀팁이 없어요 😭'}
               </TipsContainer>
             </CheckPoint>
-            {index !== routes.length - 1 && <span>..........</span>}
+            {index !== tips.length - 1 && <span>..........</span>}
           </Fragment>
         );
       })}
-    </RoutesContainer>
+    </TravelTipsContainer>
   );
 }
 
-export default Route;
+export default TravelTips;
 
-const RoutesContainer = styled.ul`
+const TravelTipsContainer = styled.ul`
   width: 550px;
   height: 100px;
   display: flex;
