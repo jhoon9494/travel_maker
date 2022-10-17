@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
+import { GlobalColor } from '../../styles/GlobalColor';
 
 interface IProps {
   text: string;
@@ -13,9 +14,8 @@ function Confirm({ text, close, setResult, yes, no }: IProps) {
   return (
     <Outter onClick={() => close(false)}>
       <Inner>
-        {text}
+        <div style={{ whiteSpace: 'pre-wrap', textAlign: 'center' }}>{text}</div>
         <BtnsContainer>
-          {/* TODO 확인 및 취소 버튼 색상 어떤걸로 할지 결정하기 */}
           <Button onClick={() => setResult(true)}>{yes}</Button>
           <Button onClick={() => setResult(null)}>{no}</Button>
         </BtnsContainer>
@@ -54,6 +54,12 @@ const BtnsContainer = styled.div`
   margin-top: 30px;
   display: flex;
   justify-content: space-between;
+
+  > button:first-child {
+    background-color: ${GlobalColor.mainColor};
+    color: white;
+    border: none;
+  }
 `;
 
 const Button = styled.button`
