@@ -6,7 +6,7 @@ function Layout() {
   const location = useLocation();
   return (
     <Wrapper>
-      {location.pathname !== '/login' && location.pathname !== '/register' ? <Navbar /> : <NonNavbar />}
+      {location.pathname !== '/' && location.pathname !== '/register' ? <Navbar /> : <NonNavbar />}
       <Body>
         <Outlet />
       </Body>
@@ -29,4 +29,17 @@ const NonNavbar = styled.div`
 const Body = styled.div`
   height: calc(100vh - 65px);
   overflow-y: scroll;
+
+  ::-webkit-scrollbar {
+    width: 7px; /*스크롤바의 너비*/
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: lightgray; /*스크롤바의 색상*/
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent; /*스크롤바 트랙 색상*/
+  }
 `;

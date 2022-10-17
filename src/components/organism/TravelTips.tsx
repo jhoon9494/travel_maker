@@ -67,6 +67,18 @@ const TravelTipsContainer = styled.ul`
 
   overflow-y: hidden;
   overflow-x: scroll;
+  ::-webkit-scrollbar {
+    height: 6px; /*스크롤바의 너비*/
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: lightgray; /*스크롤바의 색상*/
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent; /*스크롤바 트랙 색상*/
+  }
 `;
 
 const CheckPoint = styled.li`
