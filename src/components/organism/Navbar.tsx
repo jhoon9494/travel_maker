@@ -1,11 +1,12 @@
-import { useState, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, FormEvent, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import SideBar from 'components/organism/SideBar';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 function Navbar() {
+  const location = useLocation();
   const navigate = useNavigate();
   // 검색 부분
   const [search, setSearch] = useState<string>('');
@@ -23,6 +24,11 @@ function Navbar() {
 
     setSearch('');
   };
+
+  // 페이지 전환 시 햄버거바를 닫음
+  useEffect(() => {
+    setSideOpen(false);
+  }, [location]);
 
   return (
     <Container>

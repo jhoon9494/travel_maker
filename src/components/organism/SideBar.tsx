@@ -11,7 +11,7 @@ interface IProps {
 function SideBar({ open, setOpen }: IProps) {
   return (
     <>
-      {open && <Background />}
+      {open && <Background onClick={() => setOpen(false)} />}
       <Container open={open}>
         <CloseBtn onClick={() => setOpen(false)}>
           <GoX />
@@ -19,7 +19,9 @@ function SideBar({ open, setOpen }: IProps) {
         <LinkWrapper>
           {/* TODO 각 페이지 제작 후 link 및 api 연결시키기 */}
           <div>유저 아이디</div>
-          <div>정보수정</div>
+          <div>
+            <Link to="/mypage">정보수정</Link>
+          </div>
           <div>설정</div>
           <div>로그아웃</div>
         </LinkWrapper>
@@ -63,7 +65,7 @@ const CloseBtn = styled.button`
 const LinkWrapper = styled.div`
   margin-top: 40px;
   text-align: center;
-  //TODO Link로 바꿔줘야함
+
   > div {
     margin-bottom: 30px;
   }
