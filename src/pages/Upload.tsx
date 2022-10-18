@@ -7,6 +7,8 @@ import Input from 'components/atoms/Input';
 import ScoreInput from 'components/atoms/ScoreInput';
 import CardList from 'components/organism/CardList';
 import Confirm from 'components/atoms/Confirm';
+import Alert from 'components/atoms/Alert';
+import SubmitBtn from 'components/atoms/SubmitBtn';
 import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
 
@@ -32,6 +34,10 @@ function Upload() {
   // Confirm 부분
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+
+  // Alert 부분
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState('');
 
   // 페이지 전환 부분
   const [page, setPage] = useState(1);
@@ -63,16 +69,18 @@ function Upload() {
     }
   }, [confirmResult, navigate]);
 
-  // TODO 경고창 커스텀화
   const handleTipSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // 추천 여행지 장소명 중복검사
     if (tipsList.some((t) => t.placeName === placeName)) {
-      return alert('이미 등록된 장소입니다. 다시 확인해주세요!');
+      setAlertText('이미 등록된 장소입니다. 다시 확인해주세요!');
+      setPlaceName('');
+      return setAlertOpen(true);
     }
     // 팁을 작성하지 않고 추가 클릭시 경고창 반환
     if (placeName === '' || tip === '') {
-      return alert('팁을 작성한 후 추가해주세요!');
+      setAlertText('팁을 작성한 후 추가해주세요!');
+      return setAlertOpen(true);
     }
     setTipsList((prevList) => [...prevList, { placeName, tip }]);
     setPlaceName('');
@@ -99,7 +107,8 @@ function Upload() {
 
   const handleWrite = () => {
     if (imgFiles.length === 0) {
-      return alert('이미지를 추가하여 작성해주세요!');
+      setAlertText('이미지를 추가하여 작성해주세요!');
+      return setAlertOpen(true);
     }
     // blob url 제거하는 코드
     previewImgs.forEach((img) => {
@@ -180,7 +189,7 @@ function Upload() {
                 width="400"
                 height="100"
               />
-              <input type="submit" value="추가하기" />
+              <SubmitBtn value="추가하기" />
             </Form>
             <div style={{ marginTop: '20px', position: 'relative' }}>
               <h3 style={{ display: 'flex' }}>
@@ -214,6 +223,7 @@ function Upload() {
           no="취소"
         />
       )}
+      {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
     </Wrapper>
   );
 }
@@ -292,6 +302,11 @@ const AddTipScoreContainer = styled.div`
 const Form = styled.form`
   width: 400px;
   text-align: center;
+
+  > button {
+    margin: 0;
+    font-size: 16px;
+  }
 `;
 
 const ScoreTip = styled.div<{ hover: boolean }>`
