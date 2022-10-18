@@ -5,20 +5,15 @@ import { Dispatch, SetStateAction } from 'react';
 interface IProps {
   placeName: string;
   tip: string;
-  index: number;
-  setPlace: Dispatch<SetStateAction<[string, number | null]>>;
+  setPlace: Dispatch<SetStateAction<string>>;
 }
 
-function Card({ placeName, tip, index, setPlace }: IProps) {
-  const deleteCard = () => {
-    setPlace([placeName, index]);
-  };
-
+function Card({ placeName, tip, setPlace }: IProps) {
   return (
     <Container>
       <h3>{placeName}</h3>
       <p>{tip}</p>
-      <CloseBtn onClick={deleteCard}>
+      <CloseBtn onClick={() => setPlace(placeName)}>
         <CustomMark />
       </CloseBtn>
     </Container>
