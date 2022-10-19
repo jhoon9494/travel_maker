@@ -1,24 +1,23 @@
 import styled from 'styled-components';
-import { useState, useEffect, FormEvent, FormEventHandler } from 'react';
-import axios from 'axios';
+import { useState, FormEvent, FormEventHandler } from 'react';
 import ValidateInput from 'components/organism/ValidateInput';
 import Input from 'components/atoms/Input';
+import { useOutletContext } from 'react-router-dom';
 import { validatePw } from '../../utils/validate';
 import SubmitBtn from '../../components/atoms/SubmitBtn';
 
+interface UserDataProps {
+  user_id: string;
+  email: string;
+  phone_number: string;
+  user_img: string;
+}
+
 function ChangePw() {
-  const [userId, setUserId] = useState('');
+  const userData = useOutletContext<UserDataProps>();
   const [currPw, setCurrPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
-
-  useEffect(() => {
-    const getData = async () => {
-      const res = await axios.get('http://localhost:3000/mock/userData.json');
-      setUserId(res.data.user_id);
-    };
-    getData();
-  }, []);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +29,7 @@ function ChangePw() {
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit}>
-        <div>{userId}</div>
+        <div>{userData.user_id}</div>
         <Input
           id="currPw"
           placeholder="현재 비밀번호"
@@ -80,5 +79,9 @@ const Form = styled.form<{ onSubmit: FormEventHandler<HTMLFormElement> }>`
 
   > button {
     margin-top: 30px;
+  }
+
+  > div:nth-child(2) {
+    margin-bottom: 20px;
   }
 `;

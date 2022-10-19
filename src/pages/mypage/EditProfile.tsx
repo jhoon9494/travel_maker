@@ -1,15 +1,22 @@
 import styled from 'styled-components';
 import { FormEventHandler, useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { VscSettingsGear } from 'react-icons/vsc';
-import axios from 'axios';
 import SubmitBtn from 'components/atoms/SubmitBtn';
+import { useOutletContext } from 'react-router-dom';
 import Input from '../../components/atoms/Input';
 import ValidateInput from '../../components/organism/ValidateInput';
 import { validatePhone, validateEmail } from '../../utils/validate';
 import UserImage from '../../components/atoms/UserImage';
 
+interface UserDataProps {
+  user_id: string;
+  email: string;
+  phone_number: string;
+  user_img: string;
+}
+
 function EditProfile() {
-  const [userId, setUserId] = useState('');
+  const userData = useOutletContext<UserDataProps>();
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,16 +24,10 @@ function EditProfile() {
   const [profileImg, setProfileImg] = useState<File | null>(null);
 
   useEffect(() => {
-    const getData = async () => {
-      const res = await axios.get('http://localhost:3000/mock/userData.json');
-      const user = res.data;
-      setPhone(user.phone_number);
-      setEmail(user.email);
-      setPreviewImg(user.user_img);
-      setUserId(user.user_id);
-    };
-    getData();
-  }, []);
+    setPhone(userData.phone_number);
+    setEmail(userData.email);
+    setPreviewImg(userData.user_img);
+  }, [userData]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +35,7 @@ function EditProfile() {
     URL.revokeObjectURL(previewImg);
     // TODO 이미지 추가하지않을경우 null값 전송
     // TODO try catch 사용하여 api 요청한 뒤 결과에 맞게 확인창 팝업시켜주기
+    // api 요청이 정상적으로 이루어졌다면 해당 페이지로 리다이렉트
     console.log(profileImg, phone, email, password);
   };
 
@@ -50,7 +52,7 @@ function EditProfile() {
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit}>
-        <UserImage src={previewImg} alt={userId} name={userId} />
+        <UserImage src={previewImg} alt={userData.user_id} name={userData.user_id} />
         <Label htmlFor="imgFile" style={{ cursor: 'pointer' }}>
           <CustomGear />
           <input style={{ display: 'none' }} type="file" id="imgFile" accept="image/*" onChange={loadImg} />

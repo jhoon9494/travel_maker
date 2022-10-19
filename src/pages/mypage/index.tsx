@@ -18,11 +18,28 @@ const links = [
   },
 ];
 
+const initUserData = {
+  user_id: '',
+  email: '',
+  phone_number: '',
+  user_img: '',
+};
+
 function Mypage() {
   const location = useLocation();
   const [currLinkIndex, setCurrLinkIndex] = useState<number>(0);
+  const [userData, setUserData] = useState(initUserData);
 
   useEffect(() => {
+    const getData = async () => {
+      const res = await axios.get('http://localhost:3000/mock/userData.json');
+      setUserData(res.data);
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    setCurrLinkIndex(0);
     links.forEach(({ link }, index) => {
       if (location.pathname.includes(link)) {
         setCurrLinkIndex(index);
@@ -42,7 +59,7 @@ function Mypage() {
         })}
       </Menubar>
       <Body>
-        <Outlet />
+        <Outlet context={userData} />
       </Body>
     </Wrapper>
   );
