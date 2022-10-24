@@ -8,7 +8,6 @@ export const GlobalStyle = createGlobalStyle`
   font-family: 'Noto Sans KR', sans-serif;
 }
 body {
-  background-color: gray;
   max-width: 935px;
   margin: 0 auto;
   font-family: 'Noto Sans KR', sans-serif;
