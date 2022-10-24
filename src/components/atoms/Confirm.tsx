@@ -38,9 +38,10 @@ const Outter = styled.div`
   align-items: center;
 `;
 
+// TODO 이너 사이즈 조절하기
 const Inner = styled.div`
-  width: 500px;
-  height: 300px;
+  width: 400px;
+  height: 230px;
   background-color: white;
   border-radius: 10px;
   display: flex;
