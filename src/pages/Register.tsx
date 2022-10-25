@@ -2,7 +2,8 @@ import { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import ValidateInput from 'components/organism/ValidateInput';
 import SubmitBtn from 'components/atoms/SubmitBtn';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 
 function Register() {
@@ -11,20 +12,22 @@ function Register() {
   const [phone, setPhone] = useState<string>('');
   const [pw, setPw] = useState<string>('');
   const [confirmPw, setConfirmPw] = useState<string>('');
+  const navigate = useNavigate();
 
-  const handleRegister = (event: FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      // TODO axios 사용하여 로그인 api 요청하기
-      const userData = {
+      const res = await axios.post('http://localhost:8888/api/register', {
         id,
+        password: pw,
         email,
-        phone,
-        pw,
-      };
-      console.log(userData);
-    } catch (e) {
-      alert(e);
+        phone_number: phone,
+      });
+      if (res.data === 'OK') {
+        navigate('/main');
+      }
+    } catch (e: any) {
+      console.error(e);
     }
   };
   return (
@@ -67,11 +70,10 @@ function Register() {
             // 하이픈 자동입력
             const phoneNumber: string[] = [];
             phoneNumber.push(e.target.value);
-            if (
-              (e.target.value.length === 3 && e.target.value.length > phone.length) ||
-              (e.target.value.length === 8 && e.target.value.length > phone.length)
-            ) {
-              phoneNumber.push('-');
+            if (e.target.value.length === 3 || e.target.value.length === 8) {
+              if (e.target.value.length > phone.length) {
+                phoneNumber.push('-');
+              }
             }
             setPhone(phoneNumber.join(''));
           }}
@@ -109,7 +111,7 @@ function Register() {
 export default Register;
 
 const Container = styled.div`
-  height: 100%;
+  height: 100vh;
   background-color: white;
   display: flex;
   flex-direction: column;
