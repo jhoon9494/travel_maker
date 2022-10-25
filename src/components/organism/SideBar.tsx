@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { Dispatch, SetStateAction } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
+import axios from 'axios';
 
 interface IProps {
   open: boolean;
@@ -9,6 +10,17 @@ interface IProps {
 }
 
 function SideBar({ open, setOpen }: IProps) {
+  const navigate = useNavigate();
+  const handleLogOut = async () => {
+    try {
+      const res = await axios.get('http://localhost:8888/api/logout');
+      if (res.data === 'OK') {
+        navigate('/');
+      }
+    } catch (e: any) {
+      console.error(e);
+    }
+  };
   return (
     <>
       {open && <Background onClick={() => setOpen(false)} />}
@@ -18,12 +30,12 @@ function SideBar({ open, setOpen }: IProps) {
         </CloseBtn>
         <LinkWrapper>
           {/* TODO 각 페이지 제작 후 link 및 api 연결시키기 */}
-          <div>유저 아이디</div>
-          <div>
-            <Link to="/mypage">정보수정</Link>
-          </div>
-          <div>설정</div>
-          <div>로그아웃</div>
+          <button type="button">유저 아이디</button>
+          <Link to="/mypage">정보수정</Link>
+          <button type="button">설정</button>
+          <button type="button" onClick={handleLogOut}>
+            로그아웃
+          </button>
         </LinkWrapper>
       </Container>
     </>
@@ -64,10 +76,14 @@ const CloseBtn = styled.button`
 `;
 
 const LinkWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 40px;
-  text-align: center;
 
-  > div {
+  > button,
+  a {
     margin-bottom: 30px;
+    font-size: 16px;
   }
 `;
