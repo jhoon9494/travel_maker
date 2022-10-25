@@ -1,11 +1,13 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useContext } from 'react';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import userContext from '../userContext';
 
 function Login() {
+  const user = useContext(userContext);
   const navigate = useNavigate();
   const [id, setId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
@@ -17,11 +19,10 @@ function Login() {
     try {
       setIdError(false);
       setPwError(false);
-      const res = await axios.post('http://localhost:8888/api/login', { id, password: pw });
-
-      if (res.data === 'OK') {
-        navigate('/main');
-      }
+      await axios.post('http://localhost:8888/api/login', { id, password: pw });
+      user.setLoggedIn(id);
+      localStorage.setItem('id', id);
+      navigate('/main');
     } catch (e: any) {
       if (e.response.data.code === 'USER_NOT_FOUND') {
         setIdError(true);
