@@ -17,19 +17,18 @@ function Login() {
     try {
       setIdError(false);
       setPwError(false);
-      const res = await axios.post('http://localhost:8888/api/login', { id: id, password: pw });
-      
+      const res = await axios.post('http://localhost:8888/api/login', { id, password: pw });
+
       if (res.data === 'OK') {
-        navigate('/');
+        navigate('/main');
       }
-    } catch (e) {
-      if (e.response.data.code === "USER_NOT_FOUND") {
+    } catch (e: any) {
+      if (e.response.data.code === 'USER_NOT_FOUND') {
         setIdError(true);
       }
-      if (e.response.data.code === "INVALID_PASSWORD") {
+      if (e.response.data.code === 'INVALID_PASSWORD') {
         setPwError(true);
       }
-      
     }
   };
   return (
@@ -68,7 +67,7 @@ function Login() {
 export default Login;
 
 const Container = styled.div`
-  height: 100%;
+  height: 100vh;
   background-color: white;
   display: flex;
   flex-direction: column;
