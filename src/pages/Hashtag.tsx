@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import axios from 'axios';
+import PostBox from '../components/atoms/PostBox';
 
 type TagDataType = {
   img: string;
@@ -36,11 +37,7 @@ function Hashtag() {
         {hashtagData.length !== 0 ? (
           <DataContainer>
             {hashtagData.map((data, index) => {
-              return (
-                <Link to={`/detail/${data.id}`} key={`${data.id}-${index + 1}`}>
-                  <Img src={data.img} alt="이미지" />
-                </Link>
-              );
+              return <PostBox id={data.id} img={data.img} key={`${data.id}-${index + 1}`} />;
             })}
           </DataContainer>
         ) : (
@@ -79,11 +76,6 @@ const DataContainer = styled.div`
   > a {
     margin: 0 20px 20px;
   }
-`;
-
-const Img = styled.img`
-  width: 200px;
-  height: 200px;
 `;
 
 const NoResult = styled.div`
