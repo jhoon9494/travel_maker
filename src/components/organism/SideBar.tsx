@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
 import axios from 'axios';
+import userContext from '../../userContext';
 
 interface IProps {
   open: boolean;
@@ -10,13 +11,13 @@ interface IProps {
 }
 
 function SideBar({ open, setOpen }: IProps) {
+  const { id } = useContext(userContext);
   const navigate = useNavigate();
   const handleLogOut = async () => {
     try {
-      const res = await axios.get('http://localhost:8888/api/logout');
-      if (res.data === 'OK') {
-        navigate('/');
-      }
+      await axios.get('http://localhost:8888/api/logout');
+      localStorage.removeItem('id');
+      navigate('/');
     } catch (e: any) {
       console.error(e);
     }
@@ -29,8 +30,7 @@ function SideBar({ open, setOpen }: IProps) {
           <GoX />
         </CloseBtn>
         <LinkWrapper>
-          {/* TODO 각 페이지 제작 후 link 및 api 연결시키기 */}
-          <button type="button">유저 아이디</button>
+          <Link to={`/${id}`}>{id}</Link>
           <Link to="/mypage">정보수정</Link>
           <button type="button">설정</button>
           <button type="button" onClick={handleLogOut}>
