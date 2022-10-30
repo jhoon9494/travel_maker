@@ -11,6 +11,7 @@ body {
   max-width: 935px;
   margin: 0 auto;
   font-family: 'Noto Sans KR', sans-serif;
+  position: relative;
 }
 *, :after, :before {
     box-sizing: border-box;
