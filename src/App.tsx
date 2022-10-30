@@ -28,6 +28,7 @@ function App() {
               <Route path="/main" element={<Home />} />
               <Route path="/detail/:id" element={<DetailPage />} />
               <Route path="/upload" element={<Upload />} />
+              <Route path="/upload/:id" element={<Upload />} />
               <Route path="/hashtag/:tag" element={<Hashtag />} />
               <Route path="/explore/:result" element={<Explore />} />
               <Route path="/mypage" element={<Mypage />}>

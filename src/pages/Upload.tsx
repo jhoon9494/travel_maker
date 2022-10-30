@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { useState, FormEvent, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, FormEvent, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgPreviewerList from 'components/organism/ImgPreviewerList';
 import Input from 'components/atoms/Input';
@@ -11,6 +11,7 @@ import Alert from 'components/atoms/Alert';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
+import axios from 'axios';
 
 type PreviewImgType = {
   src: string;
@@ -24,7 +25,7 @@ type TipsType = {
 
 function Upload() {
   const navigate = useNavigate();
-  // TODO 수정하기로 들어온 경우 useParams id값으로 게시글 인식해서 기존 작성된 게시글 정보를 api 요청해서 가져온 후 각 업로드 set함수에 반영하기
+  const { id } = useParams();
 
   // 이미지 파일 및 미리보기 부분
   const [imgFiles, setImgFiles] = useState<File[]>([]);
@@ -61,6 +62,37 @@ function Upload() {
 
   // 해시태그 부분
   const [hashtag, setHashtag] = useState<string[]>([]);
+
+  // TODO 수정하기로 들어온 경우 기존 데이터를 상태에 반영시켜줘야 함.
+  const getData = useCallback(async () => {
+    try {
+      // FIXME 임시코드, 수정하기 위해서 게시글 인덱스 번호로 api 요청한 후, 받아온 정보를 각 state에 반영시켜주기
+      // TODO 이미지 파일은 어떻게 받아와서 file 자료형으로 어떻게 넘겨주냐...............;;;;;;
+      const res = await axios.get('http://localhost:3000/mock/travelData.json');
+      const editData = res.data.filter((data: any) => data.id === id)[0];
+      console.log(editData);
+
+      setTitle(editData.title);
+      setContent(editData.content);
+      setPreviewImg({ src: editData.post_img[0], alt: 'ㅇㅇ' });
+      setPreviewImgs(editData.post_img);
+      setRecommend(editData.figures.recommend);
+      setEmotion(editData.figures.emotion);
+      setRevisit(editData.figures.revisit);
+      editData.recommendRoutes.forEach((route: { placeName: string; tips: string }) => {
+        setTipsList((prev) => [...prev, { placeName: route.placeName, tip: route.tips }]);
+      });
+    } catch (e: any) {
+      console.error(e);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    // 수정하기로 들어온 경우 실행
+    if (id) {
+      getData();
+    }
+  }, [getData, id]);
 
   useEffect(() => {
     // 파일업로드 첫번째 페이지에서 돌아가기 클릭 시 동작
@@ -116,7 +148,7 @@ function Upload() {
     });
 
     // TODO API 요청하는 코드 작성하기.
-    return console.log(content, hashtag);
+    return console.log(content, hashtag, imgFiles, previewImgs, tipsList);
   };
 
   return (
