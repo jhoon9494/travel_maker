@@ -78,7 +78,7 @@ const DataContainer = styled.div`
   margin-bottom: 30px;
   padding: 0 20px;
 
-  > a {
+  > div {
     min-width: 250px;
     min-height: 250px;
   }
