@@ -17,6 +17,6 @@ function PostBox({ id, img }: IProps) {
 export default PostBox;
 
 const Img = styled.img`
-  width: 230px;
-  height: 230px;
+  width: 100%;
+  height: 100%;
 `;

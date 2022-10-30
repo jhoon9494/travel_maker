@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface IProps {
-  src: string;
+  src: string | undefined;
   alt: string;
   name?: string;
 }
