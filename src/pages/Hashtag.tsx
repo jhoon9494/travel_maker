@@ -70,11 +70,17 @@ const ResultWrapper = styled.div`
 `;
 
 const DataContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  grid-gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  padding: 0 20px;
 
   > a {
-    margin: 0 20px 20px;
+    min-width: 250px;
+    min-height: 250px;
   }
 `;
 
