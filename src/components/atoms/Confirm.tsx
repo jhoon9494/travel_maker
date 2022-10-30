@@ -32,16 +32,17 @@ const Outter = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
+  z-index: 999;
   background-color: #8080809b;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-// TODO 이너 사이즈 조절하기
 const Inner = styled.div`
   width: 400px;
   height: 230px;
+  z-index: 1000;
   background-color: white;
   border-radius: 10px;
   display: flex;
