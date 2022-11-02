@@ -19,7 +19,16 @@ function Login() {
     try {
       setIdError(false);
       setPwError(false);
-      await axios.post('http://localhost:8888/api/login', { id, password: pw });
+      await axios.post(
+        'http://localhost:8888/api/login',
+        { id, password: pw },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
       user.setLoggedIn(id);
       localStorage.setItem('id', id);
       navigate('/main');
