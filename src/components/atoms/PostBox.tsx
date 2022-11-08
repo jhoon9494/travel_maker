@@ -34,7 +34,7 @@ function PostBox({ id, img, edit }: IProps) {
         </EditBtn>
       )}
       <EditContainer active={editBox}>
-        <button type="button" onClick={() => navigate(`/upload/${id}`)}>
+        <button type="button" onClick={() => navigate(`/edit/${id}`)}>
           수정
         </button>
         <button
