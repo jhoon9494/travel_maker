@@ -14,6 +14,7 @@ import ChangePw from 'pages/mypage/ChangePw';
 import DeleteAccount from 'pages/mypage/DeleteAccount';
 import UserPage from 'pages/UserPage';
 import ContextProvider from 'ContextProvider';
+import FollowListPage from 'pages/FollowListPage';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
               <Route path="/main" element={<Home />} />
               <Route path="/detail/:id" element={<DetailPage />} />
               <Route path="/upload" element={<Upload />} />
-              <Route path="/upload/:id" element={<Upload />} />
+              <Route path="/edit/:id" element={<Upload />} />
               <Route path="/hashtag/:tag" element={<Hashtag />} />
               <Route path="/explore/:result" element={<Explore />} />
               <Route path="/mypage" element={<Mypage />}>
@@ -38,6 +39,8 @@ function App() {
                 <Route path="deleteAccount" element={<DeleteAccount />} />
               </Route>
               <Route path="/:userId" element={<UserPage />} />
+              <Route path="/:userId/follow" element={<FollowListPage />} />
+              <Route path="/:userId/follower" element={<FollowListPage />} />
               {/* TODO 404 Not Found 페이지 만들기 */}
             </Route>
           </Routes>

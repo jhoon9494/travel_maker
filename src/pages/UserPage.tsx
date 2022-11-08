@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import UserImage from 'components/atoms/UserImage';
 import { BiEdit } from 'react-icons/bi';
@@ -13,11 +13,16 @@ type PostType = {
   post_img: string;
 };
 
+type FollowType = {
+  user_id: string;
+  user_img: string;
+};
+
 interface postDataProps {
   user_id: string;
   user_img: string;
-  follower: number;
-  follow: number;
+  follower: FollowType[];
+  follow: FollowType[];
   post: PostType[];
 }
 
@@ -60,9 +65,13 @@ function UserPage() {
 
           <div>
             <InfoWrapper>게시물 {postData?.post.length}</InfoWrapper>
-            {/* TODO 팔로우 팔로워 클릭시 누가 팔로우하고있는지 알려줄것인지??? */}
-            <InfoWrapper>팔로워 {postData?.follower.toLocaleString()}</InfoWrapper>
-            <InfoWrapper>팔로우 {postData?.follow.toLocaleString()}</InfoWrapper>
+            {/* TODO 팔로우 팔로워 페이지네이션 버튼? 무한스크롤? */}
+            <InfoWrapper>
+              <Link to={`/${postData?.user_id}/follower`}>팔로워 {postData?.follower.length.toLocaleString()}</Link>
+            </InfoWrapper>
+            <InfoWrapper>
+              <Link to={`/${postData?.user_id}/follow`}>팔로우 {postData?.follow.length.toLocaleString()}</Link>
+            </InfoWrapper>
           </div>
         </UserInfo>
       </UserContainer>
