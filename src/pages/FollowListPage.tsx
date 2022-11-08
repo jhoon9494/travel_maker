@@ -49,9 +49,9 @@ function FollowListPage() {
         {currPage === 'follow' ? <h2>팔로우</h2> : <h2>팔로워</h2>}
         <ul>
           {userList &&
-            userList.map((user) => {
+            userList.map((user, index) => {
               return (
-                <UserItem>
+                <UserItem key={`${user.user_id}-${index + 1}`}>
                   <UserLink to={`/${user.user_id}`}>
                     <UserImage src={user.user_img} alt={user.user_id} name={user.user_id} />
                   </UserLink>
