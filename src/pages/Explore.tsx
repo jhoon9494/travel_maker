@@ -22,6 +22,7 @@ function Explore() {
   useEffect(() => {
     async function getData() {
       try {
+        // TODO result 값을 가지고 api 요청
         const resUser = await axios.get('http://localhost:3000/mock/searchData.json');
         const resTag = await axios.get('http://localhost:3000/mock/searchTag.json');
         setSearchData(resUser.data);
@@ -42,11 +43,12 @@ function Explore() {
           {searchData.length !== 0 ? (
             searchData.map((data, index) => {
               return (
-                // TODO 클릭 시 해당 유저의 페이지로 이동
-                <UserData key={`${data.name}-${index + 1}`}>
-                  <img src={data.img} alt="검색된 유저 이미지" />
-                  <p>{data.name}</p>
-                </UserData>
+                <Link to={`/${data.name}`} key={`${data.name}-${index + 1}`}>
+                  <UserData>
+                    <img src={data.img} alt="검색된 유저 이미지" />
+                    <p>{data.name}</p>
+                  </UserData>
+                </Link>
               );
             })
           ) : (
