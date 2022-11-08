@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { useState, ChangeEvent, Dispatch, SetStateAction, MouseEvent } from 'react';
 import { BsFillPlusCircleFill } from 'react-icons/bs';
 import { AiFillMinusCircle } from 'react-icons/ai';
 import { GlobalColor } from '../../styles/GlobalColor';
@@ -35,13 +35,14 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: I
         }
       });
     }
+    // 동일한 파일을 업로드할 수 있도록 현재 선택된 value를 비워줌
+    e.target.value = '';
   };
   const handleImgClick = (img: PreviewImgType) => {
     selectImg(img);
   };
+
   const handleDeleteImg = (index: number) => {
-    // FIXME setPreviewImgs로 splice를 실행할 경우 set함수가 두 번 실행되어 의도대로 동작하지 않음.
-    // 깊은 복사를 통해 임시로 동작하도록 만들어두었으나, 더 좋은 방법이 있다면 해당 방법으로 수정 필요.
     const newPreviewImgs = JSON.parse(JSON.stringify(previewImgs));
     newPreviewImgs.splice(index, 1);
     setPreviewImgs(newPreviewImgs);
@@ -80,7 +81,7 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: I
                 key={`${img.alt}-${index + 1}`}
               >
                 <Img src={img.src} alt={img.alt} onClick={() => handleImgClick(img)} />
-                <MinusBtn onClick={() => handleDeleteImg(index)} hide={currImg === img.alt}>
+                <MinusBtn onClick={() => handleDeleteImg(index)} active={currImg === img.alt}>
                   <AiFillMinusCircle />
                 </MinusBtn>
               </ImgBox>
@@ -144,12 +145,12 @@ const PlusBtn = styled(BsFillPlusCircleFill)`
   }
 `;
 
-const MinusBtn = styled.div<{ hide: boolean }>`
+const MinusBtn = styled.div<{ active: boolean }>`
   font-size: 20px;
   color: #f74e4e;
   position: absolute;
   right: -5px;
   top: -5px;
-  opacity: ${({ hide }) => (hide ? 1 : 0)};
+  opacity: ${({ active }) => (active ? 1 : 0)};
   transition: opacity 0.2s ease;
 `;
