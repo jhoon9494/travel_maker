@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import ScoreBox from 'components/atoms/ScoreBox';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
@@ -65,33 +65,40 @@ function DetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    async function getData() {
-      const res = await axios.get('http://localhost:3000/mock/travelData.json');
-      const postsData = res.data;
-      setData(postsData.filter((post: PostData) => post.id === id)[0]);
+  const getData = useCallback(async () => {
+    try {
+      const res = await axios.get(`http://localhost:8888/api/post/detail/${id}`, { withCredentials: true });
+      setData(res.data);
+    } catch (e: any) {
+      // TODO 게시글 아이디로 api 요청하고, 요청결과가 없으면(혹은 에러발생 시) not found 페이지로 리다이렉트 시켜주기
+      console.error(e);
     }
-    getData();
   }, [id]);
 
+  useEffect(() => {
+    getData();
+  }, [getData, data.like]);
+
+  // TODO 게시글 수정 및 삭제 버튼 만들기
   return (
     <Wrapper>
       <BackSpaceBtn onClick={() => navigate(-1)} />
       <DataContainer>
         <PostContainer>
-          <ImgSlider img={data.post_img} />
-          {/* TODO 좋아요 클릭 시 받아온 좋아요 데이터에서 +1, -1 해서 다시 넘겨주기 */}
-          <HeartBtn heartNum={data.like} />
-          {data.recommendRoutes.length !== 0 ? (
+          {/* <ImgSlider img={data.post_img} /> */}
+          {/* TODO 내가 좋아요 누른상태인지 체크하기 */}
+          <HeartBtn like={data.like} setLike={setData} />
+          {/* {data.recommendRoutes.length !== 0 ? (
             <TravelTips tips={data.recommendRoutes} />
           ) : (
             <div style={{ height: '40px' }} />
-          )}
+          )} */}
           <TextArea>{createContent(data.content)}</TextArea>
         </PostContainer>
 
         <SideContainer>
-          <p style={{ marginLeft: '5px', marginBottom: '10px' }}>user_id</p>
+          {/* TODO 유저 아이디 클릭시 해당 유저페이지로 이동 */}
+          <p style={{ marginLeft: '5px', marginBottom: '10px' }}>userId</p>
           <h2 style={{ marginLeft: '5px' }}>{data.title}</h2>
           <ScoreContainer>
             <ScoreBox title="추천도" score={data.figures.recommend} />
