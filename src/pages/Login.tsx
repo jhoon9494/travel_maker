@@ -4,7 +4,7 @@ import Input from 'components/atoms/Input';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import userContext from '../userContext';
+import userContext from '../context/userContext';
 
 function Login() {
   const user = useContext(userContext);

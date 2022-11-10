@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import UserImage from 'components/atoms/UserImage';
 import { BiEdit } from 'react-icons/bi';
 import PostBox from '../components/atoms/PostBox';
-import userContext from '../userContext';
+import userContext from '../context/userContext';
 import { GlobalColor } from '../styles/GlobalColor';
 
 type PostType = {
@@ -34,7 +34,6 @@ function UserPage() {
   // 받아올 정보 => 유저아이디, 팔로우 ,팔로워, 게시글리스트[썸네일(보통 리스트의 0번째), 게시글 인덱스번호] 정도만 있으면 충분할 것 같다.
   // context에 가지고있는 유저 아이디와 파라미터로 받은 유저아이디가 동일한 경우 게시글이나 유저정보 수정할 수 있도록 하면 될거같은데??
   const { userId } = useParams();
-
   const getData = useCallback(async () => {
     try {
       const res = await axios.get('http://localhost:3000/mock/userPage.json');

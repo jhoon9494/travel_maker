@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
 import axios from 'axios';
-import userContext from '../../userContext';
+import userContext from '../../context/userContext';
 
 interface IProps {
   open: boolean;
