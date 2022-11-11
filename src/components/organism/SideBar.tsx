@@ -11,12 +11,13 @@ interface IProps {
 }
 
 function SideBar({ open, setOpen }: IProps) {
-  const { id } = useContext(userContext);
+  const { id, setLoggedIn } = useContext(userContext);
   const navigate = useNavigate();
   const handleLogOut = async () => {
     try {
       await axios.get('http://localhost:8888/api/logout');
       localStorage.removeItem('id');
+      setLoggedIn('');
       navigate('/');
     } catch (e: any) {
       console.error(e);
