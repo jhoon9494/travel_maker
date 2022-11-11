@@ -1,14 +1,37 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useContext } from 'react';
 import Navbar from 'components/organism/Navbar';
 import styled from 'styled-components';
+import Alert from 'components/atoms/Alert';
+import userContext from 'context/userContext';
 
 function Layout() {
+  const [alert, setAlert] = useState(false);
+  const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
+  const loggedUser = useContext(userContext);
+
+  useEffect(() => {
+    // 로그인하지 않은 유저인 경우 로그인 페이지로 리다이렉트
+    if (!loggedUser.id) {
+      setAlert(true);
+      setOpen(true);
+    }
+  }, [loggedUser]);
+
+  useEffect(() => {
+    if (!open) {
+      navigate('/', { replace: true });
+    }
+  }, [open, navigate]);
+
   return (
     <Wrapper>
       <Navbar />
       <Body>
         <Outlet />
       </Body>
+      {alert && <Alert text={`로그인한 유저만 이용 가능합니다. \n\n로그인 후 이용해주세요`} open={setOpen} />}
     </Wrapper>
   );
 }
