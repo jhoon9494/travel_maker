@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 
 type SearchDataType = {
+  id: string;
   img: string;
-  name: string;
 };
 
 type TagDataType = {
@@ -19,20 +19,34 @@ function Explore() {
   const { result } = useParams();
   const navigate = useNavigate();
 
+  const getData = useCallback(() => {
+    setSearchData([]);
+    setHashtagData([]);
+
+    Promise.allSettled([
+      axios.get('http://localhost:8888/api/user', { params: { word: result }, withCredentials: true }),
+      axios.get('http://localhost:8888/api/tag', { params: { word: result }, withCredentials: true }),
+    ]).then((res) =>
+      res.forEach((resData, index) => {
+        // 유저 검색 부분
+        if (index === 0 && resData.status === 'fulfilled') {
+          resData.value.data.forEach((user: { user_id: string; profile_img: string }) => {
+            setSearchData((prev) => [...prev, { id: user.user_id, img: user.profile_img }]);
+          });
+        }
+        // 해시태그 검색 부분
+        if (index === 1 && resData.status === 'fulfilled') {
+          resData.value.data.forEach((tag: TagDataType) => {
+            setHashtagData((prev) => [...prev, tag]);
+          });
+        }
+      }),
+    );
+  }, [result]);
+
   useEffect(() => {
-    async function getData() {
-      try {
-        // TODO result 값을 가지고 api 요청
-        const resUser = await axios.get('http://localhost:3000/mock/searchData.json');
-        const resTag = await axios.get('http://localhost:3000/mock/searchTag.json');
-        setSearchData(resUser.data);
-        setHashtagData(resTag.data);
-      } catch (e: any) {
-        console.log(e);
-      }
-    }
     getData();
-  }, []);
+  }, [getData]);
 
   return (
     <Wrapper>
@@ -43,10 +57,10 @@ function Explore() {
           {searchData.length !== 0 ? (
             searchData.map((data, index) => {
               return (
-                <Link to={`/${data.name}`} key={`${data.name}-${index + 1}`}>
+                <Link to={`/${data.id}`} key={`${data.id}-${index + 1}`}>
                   <UserData>
                     <img src={data.img} alt="검색된 유저 이미지" />
-                    <p>{data.name}</p>
+                    <p>{data.id}</p>
                   </UserData>
                 </Link>
               );
