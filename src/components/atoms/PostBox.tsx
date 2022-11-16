@@ -1,27 +1,36 @@
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { BsThreeDots } from 'react-icons/bs';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Dispatch, SetStateAction } from 'react';
+import axios from 'axios';
 import Confirm from './Confirm';
 
 interface IProps {
   id: string;
   img: string;
   edit?: boolean;
+  setDeleteIndex?: Dispatch<SetStateAction<string>>;
 }
 
-function PostBox({ id, img, edit }: IProps) {
+function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
   const [editBox, setEditBox] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // TODO 삭제 api 요청하기
-    if (confirmResult) {
-      console.log('삭제요청하기');
+  const deletePost = useCallback(async () => {
+    const res = await axios.get(`http://localhost:8888/api/post/${id}`, { withCredentials: true });
+    // 게시글 삭제되었을 경우 게시글 목록을 새로 받아오기 위한 부분
+    if (res.data === 'OK' && setDeleteIndex) {
+      setDeleteIndex(id);
     }
-  }, [confirmResult]);
+  }, [setDeleteIndex, id]);
+
+  useEffect(() => {
+    if (confirmResult) {
+      deletePost();
+    }
+  }, [confirmResult, deletePost]);
 
   return (
     <Container>
@@ -50,7 +59,7 @@ function PostBox({ id, img, edit }: IProps) {
       {confirmOpen && (
         <Confirm
           text="게시글을 삭제하시겠습니까?"
-          close={setConfirmOpen}
+          open={setConfirmOpen}
           setResult={setConfirmResult}
           yes="삭제하기"
           no="취소"
@@ -62,6 +71,7 @@ function PostBox({ id, img, edit }: IProps) {
 
 const defaultProps = {
   edit: false,
+  setDeleteIndex: undefined,
 };
 
 PostBox.defaultProps = defaultProps;
