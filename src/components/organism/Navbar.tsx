@@ -33,7 +33,7 @@ function Navbar() {
   return (
     <Container>
       <Link to="/main">
-        <Logo src="/logo/logo.png" alt="logo" />
+        <Logo src="/icons/logo.png" alt="logo" />
       </Link>
       <form onSubmit={handleSearch}>
         <Input

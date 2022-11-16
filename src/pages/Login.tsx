@@ -43,7 +43,7 @@ function Login() {
   };
   return (
     <Container>
-      <Logo src="/logo/logo.png" alt="logo" />
+      <Logo src="/icons/logo.png" alt="logo" />
       <form onSubmit={handleLogin}>
         <Input
           id="id"

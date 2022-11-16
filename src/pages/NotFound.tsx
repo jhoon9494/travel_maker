@@ -5,7 +5,7 @@ function NotFound() {
   const navigate = useNavigate();
   return (
     <Container>
-      <img src="/logo/logo.png" alt="로고" />
+      <img src="/icons/logo.png" alt="로고" />
       <p>죄송합니다. 요청하신 페이지를 찾을 수 없습니다.</p>
       <button type="button" onClick={() => navigate('/main')}>
         돌아가기
