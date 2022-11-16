@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction } from 'react';
 
 interface IProps {
   id: string;
-  value: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  value: number;
+  setValue: Dispatch<SetStateAction<number>>;
   text: string;
 }
 
@@ -18,10 +18,13 @@ function ScoreInput({ id, value, setValue, text }: IProps) {
         type="number"
         onChange={(e) => {
           const score = Number(e.target.value);
-          if (score > 100 || score < 0) {
-            return;
+          if (score >= 100) {
+            setValue(100);
+          } else if (score < 0) {
+            setValue(0);
+          } else {
+            setValue(score);
           }
-          setValue(e.target.value);
         }}
       />
     </ScoreItem>

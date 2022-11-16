@@ -29,6 +29,7 @@ function Upload() {
 
   // 이미지 파일 및 미리보기 부분
   const [imgFiles, setImgFiles] = useState<File[]>([]);
+  // TODO 이미지 파일 용량 제한시키기
   const [previewImg, setPreviewImg] = useState<PreviewImgType | null>(null);
   const [previewImgs, setPreviewImgs] = useState<PreviewImgType[]>([]);
 
@@ -53,9 +54,9 @@ function Upload() {
   const [tipsList, setTipsList] = useState<TipsType[]>([]);
 
   // 여행 추천 점수 부분
-  const [recommend, setRecommend] = useState<string>('0');
-  const [emotion, setEmotion] = useState<string>('0');
-  const [revisit, setRevisit] = useState<string>('0');
+  const [recommend, setRecommend] = useState(0);
+  const [emotion, setEmotion] = useState(0);
+  const [revisit, setRevisit] = useState(0);
 
   // 여행 추천점수 안내 부분
   const [scoreHover, setScoreHover] = useState(false);
@@ -63,25 +64,29 @@ function Upload() {
   // 해시태그 부분
   const [hashtag, setHashtag] = useState<string[]>([]);
 
-  // TODO 수정하기로 들어온 경우 기존 데이터를 상태에 반영시켜줘야 함.
   const getData = useCallback(async () => {
     try {
-      // FIXME 임시코드, 수정하기 위해서 게시글 인덱스 번호로 api 요청한 후, 받아온 정보를 각 state에 반영시켜주기
-      // TODO 이미지 파일은 어떻게 받아와서 file 자료형으로 어떻게 넘겨주냐...............;;;;;;
-      const res = await axios.get('http://localhost:3000/mock/travelData.json');
-      const editData = res.data.filter((data: any) => data.id === id)[0];
-      console.log(editData);
+      // TODO 이미지 받아오는 로직 구현한 다음 진행
+      const res = await axios.get(`http://localhost:8888/api/post/detail/${id}`);
+      console.log(res);
 
-      setTitle(editData.title);
-      setContent(editData.content);
-      setPreviewImg({ src: editData.post_img[0], alt: 'ㅇㅇ' });
-      setPreviewImgs(editData.post_img);
-      setRecommend(editData.figures.recommend);
-      setEmotion(editData.figures.emotion);
-      setRevisit(editData.figures.revisit);
-      editData.recommendRoutes.forEach((route: { placeName: string; tips: string }) => {
-        setTipsList((prev) => [...prev, { placeName: route.placeName, tip: route.tips }]);
-      });
+      // setTitle(editData.title);
+      // setContent(editData.content);
+
+      // // 이미지 미리보기 부분
+      // setPreviewImg({ src: editData.post_img[0], alt: `${editData.title}-썸네일` });
+      // editData.post_img.forEach((img: string, index: number) => {
+      //   setPreviewImgs((prev) => [...prev, { src: img, alt: `${editData.title}-${index + 1}-img` }]);
+      // });
+
+      // setRecommend(editData.figures.recommend);
+      // setEmotion(editData.figures.emotion);
+      // setRevisit(editData.figures.revisit);
+
+      // // 여행 추천 경로 부분
+      // editData.recommendRoutes.forEach((route: { placeName: string; tips: string }) => {
+      //   setTipsList((prev) => [...prev, { placeName: route.placeName, tip: route.tips }]);
+      // });
     } catch (e: any) {
       console.error(e);
     }
@@ -132,12 +137,18 @@ function Upload() {
     // 해시태그 추출 부분
     content.split(/(#[^\s#]+)/g).forEach((str) => {
       if (str[0] === '#') {
-        setHashtag((prev) => [...prev, str]);
+        setHashtag((prev) => {
+          // 중복된 해시태그 제거
+          if (!prev.includes(str)) {
+            return [...prev, str];
+          }
+          return [...prev];
+        });
       }
     });
   };
 
-  const handleWrite = () => {
+  const handlePostWrite = () => {
     if (imgFiles.length === 0) {
       setAlertText('이미지를 추가하여 작성해주세요!');
       return setAlertOpen(true);
@@ -148,7 +159,7 @@ function Upload() {
     });
 
     // TODO API 요청하는 코드 작성하기.
-    return console.log(content, hashtag, imgFiles, previewImgs, tipsList);
+    return console.log(imgFiles, title, content, revisit);
   };
 
   return (
@@ -156,20 +167,12 @@ function Upload() {
       <BtnsContainer>
         <BackSpaceBtn onClick={handleBackSpace} />
         <span style={{ flexGrow: 1 }} />
-        {page === 1 ? (
-          <Button type="button" onClick={handleNextStep}>
-            다음
-          </Button>
-        ) : (
-          <Button type="button" onClick={handleWrite}>
-            제출
-          </Button>
-        )}
+        <Button onClick={page === 1 ? handleNextStep : handlePostWrite}>{page === 1 ? '다음' : '제출'}</Button>
       </BtnsContainer>
 
       {page === 1 ? (
+        // 첫번째 페이지, 이미지 추가 및 본문 작성 영역
         <div style={{ display: 'flex', paddingLeft: '50px' }}>
-          {/* 이미지 추가 및 본문 작성 영역 */}
           <ImgPreviewer>
             {previewImg ? (
               <Img src={previewImg?.src} alt={previewImg?.alt} />
@@ -197,13 +200,13 @@ function Upload() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               width="245"
-              height="200"
+              height="400"
             />
           </TextContainer>
         </div>
       ) : (
+        // 두번째 페이지, 여행 추천 점수 및 팁 작성 영역
         <div style={{ display: 'flex', paddingLeft: '50px' }}>
-          {/* 여행 추천 점수 및 팁 작성 영역 */}
           <AddTipScoreContainer>
             <h3>여행 Tips</h3>
             <Form onSubmit={handleTipSubmit}>
@@ -217,10 +220,15 @@ function Upload() {
               <TextArea
                 placeholder="여행지의 꿀팁을 알려주세요."
                 value={tip}
-                onChange={(e) => setTip(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setTip(e.target.value);
+                  }
+                }}
                 width="400"
                 height="100"
               />
+              <CharacterRange>{tip.length}/100</CharacterRange>
               <SubmitBtn value="추가하기" />
             </Form>
             <div style={{ marginTop: '20px', position: 'relative' }}>
@@ -249,7 +257,7 @@ function Upload() {
       {confirmOpen && (
         <Confirm
           text={`현재까지 작성하신 게시글이 삭제됩니다.\n돌아가시겠습니까?`}
-          close={setConfirmOpen}
+          open={setConfirmOpen}
           setResult={setConfirmResult}
           yes="돌아가기"
           no="취소"
@@ -334,11 +342,21 @@ const AddTipScoreContainer = styled.div`
 const Form = styled.form`
   width: 400px;
   text-align: center;
+  position: relative;
 
   > button {
     margin: 0;
     font-size: 16px;
   }
+`;
+
+const CharacterRange = styled.div`
+  position: absolute;
+  font-size: 14px;
+  bottom: 65px;
+  right: 10px;
+
+  color: gray;
 `;
 
 const ScoreTip = styled.div<{ hover: boolean }>`
