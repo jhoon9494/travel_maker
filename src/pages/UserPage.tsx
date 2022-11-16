@@ -8,75 +8,113 @@ import PostBox from '../components/atoms/PostBox';
 import userContext from '../context/userContext';
 import { GlobalColor } from '../styles/GlobalColor';
 
-type PostType = {
+interface PostDataProps {
   id: string;
   post_img: string;
-};
-
-type FollowType = {
-  user_id: string;
-  user_img: string;
-};
-
-interface postDataProps {
-  user_id: string;
-  user_img: string;
-  follower: FollowType[];
-  follow: FollowType[];
-  post: PostType[];
 }
 
 function UserPage() {
   const { id } = useContext(userContext);
-  const navigate = useNavigate();
-  const [postData, setPostData] = useState<postDataProps>();
-  // TODO 유저아이디를 받아서 api 요청한 다음 응답 결과가 없으면 해당 유저 없습니다 페이지 띄우고, 있다면 해당 유저 아이디 입력하기
-  // 받아올 정보 => 유저아이디, 팔로우 ,팔로워, 게시글리스트[썸네일(보통 리스트의 0번째), 게시글 인덱스번호] 정도만 있으면 충분할 것 같다.
-  // context에 가지고있는 유저 아이디와 파라미터로 받은 유저아이디가 동일한 경우 게시글이나 유저정보 수정할 수 있도록 하면 될거같은데??
   const { userId } = useParams();
-  const getData = useCallback(async () => {
-    try {
-      const res = await axios.get('http://localhost:3000/mock/userPage.json');
-      setPostData(res.data);
-    } catch (e: any) {
-      console.error(e);
-    }
-  }, []);
+  const navigate = useNavigate();
+  const [postData, setPostData] = useState<PostDataProps[]>([]);
+  const [userImage, setUserImage] = useState<string>('');
+  const [followerList, setFollowerList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
+  const [deletePostIndex, setDeletePostIndex] = useState<string>('');
+
+  const getData = useCallback(() => {
+    Promise.allSettled([
+      axios.get(`http://localhost:8888/api/post/user/list/${userId}`, {
+        withCredentials: true,
+      }),
+      // TODO 특정 유저의 정보도 받아올 수 있어야 함.....
+      axios.get('http://localhost:8888/api/info', { withCredentials: true }),
+      axios.get(`http://localhost:8888/api/follow/follower/${userId}`),
+      axios.get(`http://localhost:8888/api/follow/following/${userId}`),
+    ]).then((res) => {
+      res.forEach((resData, index) => {
+        // 게시글 정보
+        if (index === 0) {
+          if (resData.status === 'fulfilled') {
+            setPostData(resData.value.data);
+          }
+        }
+
+        // 유저 정보
+        if (index === 1) {
+          if (resData.status === 'fulfilled') {
+            setUserImage(resData.value.data.profile_img);
+          } else {
+            navigate('/*', { replace: true });
+          }
+        }
+
+        // 팔로워 정보
+        if (index === 2) {
+          if (resData.status === 'fulfilled') {
+            setFollowerList(resData.value.data);
+          }
+        }
+
+        // 팔로잉 정보
+        if (index === 3) {
+          if (resData.status === 'fulfilled') {
+            setFollowingList(resData.value.data);
+          }
+        }
+      });
+    });
+  }, [userId, navigate]);
 
   useEffect(() => {
     getData();
-  }, [getData]);
+  }, [getData, deletePostIndex]);
 
-  const handleFollow = () => {
-    // TODO 팔로우 api 요청
-    console.log('팔로우 하기');
+  const handleFollow = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8888/api/follow/${userId}`, { withCredentials: true });
+      console.log(res);
+      // TODO res.data == ok인 경우 유저 정보를 다시 한번 더 불러와서 갱신시켜주면 어떨지?
+    } catch (e: any) {
+      console.error(e);
+    }
   };
 
   return (
     <Container>
       <UserContainer>
-        <UserImage src={postData?.user_img} alt={`${postData?.user_id}-이미지`} />
+        <UserImage src={userImage} alt={`${userId}-이미지`} />
         <UserInfo>
           <h2>
-            {postData?.user_id}
-            <FollowBtn onClick={handleFollow}>팔로우</FollowBtn>
+            {userId}
+            {id !== userId && <FollowBtn onClick={handleFollow}>팔로우</FollowBtn>}
           </h2>
 
           <div>
-            <InfoWrapper>게시물 {postData?.post.length}</InfoWrapper>
-            {/* TODO 팔로우 팔로워 페이지네이션 버튼? 무한스크롤? */}
+            <InfoWrapper>게시물 {postData?.length}</InfoWrapper>
             <InfoWrapper>
-              <Link to={`/${postData?.user_id}/follower`}>팔로워 {postData?.follower.length.toLocaleString()}</Link>
+              <Link to={`/${userId}/follower`}>팔로워 </Link>
+              {followerList.length.toLocaleString()}
             </InfoWrapper>
             <InfoWrapper>
-              <Link to={`/${postData?.user_id}/follow`}>팔로우 {postData?.follow.length.toLocaleString()}</Link>
+              <Link to={`/${userId}/follow`}>팔로우 </Link>
+              {followingList.length.toLocaleString()}
             </InfoWrapper>
           </div>
         </UserInfo>
       </UserContainer>
       <PostContainer>
-        {postData?.post.map((data, index) => {
-          return <PostBox id={data.id} img={data.post_img} key={`${data.id}-${index + 1}`} edit={id === userId} />;
+        {postData?.map((data, index) => {
+          return (
+            <PostBox
+              id={data.id}
+              img={data.post_img}
+              key={`${data.id}-${index + 1}`}
+              edit={id === userId}
+              setDeleteIndex={setDeletePostIndex}
+            />
+          );
         })}
       </PostContainer>
 
@@ -112,7 +150,7 @@ const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin: 20px 0 20px 80px;
+  margin: 20px 0 20px 60px;
 `;
 
 const FollowBtn = styled.button`
