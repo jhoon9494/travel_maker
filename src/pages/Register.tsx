@@ -1,10 +1,12 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import ValidateInput from 'components/organism/ValidateInput';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
+import { GlobalColor } from '../styles/GlobalColor';
+import userContext from '../context/userContext';
 
 function Register() {
   const [id, setId] = useState<string>('');
@@ -12,42 +14,84 @@ function Register() {
   const [phone, setPhone] = useState<string>('');
   const [pw, setPw] = useState<string>('');
   const [confirmPw, setConfirmPw] = useState<string>('');
+  const [checkId, setCheckId] = useState(false);
   const navigate = useNavigate();
+  const { setLoggedIn } = useContext(userContext);
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const res = await axios.post('http://localhost:8888/api/register', {
-        id,
-        password: pw,
-        email,
-        phone_number: phone,
-      });
-      if (res.data === 'OK') {
-        navigate('/main');
+
+    if (validateId(id) && validateEmail(email) && validatePhone(phone) && validatePw(pw) && pw === confirmPw) {
+      try {
+        const res = await axios.post(
+          'http://localhost:8888/api/register',
+          {
+            id,
+            password: pw,
+            email,
+            phone_number: phone,
+            profile_img: '/icons/default_profile.svg',
+          },
+          { withCredentials: true },
+        );
+        if (res.data === 'OK') {
+          setLoggedIn(id);
+          localStorage.setItem('id', id);
+          navigate('/main');
+        }
+      } catch (e: any) {
+        console.error(e);
       }
-    } catch (e: any) {
-      console.error(e);
+    } else {
+      // TODO 유효성 검사 통과한 경우에만 api 호출하도록 하며, 통과 못한 경우 alert창 띄우기
+      console.log('항목을 입력하세요');
     }
   };
+
+  const handleIdCheck = async () => {
+    if (validateId(id)) {
+      try {
+        const res = await axios.get('http://localhost:8888/api/check', { params: { id } });
+        console.log(res);
+      } catch (e: any) {
+        console.log(e);
+        // FIXME 중복된 아이디 없는 경우에도 500번 코드 뱉으며 catch 단에서 잡힘.
+        if (e.response.data.status === 500) {
+          setCheckId(true);
+        } else {
+          // TODO 중복된 아이디 있을 경우 alert 띄우기
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    setCheckId(false);
+  }, [id]);
+
   return (
     <Container>
-      <Link to="/login">
-        <Logo src="/logo/logo.png" alt="logo" />
+      <Link to="/">
+        <Logo src="/icons/logo.png" alt="logo" />
       </Link>
       <form onSubmit={handleRegister}>
-        {/* TODO 아이디 중복조회 API 요청 버튼 만들기 */}
-        <ValidateInput
-          id="id"
-          label="아이디"
-          placeholder="아이디"
-          type="text"
-          size="large"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
-          validateValue="6자 이상 · 12자 이내"
-          validationCheck={validateId(id)}
-        />
+        <IdWrapper>
+          <ValidateInput
+            id="id"
+            label="아이디"
+            placeholder="아이디"
+            type="text"
+            size="large"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            validateValue="6자 이상 · 12자 이내"
+            validationCheck={validateId(id)}
+          />
+          <CheckBtn onClick={handleIdCheck} type="button" disabled={checkId}>
+            {checkId ? '사용가능' : '중복확인'}
+          </CheckBtn>
+        </IdWrapper>
+
         <ValidateInput
           id="email"
           label="이메일"
@@ -122,4 +166,24 @@ const Container = styled.div`
 const Logo = styled.img`
   width: 250px;
   margin-bottom: 55px;
+`;
+
+const IdWrapper = styled.div`
+  display: flex;
+  position: relative;
+`;
+
+const CheckBtn = styled.button`
+  position: absolute;
+  top: 40%;
+  right: 13px;
+
+  padding: 6px 12px;
+  border-radius: 5px;
+  background-color: ${GlobalColor.mainColor};
+  color: white;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;
