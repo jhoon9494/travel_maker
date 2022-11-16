@@ -1,23 +1,30 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
 interface IProps {
   text: string;
-  close: Dispatch<SetStateAction<boolean>>;
+  open: Dispatch<SetStateAction<boolean>>;
   setResult: Dispatch<SetStateAction<boolean | null>>;
   yes: string;
   no: string;
 }
 
-function Confirm({ text, close, setResult, yes, no }: IProps) {
+function Confirm({ text, open, setResult, yes, no }: IProps) {
   return (
-    <Outter onClick={() => close(false)}>
-      <Inner>
+    <Outter onClick={() => open(false)}>
+      <Inner onClick={(e: MouseEvent) => e.stopPropagation()}>
         <div style={{ whiteSpace: 'pre-wrap', textAlign: 'center' }}>{text}</div>
         <BtnsContainer>
           <Button onClick={() => setResult(true)}>{yes}</Button>
-          <Button onClick={() => setResult(null)}>{no}</Button>
+          <Button
+            onClick={() => {
+              setResult(null);
+              open(false);
+            }}
+          >
+            {no}
+          </Button>
         </BtnsContainer>
       </Inner>
     </Outter>

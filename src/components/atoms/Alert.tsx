@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
@@ -10,7 +10,7 @@ interface IProps {
 function Alert({ text, open }: IProps) {
   return (
     <Outter onClick={() => open(false)}>
-      <Inner>
+      <Inner onClick={(e: MouseEvent) => e.stopPropagation()}>
         <div style={{ whiteSpace: 'pre-wrap', textAlign: 'center' }}>{text}</div>
         <BtnsContainer>
           <Button onClick={() => open(false)}>확인</Button>
