@@ -4,24 +4,36 @@ import ValidateInput from 'components/organism/ValidateInput';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Alert from 'components/atoms/Alert';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 import { GlobalColor } from '../styles/GlobalColor';
 import userContext from '../context/userContext';
 
 function Register() {
+  const navigate = useNavigate();
+  const { setLoggedIn } = useContext(userContext);
   const [id, setId] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [pw, setPw] = useState<string>('');
   const [confirmPw, setConfirmPw] = useState<string>('');
   const [checkId, setCheckId] = useState(false);
-  const navigate = useNavigate();
-  const { setLoggedIn } = useContext(userContext);
+
+  // Alert 부분
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState('');
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (validateId(id) && validateEmail(email) && validatePhone(phone) && validatePw(pw) && pw === confirmPw) {
+    if (
+      validateId(id) &&
+      checkId &&
+      validateEmail(email) &&
+      validatePhone(phone) &&
+      validatePw(pw) &&
+      pw === confirmPw
+    ) {
       try {
         const res = await axios.post(
           'http://localhost:8888/api/register',
@@ -42,9 +54,12 @@ function Register() {
       } catch (e: any) {
         console.error(e);
       }
-    } else {
-      // TODO 유효성 검사 통과한 경우에만 api 호출하도록 하며, 통과 못한 경우 alert창 띄우기
-      console.log('항목을 입력하세요');
+    } else if (!checkId) {
+      setAlertOpen(true);
+      setAlertText('아이디가 중복되었는지 확인해주세요');
+    } else if (!validateId(id) || validateEmail(email) || validatePhone(phone) || validatePw(pw) || pw === confirmPw) {
+      setAlertOpen(true);
+      setAlertText('입력한 내용을 다시 확인해주세요');
     }
   };
 
@@ -59,7 +74,8 @@ function Register() {
         if (e.response.data.status === 500) {
           setCheckId(true);
         } else {
-          // TODO 중복된 아이디 있을 경우 alert 띄우기
+          setAlertOpen(true);
+          setAlertText('이미 존재하는 아이디입니다.\n\n다른 아이디를 입력해주세요.');
         }
       }
     }
@@ -148,6 +164,7 @@ function Register() {
         />
         <SubmitBtn value="가입하기" />
       </form>
+      {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
     </Container>
   );
 }
