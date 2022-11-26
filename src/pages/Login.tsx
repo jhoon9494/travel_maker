@@ -23,7 +23,6 @@ function Login() {
         'http://localhost:8888/api/login',
         { id, password: pw },
         {
-          withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
           },
