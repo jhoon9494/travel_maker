@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -18,25 +17,9 @@ const links = [
   },
 ];
 
-const initUserData = {
-  user_id: '',
-  email: '',
-  phone_number: '',
-  user_img: '',
-};
-
 function Mypage() {
   const location = useLocation();
   const [currLinkIndex, setCurrLinkIndex] = useState<number>(0);
-  const [userData, setUserData] = useState(initUserData);
-
-  useEffect(() => {
-    const getData = async () => {
-      const res = await axios.get('http://localhost:3000/mock/userData.json');
-      setUserData(res.data);
-    };
-    getData();
-  }, []);
 
   useEffect(() => {
     setCurrLinkIndex(0);
@@ -59,7 +42,7 @@ function Mypage() {
         })}
       </Menubar>
       <Body>
-        <Outlet context={userData} />
+        <Outlet />
       </Body>
     </Wrapper>
   );
