@@ -19,10 +19,14 @@ function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
   const navigate = useNavigate();
 
   const deletePost = useCallback(async () => {
-    const res = await axios.get(`http://localhost:8888/api/post/${id}`, { withCredentials: true });
-    // 게시글 삭제되었을 경우 게시글 목록을 새로 받아오기 위한 부분
-    if (res.data === 'OK' && setDeleteIndex) {
-      setDeleteIndex(id);
+    try {
+      const res = await axios.get(`/api/post/${id}`);
+      // 게시글 삭제되었을 경우 게시글 목록을 새로 받아오기 위한 부분
+      if (res.data === 'OK' && setDeleteIndex) {
+        setDeleteIndex(id);
+      }
+    } catch (e: any) {
+      console.error(e);
     }
   }, [setDeleteIndex, id]);
 
@@ -98,6 +102,7 @@ const EditContainer = styled.div<{ active: boolean }>`
   position: absolute;
   top: 25px;
   right: 10px;
+  border: 1px solid lightgray;
   background-color: white;
   border-radius: 5px;
   width: ${({ active }) => (active ? 60 : 30)}px;

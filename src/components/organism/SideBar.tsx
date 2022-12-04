@@ -15,7 +15,7 @@ function SideBar({ open, setOpen }: IProps) {
   const navigate = useNavigate();
   const handleLogOut = async () => {
     try {
-      await axios.get('http://localhost:8888/api/logout');
+      await axios.get('/api/logout');
       localStorage.removeItem('id');
       setLoggedIn('');
       navigate('/');

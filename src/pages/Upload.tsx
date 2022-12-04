@@ -67,7 +67,7 @@ function Upload() {
   const getData = useCallback(async () => {
     try {
       // TODO 이미지 받아오는 로직 구현한 다음 진행
-      const res = await axios.get(`http://localhost:8888/api/post/detail/${id}`);
+      const res = await axios.get(`/api/post/detail/${id}`);
       console.log(res);
 
       // setTitle(editData.title);
@@ -256,7 +256,7 @@ function Upload() {
       )}
       {confirmOpen && (
         <Confirm
-          text={`현재까지 작성하신 게시글이 삭제됩니다.\n돌아가시겠습니까?`}
+          text={`현재까지 작성하신 게시글이 삭제됩니다.\n\n돌아가시겠습니까?`}
           open={setConfirmOpen}
           setResult={setConfirmResult}
           yes="돌아가기"
