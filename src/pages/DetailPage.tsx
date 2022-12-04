@@ -28,6 +28,7 @@ interface PostData {
   hashTags: string[];
   figures: FiguresType;
   like: number;
+  userId: string;
 }
 
 const initialSet: PostData = {
@@ -43,6 +44,7 @@ const initialSet: PostData = {
     revisit: 0,
   },
   like: 0,
+  userId: '',
 };
 
 // 게시글의 본문 및 해시태그 생성 함수
@@ -67,19 +69,17 @@ function DetailPage() {
 
   const getData = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:8888/api/post/detail/${id}`, { withCredentials: true });
+      const res = await axios.get(`/api/post/detail/${id}`);
       setData(res.data);
-    } catch (e: any) {
-      // TODO 게시글 아이디로 api 요청하고, 요청결과가 없으면(혹은 에러발생 시) not found 페이지로 리다이렉트 시켜주기
-      console.error(e);
+    } catch (e) {
+      navigate('/*', { replace: true });
     }
-  }, [id]);
+  }, [id, navigate]);
 
   useEffect(() => {
     getData();
   }, [getData, data.like]);
 
-  // TODO 게시글 수정 및 삭제 버튼 만들기
   return (
     <Wrapper>
       <BackSpaceBtn onClick={() => navigate(-1)} />
@@ -87,19 +87,21 @@ function DetailPage() {
         <PostContainer>
           {/* <ImgSlider img={data.post_img} /> */}
           {/* TODO 내가 좋아요 누른상태인지 체크하기 */}
+          {/* TODO 좋아요 누른 상태인 경우 해제만 가능하도록 변경 or 좋아요 누를때 이미 좋아요 눌렀다고 알려주기? */}
           <HeartBtn like={data.like} setLike={setData} />
-          {/* {data.recommendRoutes.length !== 0 ? (
+          {data.recommendRoutes.length !== 0 ? (
             <TravelTips tips={data.recommendRoutes} />
           ) : (
             <div style={{ height: '40px' }} />
-          )} */}
+          )}
           <TextArea>{createContent(data.content)}</TextArea>
         </PostContainer>
 
         <SideContainer>
-          {/* TODO 유저 아이디 클릭시 해당 유저페이지로 이동 */}
-          <p style={{ marginLeft: '5px', marginBottom: '10px' }}>userId</p>
-          <h2 style={{ marginLeft: '5px' }}>{data.title}</h2>
+          <p>
+            <Link to={`/${data.userId}`}>{data.userId}</Link>
+          </p>
+          <h2>{data.title}</h2>
           <ScoreContainer>
             <ScoreBox title="추천도" score={data.figures.recommend} />
             <ScoreBox title="감성" score={data.figures.emotion} />
@@ -139,6 +141,14 @@ const TextArea = styled.div`
 const SideContainer = styled.div`
   width: 285px;
   padding: 15px;
+
+  > p {
+    margin: 0 0 10px 5px;
+  }
+
+  > h2 {
+    margin-left: 5px;
+  }
 `;
 
 const ScoreContainer = styled.div`
