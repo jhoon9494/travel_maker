@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import axios from 'axios';
 import PostBox from '../components/atoms/PostBox';
+import Loading from '../components/atoms/Loading';
 
 type TagDataType = {
   img: string;
@@ -14,34 +15,45 @@ function Hashtag() {
   const { tag } = useParams();
   const navigate = useNavigate();
   const [hashtagData, setHashtagData] = useState<TagDataType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getData = useCallback(async () => {
+    try {
+      const res = await axios.get('/api/post/tag', { params: { word: tag } });
+      // setHashtagData(res.data);
+      console.log(res);
+    } catch (e: any) {
+      console.log(e);
+    }
+  }, [tag]);
 
   useEffect(() => {
-    async function getData() {
-      try {
-        const res = await axios.get('http://localhost:3000/mock/tagList.json');
-        setHashtagData(res.data);
-      } catch (e: any) {
-        console.log(e);
-      }
-    }
+    setIsLoading(true);
     getData();
-  }, []);
+    setIsLoading(false);
+  }, [getData]);
 
   return (
     <Wrapper>
       <BackSpaceBtn onClick={() => navigate(-1)} />
       <ResultWrapper>
         <h3>#{tag}</h3>
-        <p>게시글 수 : {hashtagData.length.toLocaleString()}개</p>
-
-        {hashtagData.length !== 0 ? (
-          <DataContainer>
-            {hashtagData.map((data, index) => {
-              return <PostBox id={data.id} img={data.img} key={`${data.id}-${index + 1}`} />;
-            })}
-          </DataContainer>
+        {isLoading ? (
+          <Loading />
         ) : (
-          <NoResult>해시태그와 연관된 게시글이 없습니다.</NoResult>
+          <>
+            <p>게시글 수 : {hashtagData.length.toLocaleString()}개</p>
+
+            {hashtagData.length !== 0 ? (
+              <DataContainer>
+                {hashtagData.map((data, index) => {
+                  return <PostBox id={data.id} img={data.img} key={`${data.id}-${index + 1}`} />;
+                })}
+              </DataContainer>
+            ) : (
+              <NoResult>해시태그와 연관된 게시글이 없습니다.</NoResult>
+            )}
+          </>
         )}
       </ResultWrapper>
     </Wrapper>
