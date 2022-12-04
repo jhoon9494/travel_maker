@@ -12,13 +12,14 @@ type FiguresType = {
 };
 
 type PostData = {
-  id: string;
+  idx: string;
   title: string;
   content: string;
   like: number;
-  user_id: string;
+  userId: string;
   figures: FiguresType;
-  post_img: string[];
+  postImg: string[];
+  hashtags: string[];
 };
 
 function Home() {
@@ -32,10 +33,9 @@ function Home() {
 
   const getData = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:8888/api/post/list', { withCredentials: true });
+      const res = await axios.get('/api/post/list');
       setPostList((prevList) => [...prevList, ...res.data]);
     } catch (e: any) {
-      console.error(e);
       // TODO 무한스크롤로 더이상 받아올 정보가 없는 경우에는 기존에 모아진 배열 그대로 다시 반환하면 될듯
       // 추가로 boxRef.current = null로 변경해서 옵저버 관찰 없애기
     }
@@ -91,14 +91,14 @@ function Home() {
               <div ref={boxRef} key={`${data.title}-${index + 1}-key`}>
                 <Post>
                   <Img
-                    src={data.post_img[0]}
+                    src={data.postImg?.[0]}
                     alt={`${data.title}-1번째 이미지`}
-                    onClick={() => handleMoveContent(data.id)}
+                    onClick={() => handleMoveContent(data.idx)}
                   />
                   <PostText>
-                    <H2Tag onClick={() => handleMoveContent(data.id)}>{data.title}</H2Tag>
+                    <H2Tag onClick={() => handleMoveContent(data.idx)}>{data.title}</H2Tag>
                     <p>
-                      <Link to={`/${data.user_id}`}>{data.user_id}</Link>
+                      <Link to={`/${data.userId}`}>{data.userId}</Link>
                     </p>
                   </PostText>
                 </Post>
@@ -108,14 +108,14 @@ function Home() {
           return (
             <Post key={`${data.title}-${index + 1}-key`}>
               <Img
-                src={data.post_img[0]}
+                src={data.postImg?.[0]}
                 alt={`${data.title}-1번째 이미지`}
-                onClick={() => handleMoveContent(data.id)}
+                onClick={() => handleMoveContent(data.idx)}
               />
               <PostText>
-                <H2Tag onClick={() => handleMoveContent(data.id)}>{data.title}</H2Tag>
+                <H2Tag onClick={() => handleMoveContent(data.idx)}>{data.title}</H2Tag>
                 <p>
-                  <Link to={`/${data.user_id}`}>{data.user_id}</Link>
+                  <Link to={`/${data.userId}`}>{data.userId}</Link>
                 </p>
               </PostText>
             </Post>
