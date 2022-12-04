@@ -36,15 +36,19 @@ function Register() {
     ) {
       try {
         const res = await axios.post(
-          'http://localhost:8888/api/register',
+          '/api/register',
           {
             id,
             password: pw,
             email,
-            phone_number: phone,
-            profile_img: '/icons/default_profile.svg',
+            phoneNumber: phone,
+            profileImg: '/icons/default_profile.svg',
           },
-          { withCredentials: true },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
         );
         if (res.data === 'OK') {
           setLoggedIn(id);
@@ -66,14 +70,12 @@ function Register() {
   const handleIdCheck = async () => {
     if (validateId(id)) {
       try {
-        const res = await axios.get('http://localhost:8888/api/check', { params: { id } });
-        console.log(res);
-      } catch (e: any) {
-        console.log(e);
-        // FIXME 중복된 아이디 없는 경우에도 500번 코드 뱉으며 catch 단에서 잡힘.
-        if (e.response.data.status === 500) {
+        const res = await axios.get('/api/check', { params: { id } });
+        if (res.data === 'OK') {
           setCheckId(true);
-        } else {
+        }
+      } catch (e: any) {
+        if (e.response.data.code === 'ID_EXISTS') {
           setAlertOpen(true);
           setAlertText('이미 존재하는 아이디입니다.\n\n다른 아이디를 입력해주세요.');
         }
