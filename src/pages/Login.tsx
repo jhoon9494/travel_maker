@@ -20,7 +20,7 @@ function Login() {
       setIdError(false);
       setPwError(false);
       await axios.post(
-        'http://localhost:8888/api/login',
+        '/api/login',
         { id, password: pw },
         {
           headers: {
