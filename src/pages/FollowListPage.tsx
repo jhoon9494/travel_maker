@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import userContext from 'context/userContext';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import BackSpaceBtn from '../components/atoms/BackSpaceBtn';
@@ -8,34 +9,41 @@ import { GlobalColor } from '../styles/GlobalColor';
 
 type FollowType = {
   user_id: string;
-  user_img: string;
+  profile_img: string;
 };
 
 function FollowListPage() {
+  const loggedUser = useContext(userContext);
   const location = useLocation();
   const navigate = useNavigate();
-  // const { userId } = useParams();
+  const { userId } = useParams();
   const [userList, setUserList] = useState<FollowType[]>([]);
   const currPage = location.pathname.split('/')[2];
 
   const getData = useCallback(async () => {
+    // TODO 팔로우 팔로워 목록 페이지네이션 버튼? 무한스크롤?
     try {
       if (currPage === 'follow') {
-        // follow 목록 불러오기
-        const res = await axios.get('http://localhost:3000/mock/userPage.json');
-        setUserList(res.data.follow);
+        const res = await axios.get(`/api/follow/following/${userId}`);
+        setUserList(res.data);
       } else if (currPage === 'follower') {
-        // follower 목록 불러오기
-        const res = await axios.get('http://localhost:3000/mock/userPage.json');
-        setUserList(res.data.follower);
+        const res = await axios.get(`/api/follow/follower/${userId}`);
+        setUserList(res.data);
       }
     } catch (e: any) {
       console.error(e);
     }
-  }, [currPage]);
+  }, [currPage, userId]);
 
-  const handleFollow = () => {
-    console.log('api 요청하기');
+  const handleFollow = async (id: string) => {
+    // TODO 이미 팔로우 중인 상대라면?
+    // TODO 팔로우 버튼을 눌렀다면 어떻게 해제하기로 변화를 줄것인지?
+    try {
+      const res = await axios.get(`/api/follow/${id}`);
+      console.log(res);
+    } catch (e: any) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -53,11 +61,13 @@ function FollowListPage() {
               return (
                 <UserItem key={`${user.user_id}-${index + 1}`}>
                   <UserLink to={`/${user.user_id}`}>
-                    <UserImage src={user.user_img} alt={user.user_id} name={user.user_id} />
+                    <UserImage src={user.profile_img} alt={user.user_id} name={user.user_id} />
                   </UserLink>
 
                   {/* TODO 이미 팔로우 중인 유저일 경우 버튼 변경 */}
-                  <FollowBtn onClick={handleFollow}>팔로우</FollowBtn>
+                  {user.user_id !== loggedUser.id && (
+                    <FollowBtn onClick={() => handleFollow(user.user_id)}>팔로우</FollowBtn>
+                  )}
                 </UserItem>
               );
             })}
