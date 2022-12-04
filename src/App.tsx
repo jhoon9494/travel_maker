@@ -16,8 +16,12 @@ import UserPage from 'pages/UserPage';
 import ContextProvider from 'context/ContextProvider';
 import FollowListPage from 'pages/FollowListPage';
 import NotFound from 'pages/NotFound';
+import axios from 'axios';
 
 function App() {
+  axios.defaults.baseURL = 'http://localhost:8888';
+  axios.defaults.withCredentials = true;
+
   return (
     <>
       <GlobalStyle />
