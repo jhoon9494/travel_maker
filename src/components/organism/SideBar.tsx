@@ -18,7 +18,7 @@ function SideBar({ open, setOpen }: IProps) {
       await axios.get('/api/logout');
       localStorage.removeItem('id');
       setLoggedIn('');
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (e: any) {
       console.error(e);
     }
@@ -32,7 +32,7 @@ function SideBar({ open, setOpen }: IProps) {
         </CloseBtn>
         <LinkWrapper>
           <Link to={`/${id}`}>{id}</Link>
-          <Link to="/mypage">정보수정</Link>
+          <Link to="/user">정보수정</Link>
           <button type="button">설정</button>
           <button type="button" onClick={handleLogOut}>
             로그아웃

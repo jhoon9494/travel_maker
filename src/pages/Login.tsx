@@ -65,7 +65,7 @@ function Login() {
         <SubmitBtn value="로그인" />
       </form>
       <LinkContainer>
-        <Link to="/register">회원가입</Link>
+        <Link to="/sign">회원가입</Link>
         <Link to="#findId">아이디 찾기</Link>
         <Link to="#findPW">비밀번호 찾기</Link>
       </LinkContainer>

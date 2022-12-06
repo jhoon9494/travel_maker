@@ -49,11 +49,11 @@ const initialSet: PostData = {
 
 // 게시글의 본문 및 해시태그 생성 함수
 function createContent(content: string) {
-  return content.split(/(#[^\s#]+)/g).map((str, index) => {
+  return content.split(/(#[^\s#]+)/g).map((str) => {
     if (str[0] === '#') {
       const hashtag = str.split('#')[1];
       return (
-        <Link to={`/hashtag/${hashtag}`} key={`${index + 1}-hashtag`}>
+        <Link to={`/tag/${hashtag}`} key={`${hashtag}`}>
           {str}
         </Link>
       );

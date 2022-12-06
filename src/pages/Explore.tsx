@@ -89,7 +89,7 @@ function Explore() {
                 {hashtagData.map((data, index) => {
                   return (
                     <p key={`${data.tag}-${index + 1}`}>
-                      <Link to={`/hashtag/${data.tag}`}>#{data.tag}</Link>
+                      <Link to={`/tag/${data.tag}`}>#{data.tag}</Link>
                     </p>
                   );
                 })}

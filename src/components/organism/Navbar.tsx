@@ -17,9 +17,9 @@ function Navbar() {
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (search[0] === '#') {
-      navigate(`/explore/${search.split('#')[1]}`);
+      navigate(`/exp/${search.split('#')[1]}`);
     } else {
-      navigate(`/explore/${search}`);
+      navigate(`/exp/${search}`);
     }
 
     setSearch('');

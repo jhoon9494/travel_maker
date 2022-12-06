@@ -131,7 +131,7 @@ function UserPage() {
       </PostContainer>
 
       {userId === id && (
-        <UploadBtn onClick={() => navigate('/upload')}>
+        <UploadBtn onClick={() => navigate('/u')}>
           <BiEdit />
         </UploadBtn>
       )}

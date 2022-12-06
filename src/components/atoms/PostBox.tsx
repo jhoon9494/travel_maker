@@ -38,7 +38,7 @@ function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
 
   return (
     <Container>
-      <Link to={`/detail/${id}`}>
+      <Link to={`/p/${id}`}>
         <Img src={img} alt={`${id}-썸네일`} />
       </Link>
       {edit && (
@@ -47,7 +47,7 @@ function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
         </EditBtn>
       )}
       <EditContainer active={editBox}>
-        <button type="button" onClick={() => navigate(`/edit/${id}`)}>
+        <button type="button" onClick={() => navigate(`/e/${id}`)}>
           수정
         </button>
         <button

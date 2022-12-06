@@ -69,10 +69,6 @@ function Home() {
     }
   }, [postList, intersectionObserver]);
 
-  const handleMoveContent = (postId: string) => {
-    navigate(`/detail/${postId}`);
-  };
-
   return (
     <Wrapper>
       {/* eslint-disable */}
@@ -93,10 +89,10 @@ function Home() {
                   <Img
                     src={data.postImg?.[0]}
                     alt={`${data.title}-1번째 이미지`}
-                    onClick={() => handleMoveContent(data.idx)}
+                    onClick={() => navigate(`/p/${data.idx}`)}
                   />
                   <PostText>
-                    <H2Tag onClick={() => handleMoveContent(data.idx)}>{data.title}</H2Tag>
+                    <H2Tag onClick={() => navigate(`/p/${data.idx}`)}>{data.title}</H2Tag>
                     <p>
                       <Link to={`/${data.userId}`}>{data.userId}</Link>
                     </p>
@@ -110,10 +106,10 @@ function Home() {
               <Img
                 src={data.postImg?.[0]}
                 alt={`${data.title}-1번째 이미지`}
-                onClick={() => handleMoveContent(data.idx)}
+                onClick={() => navigate(`/p/${data.idx}`)}
               />
               <PostText>
-                <H2Tag onClick={() => handleMoveContent(data.idx)}>{data.title}</H2Tag>
+                <H2Tag onClick={() => navigate(`/p/${data.idx}`)}>{data.title}</H2Tag>
                 <p>
                   <Link to={`/${data.userId}`}>{data.userId}</Link>
                 </p>
@@ -122,7 +118,7 @@ function Home() {
           );
         })
       )}
-      <UploadBtn onClick={() => navigate('/upload')}>
+      <UploadBtn onClick={() => navigate('/u')}>
         <BiEdit />
       </UploadBtn>
     </Wrapper>
