@@ -32,6 +32,7 @@ function UserPage() {
       axios.get(`/api/follow/follower/${userId}`),
       axios.get(`/api/follow/following/${userId}`),
     ]).then((res) => {
+      setIsLoading(false);
       res.forEach((resData, index) => {
         // 게시글 정보
         if (index === 0) {
@@ -46,7 +47,7 @@ function UserPage() {
         // 유저 정보
         if (index === 1) {
           if (resData.status === 'fulfilled') {
-            setUserImage(resData.value.data.profile_img);
+            setUserImage(resData.value.data.profileImg);
           } else {
             navigate('/*', { replace: true });
           }
@@ -72,7 +73,6 @@ function UserPage() {
   useEffect(() => {
     setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [getData, deletePostIndex]);
 
   const handleFollow = async () => {
@@ -120,7 +120,7 @@ function UserPage() {
             return (
               <PostBox
                 id={data.idx}
-                img={data.postImg}
+                img={data.postImg.split(',')[0]}
                 key={`${data.idx}-${index + 1}`}
                 edit={id === userId}
                 setDeleteIndex={setDeletePostIndex}
