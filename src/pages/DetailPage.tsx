@@ -21,8 +21,8 @@ type FiguresType = {
 
 interface PostData {
   id: string;
-  post_img: string[];
-  recommendRoutes: TravelTips[] | [];
+  postImg: string;
+  recommendRoutes: TravelTips[];
   title: string;
   content: string;
   hashTags: string[];
@@ -33,7 +33,7 @@ interface PostData {
 
 const initialSet: PostData = {
   id: '',
-  post_img: [],
+  postImg: '',
   recommendRoutes: [],
   title: '',
   content: '',
@@ -64,6 +64,7 @@ function createContent(content: string) {
 
 function DetailPage() {
   const [data, setData] = useState<PostData>(initialSet);
+  const [imgList, setImgList] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -71,6 +72,9 @@ function DetailPage() {
     try {
       const res = await axios.get(`/api/post/detail/${id}`);
       setData(res.data);
+      const postImgList = res.data.postImg.split(',');
+      postImgList.pop();
+      setImgList(postImgList);
     } catch (e) {
       navigate('/*', { replace: true });
     }
@@ -85,7 +89,7 @@ function DetailPage() {
       <BackSpaceBtn onClick={() => navigate(-1)} />
       <DataContainer>
         <PostContainer>
-          {/* <ImgSlider img={data.post_img} /> */}
+          <ImgSlider img={imgList} />
           {/* TODO 내가 좋아요 누른상태인지 체크하기 */}
           {/* TODO 좋아요 누른 상태인 경우 해제만 가능하도록 변경 or 좋아요 누를때 이미 좋아요 눌렀다고 알려주기? */}
           <HeartBtn like={data.like} setLike={setData} />
