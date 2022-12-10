@@ -11,6 +11,8 @@ import UserImage from '../../components/atoms/UserImage';
 import Confirm from '../../components/atoms/Confirm';
 
 function EditProfile() {
+  const DEFAULT_PROFILE_URL = '/icons/default_profile.svg';
+
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,12 +28,10 @@ function EditProfile() {
   const getUserData = useCallback(async () => {
     try {
       if (loggedUser.id) {
-        const res = await axios.get(`http://localhost:8888/api/info/${loggedUser.id}`, { withCredentials: true });
-        console.log(res.data);
-        setPhone(res.data.phone_number);
+        const res = await axios.get(`/api/info/${loggedUser.id}`);
+        setPhone(res.data.phoneNumber);
         setEmail(res.data.email);
-        setPreviewImg(res.data.profile_img);
-        // TODO 프로필 이미지 파일 set함수에 넣어주기
+        setPreviewImg(res.data.profileImg);
       }
     } catch (e: any) {
       console.error(e);
@@ -42,29 +42,53 @@ function EditProfile() {
     getUserData();
   }, [getUserData]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    // 프로필 이미지의 경우 업로드한 파일이 없거나, 삭제한 경우 기본 프로필 이미지 주소를 담아 보냄
-    const uploadData = JSON.stringify({
-      id: loggedUser.id,
-      email,
-      phone_number: phone,
-      password,
-      profile_img: profileImg ? '' : '/icons/default_profile.svg',
-    });
-    formData.append('body', uploadData);
-    formData.append('profile_img', profileImg as any);
 
     // 메모리 누수 방지를 위해 revokeObjectURL 메소드로 url을 무효화 시켜줌
     URL.revokeObjectURL(previewImg);
 
-    console.log(formData.get('profile_img'));
-    console.log(formData.get('body'));
-    // TODO try catch 사용하여 api 요청한 뒤 결과에 맞게 확인창 팝업시켜주기
-    // api 요청이 정상적으로 이루어졌다면 수정된 데이터 받아와서 state 업데이트 시켜주거나,
-    // 유저정보 api 호출 한번 더 해서 state 변경시켜주기
+    const formData = new FormData();
+    const userData = new Blob(
+      [
+        JSON.stringify({
+          id: loggedUser.id,
+          email,
+          phoneNumber: phone,
+          password,
+        }),
+      ],
+      { type: 'application/json' },
+    );
+
+    // 1. 기본 이미지 그대로 두고 정보만 수정, previewImg == DEFAULT, profileImg == null
+    // 2. 이미지, 정보 둘다 수정, previewImg !== DEFAULT, profileImg !== null
+    // 3. 변경된 이미지 그대로 두고 정보만 수정 previewImg !== DEFAULT, profileImg == null
+
+    formData.append('userData', userData);
+    if (previewImg === DEFAULT_PROFILE_URL) {
+      formData.append('profileImg', DEFAULT_PROFILE_URL);
+    } else {
+      // FIXME 의도대로 동작은 하는데 ts자체적으로 에러나서 null 값을 제대로 못줌, 스트링으로 줄수있는데 어떻게 하는게 나을지?
+      formData.append('profileImg', profileImg || 'null');
+    }
+    // try {
+    //   const res = await axios.post(
+    //     '/api/user',
+    //     { formData },
+    //     {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data',
+    //       },
+    //     },
+    //   );
+
+    // TODO api 요청이 정상적으로 이루어졌다면 수정된 데이터 받아와서 state 업데이트 시켜주거나, 유저정보 api 호출 한번 더 해서 state 변경시켜주기
+    // console.log(res);
+
+    // } catch (error: any) {
+    //   console.error(error);
+    // }
   };
 
   const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
