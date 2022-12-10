@@ -18,14 +18,13 @@ type PostData = {
   like: number;
   userId: string;
   figures: FiguresType;
-  postImg: string[];
+  postImg: string;
   hashtags: string[];
 };
 
 function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  // TODO 데이터 몇개씩 뿌려줄 예정????
   const [postList, setPostList] = useState<PostData[]>([]);
 
   // 무한 스크롤 관련 부분
@@ -34,6 +33,7 @@ function Home() {
   const getData = useCallback(async () => {
     try {
       const res = await axios.get('/api/post/list');
+      setIsLoading(false);
       setPostList((prevList) => [...prevList, ...res.data]);
     } catch (e: any) {
       // TODO 무한스크롤로 더이상 받아올 정보가 없는 경우에는 기존에 모아진 배열 그대로 다시 반환하면 될듯
@@ -44,7 +44,6 @@ function Home() {
   useEffect(() => {
     setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [getData]);
 
   const intersectionObserver = useCallback(
@@ -84,27 +83,31 @@ function Home() {
           // 마지막 게시글을 담고 있는 컴포넌트에 무한스크롤을 적용시키기 위해 ref를 담아줌
           if (postList.length - 1 === index) {
             return (
-              <div ref={boxRef} key={`${data.title}-${index + 1}-key`}>
-                <Post>
-                  <Img
-                    src={data.postImg?.[0]}
-                    alt={`${data.title}-1번째 이미지`}
-                    onClick={() => navigate(`/p/${data.idx}`)}
-                  />
-                  <PostText>
-                    <H2Tag onClick={() => navigate(`/p/${data.idx}`)}>{data.title}</H2Tag>
-                    <p>
-                      <Link to={`/${data.userId}`}>{data.userId}</Link>
-                    </p>
-                  </PostText>
-                </Post>
-              </div>
+              <Post ref={boxRef} key={`${data.title}-${index + 1}-key`}>
+                <Img
+                  src={data.postImg.split(',')[0]}
+                  alt={`${data.title}-1번째 이미지`}
+                  onClick={() => navigate(`/p/${data.idx}`)}
+                />
+                <PostText>
+                  <H2Tag onClick={() => navigate(`/p/${data.idx}`)}>{data.title}</H2Tag>
+                  <p>
+                    <Link to={`/${data.userId}`}>{data.userId}</Link>
+                  </p>
+                  <TagList>
+                    {data.hashtags.map((tag) => {
+                      const tagName = tag.split('#')[1];
+                      return <li onClick={() => navigate(`/tag/${tagName}`)}>{tag}</li>;
+                    })}
+                  </TagList>
+                </PostText>
+              </Post>
             );
           }
           return (
             <Post key={`${data.title}-${index + 1}-key`}>
               <Img
-                src={data.postImg?.[0]}
+                src={data.postImg.split(',')[0]}
                 alt={`${data.title}-1번째 이미지`}
                 onClick={() => navigate(`/p/${data.idx}`)}
               />
@@ -113,6 +116,12 @@ function Home() {
                 <p>
                   <Link to={`/${data.userId}`}>{data.userId}</Link>
                 </p>
+                <TagList>
+                  {data.hashtags.map((tag) => {
+                    const tagName = tag.split('#')[1];
+                    return <li onClick={() => navigate(`/tag/${tagName}`)}>{tag}</li>;
+                  })}
+                </TagList>
               </PostText>
             </Post>
           );
@@ -167,11 +176,26 @@ const PostText = styled.div`
   display: flex;
   flex-direction: column;
   padding: 25px;
+  width: 100%;
 `;
 
 const H2Tag = styled.h2`
   margin-bottom: 15px;
   cursor: pointer;
+`;
+
+const TagList = styled.ul`
+  display: flex;
+  margin-top: 120px;
+  flex-wrap: wrap;
+
+  > li {
+    margin-right: 8px;
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+  }
 `;
 
 const UploadBtn = styled.button`
