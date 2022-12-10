@@ -77,7 +77,7 @@ function UserPage() {
 
   const handleFollow = async () => {
     try {
-      const res = await axios.get(`/api/follow/${userId}`, { withCredentials: true });
+      const res = await axios.get(`/api/follow/${userId}`);
       console.log(res);
       if (res.data === 'OK') {
         // TODO 팔로우 혹은 유저정보만 불러오게 하는게 나을듯
