@@ -8,8 +8,8 @@ import UserImage from '../components/atoms/UserImage';
 import { GlobalColor } from '../styles/GlobalColor';
 
 type FollowType = {
-  user_id: string;
-  profile_img: string;
+  userId: string;
+  profileImg: string;
 };
 
 function FollowListPage() {
@@ -59,14 +59,14 @@ function FollowListPage() {
           {userList &&
             userList.map((user, index) => {
               return (
-                <UserItem key={`${user.user_id}-${index + 1}`}>
-                  <UserLink to={`/${user.user_id}`}>
-                    <UserImage src={user.profile_img} alt={user.user_id} name={user.user_id} />
+                <UserItem key={`${user.userId}-${index + 1}`}>
+                  <UserLink to={`/${user.userId}`}>
+                    <UserImage src={user.profileImg} alt={user.userId} name={user.userId} />
                   </UserLink>
 
                   {/* TODO 이미 팔로우 중인 유저일 경우 버튼 변경 */}
-                  {user.user_id !== loggedUser.id && (
-                    <FollowBtn onClick={() => handleFollow(user.user_id)}>팔로우</FollowBtn>
+                  {user.userId !== loggedUser.id && (
+                    <FollowBtn onClick={() => handleFollow(user.userId)}>팔로우</FollowBtn>
                   )}
                 </UserItem>
               );
