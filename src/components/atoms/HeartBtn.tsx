@@ -17,13 +17,14 @@ type FiguresType = {
 
 interface PostData {
   id: string;
-  post_img: string[];
+  postImg: string;
   recommendRoutes: TravelTips[] | [];
   title: string;
   content: string;
   hashTags: string[];
   figures: FiguresType;
   like: number;
+  userId: string;
 }
 
 interface IProps {
@@ -40,10 +41,10 @@ function HeartBtn({ like, setLike }: IProps) {
     return debounce(async (status) => {
       setHeartStatus(status);
       if (status) {
-        await axios.get(`http://localhost:8888/api/post/like?idx=${id}&like=${like + 1}`, { withCredentials: true });
+        await axios.get(`/api/post/like?idx=${id}&like=${like + 1}`);
         setLike((prev) => ({ ...prev, like: like + 1 }));
       } else {
-        await axios.get(`http://localhost:8888/api/post/like?idx=${id}&like=${like - 1}`, { withCredentials: true });
+        await axios.get(`/api/post/like?idx=${id}&like=${like - 1}`);
         setLike((prev) => ({ ...prev, like: like - 1 }));
       }
     }, 100);
