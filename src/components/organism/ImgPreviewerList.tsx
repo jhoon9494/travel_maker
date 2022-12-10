@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, Dispatch, SetStateAction, MouseEvent } from 'react';
+import { useState, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { BsFillPlusCircleFill } from 'react-icons/bs';
 import { AiFillMinusCircle } from 'react-icons/ai';
 import { GlobalColor } from '../../styles/GlobalColor';
+import Alert from '../atoms/Alert';
 
 type PreviewImgType = {
   src: string;
@@ -17,27 +18,37 @@ interface IProps {
 }
 
 function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: IProps) {
+  const [alertOpen, setAlertOpen] = useState(false);
   // 이미지 삭제를 위한 state
   const [currImg, setCurrImg] = useState<string>('');
+
   const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
+    const maxSize = 5 * 1024 * 1024;
     if (files) {
-      Array.from(files).forEach((file, index) => {
+      for (let i = 0; i < files.length; i += 1) {
+        const file = files[i];
+        if (file.size > maxSize) {
+          setAlertOpen(true);
+          break;
+        }
         const previewFile = {
           src: URL.createObjectURL(file),
-          alt: `${previewImgs.length}-${index + 1}-previewFile`,
+          alt: `${previewImgs.length}-${i + 1}-previewFile`,
         };
-        setImgFiles((prevList) => [...prevList, file]);
-        setPreviewImgs((prevList) => [...prevList, previewFile]);
 
-        if (index === 0) {
+        if (i === 0) {
           selectImg(previewFile);
         }
-      });
+
+        setImgFiles((prevList) => [...prevList, file]);
+        setPreviewImgs((prevList) => [...prevList, previewFile]);
+      }
     }
     // 동일한 파일을 업로드할 수 있도록 현재 선택된 value를 비워줌
     e.target.value = '';
   };
+
   const handleImgClick = (img: PreviewImgType) => {
     selectImg(img);
   };
@@ -52,7 +63,6 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: I
       prevList.splice(index, 1);
       return prevList;
     });
-
     setCurrImg('');
 
     // 이미지가 삭제됨에 따라 배열 내부의 인덱스가 변경되므로 현재 선택된 이미지를 변경시키는 코드
@@ -94,6 +104,7 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: I
           <input id="fileUpload" style={{ display: 'none' }} multiple type="file" accept="image/*" onChange={loadImg} />
         </label>
       </AddImg>
+      {alertOpen && <Alert text="첨부파일 사이즈는 5MB 이내로 등록 가능합니다." open={setAlertOpen} />}
     </Wrapper>
   );
 }
