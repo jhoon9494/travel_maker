@@ -12,7 +12,6 @@ function Layout() {
   const loggedUser = useContext(userContext);
 
   useEffect(() => {
-    // 로그인하지 않은 유저인 경우 로그인 페이지로 리다이렉트
     if (!loggedUser.id) {
       setAlert(true);
       setOpen(true);
@@ -28,9 +27,7 @@ function Layout() {
   return (
     <Wrapper>
       <Navbar />
-      <Body>
-        <Outlet />
-      </Body>
+      <Body>{loggedUser.id && <Outlet />}</Body>
       {alert && <Alert text={`로그인한 유저만 이용 가능합니다. \n\n로그인 후 이용해주세요`} open={setOpen} />}
     </Wrapper>
   );
