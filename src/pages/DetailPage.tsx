@@ -75,8 +75,10 @@ function DetailPage() {
       const postImgList = res.data.postImg.split(',');
       postImgList.pop();
       setImgList(postImgList);
-    } catch (e) {
-      navigate('/*', { replace: true });
+    } catch (e: any) {
+      if (e.response.data.status === 500) {
+        navigate('/*', { replace: true });
+      }
     }
   }, [id, navigate]);
 

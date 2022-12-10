@@ -38,8 +38,7 @@ function UserPage() {
         if (index === 0) {
           if (resData.status === 'fulfilled') {
             setPostData(resData.value.data);
-          } else {
-            // 게시글 전체 삭제 시 Null_value 반환되므로, postData에 빈 배열 삽입
+          } else if (resData.reason.response.status === 500) {
             setPostData([]);
           }
         }
@@ -48,7 +47,7 @@ function UserPage() {
         if (index === 1) {
           if (resData.status === 'fulfilled') {
             setUserImage(resData.value.data.profileImg);
-          } else {
+          } else if (resData.reason.response.status === 404) {
             navigate('/*', { replace: true });
           }
         }
