@@ -97,7 +97,11 @@ function Home() {
                   <TagList>
                     {data.hashtags.map((tag) => {
                       const tagName = tag.split('#')[1];
-                      return <li onClick={() => navigate(`/tag/${tagName}`)}>{tag}</li>;
+                      return (
+                        <li onClick={() => navigate(`/tag/${tagName}`)} key={`${tagName}`}>
+                          {tag}
+                        </li>
+                      );
                     })}
                   </TagList>
                 </PostText>
@@ -119,7 +123,11 @@ function Home() {
                 <TagList>
                   {data.hashtags.map((tag) => {
                     const tagName = tag.split('#')[1];
-                    return <li onClick={() => navigate(`/tag/${tagName}`)}>{tag}</li>;
+                    return (
+                      <li onClick={() => navigate(`/tag/${tagName}`)} key={`${tagName}`}>
+                        {tag}
+                      </li>
+                    );
                   })}
                 </TagList>
               </PostText>
