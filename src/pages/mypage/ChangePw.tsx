@@ -1,35 +1,45 @@
 import styled from 'styled-components';
-import { useState, FormEvent, FormEventHandler } from 'react';
+import { useState, FormEvent, FormEventHandler, useContext } from 'react';
 import ValidateInput from 'components/organism/ValidateInput';
 import Input from 'components/atoms/Input';
-import { useOutletContext } from 'react-router-dom';
+import axios from 'axios';
+import userContext from 'context/userContext';
 import { validatePw } from '../../utils/validate';
 import SubmitBtn from '../../components/atoms/SubmitBtn';
 
-interface UserDataProps {
-  user_id: string;
-  email: string;
-  phone_number: string;
-  user_img: string;
-}
-
 function ChangePw() {
-  const userData = useOutletContext<UserDataProps>();
+  const loggedUser = useContext(userContext);
   const [currPw, setCurrPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // TODO try catch 사용하여 api 요청한 뒤 결과에 맞게 확인창 팝업시켜주기
-    console.log(currPw, newPw, confirmPw);
+    // FIXME 비밀번호 변경 후 로그인하면 비밀번호 일치하지 않는다고 나옴
+    try {
+      const res = await axios.post(
+        '/api/user/pass',
+        {
+          nowPassword: currPw,
+          newPassword: newPw,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      console.log(res);
+    } catch (error: any) {
+      console.error(error);
+    }
   };
 
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit}>
-        <div>{userData.user_id}</div>
+        <div>{loggedUser.id}</div>
         <Input
           id="currPw"
           placeholder="현재 비밀번호"

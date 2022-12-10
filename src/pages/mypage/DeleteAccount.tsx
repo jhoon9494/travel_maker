@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/atoms/Input';
@@ -10,8 +11,22 @@ function DeleteAccount() {
     setIsOk((curr) => !curr);
   };
 
-  const handleSubmit = () => {
-    // TODO 회원탈퇴 api 요청
+  const handleSubmit = async () => {
+    try {
+      await axios.post(
+        '/api/sign-out',
+        {
+          password: pw,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    } catch (e: any) {
+      console.error(e);
+    }
   };
 
   return (
