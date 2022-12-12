@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, FormEvent, useEffect, useCallback } from 'react';
+import { useState, FormEvent, useEffect, useCallback, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgPreviewerList from 'components/organism/ImgPreviewerList';
@@ -12,6 +12,8 @@ import SubmitBtn from 'components/atoms/SubmitBtn';
 import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
 import axios from 'axios';
+import userContext from 'context/userContext';
+import Loading from '../components/atoms/Loading';
 
 type PreviewImgType = {
   src: string;
@@ -20,11 +22,12 @@ type PreviewImgType = {
 
 type TipsType = {
   placeName: string;
-  tip: string;
+  tips: string;
 };
 
 function Upload() {
   const navigate = useNavigate();
+  const loggedUser = useContext(userContext);
   const { id } = useParams();
 
   // 이미지 파일 및 미리보기 부분
@@ -64,9 +67,12 @@ function Upload() {
   // 해시태그 부분
   const [hashtag, setHashtag] = useState<string[]>([]);
 
-  const getData = useCallback(async () => {
+  // 업로드 로딩
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getEditData = useCallback(async () => {
     try {
-      // TODO 이미지 받아오는 로직 구현한 다음 진행
+      // TODO 이미지 file 받아오는 로직 구현한 다음 진행
       const res = await axios.get(`/api/post/detail/${id}`);
       console.log(res);
 
@@ -95,9 +101,9 @@ function Upload() {
   useEffect(() => {
     // 수정하기로 들어온 경우 실행
     if (id) {
-      getData();
+      getEditData();
     }
-  }, [getData, id]);
+  }, [getEditData, id]);
 
   useEffect(() => {
     // 파일업로드 첫번째 페이지에서 돌아가기 클릭 시 동작
@@ -105,24 +111,6 @@ function Upload() {
       navigate(-1);
     }
   }, [confirmResult, navigate]);
-
-  const handleTipSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // 추천 여행지 장소명 중복검사
-    if (tipsList.some((t) => t.placeName === placeName)) {
-      setAlertText('이미 등록된 장소입니다. 다시 확인해주세요!');
-      setPlaceName('');
-      return setAlertOpen(true);
-    }
-    // 팁을 작성하지 않고 추가 클릭시 경고창 반환
-    if (placeName === '' || tip === '') {
-      setAlertText('팁을 작성한 후 추가해주세요!');
-      return setAlertOpen(true);
-    }
-    setTipsList((prevList) => [...prevList, { placeName, tip }]);
-    setPlaceName('');
-    return setTip('');
-  };
 
   const handleBackSpace = () => {
     if (page === 1) {
@@ -148,122 +136,181 @@ function Upload() {
     });
   };
 
-  const handlePostWrite = () => {
-    if (imgFiles.length === 0) {
-      setAlertText('이미지를 추가하여 작성해주세요!');
+  const handleTipSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // 추천 여행지 장소명 중복검사
+    if (tipsList.some((t) => t.placeName === placeName)) {
+      setAlertText('이미 등록된 장소입니다. 다시 확인해주세요!');
+      setPlaceName('');
       return setAlertOpen(true);
     }
-    // blob url 제거하는 코드
-    previewImgs.forEach((img) => {
-      URL.revokeObjectURL(img.src);
-    });
+    // 팁을 작성하지 않고 추가 클릭시 경고창 반환
+    if (placeName === '' || tip === '') {
+      setAlertText('팁을 작성한 후 추가해주세요!');
+      return setAlertOpen(true);
+    }
+    setTipsList((prevList) => [...prevList, { placeName, tips: tip }]);
+    setPlaceName('');
+    return setTip('');
+  };
 
-    // TODO API 요청하는 코드 작성하기.
-    return console.log(imgFiles, title, content, revisit);
+  const handlePostWrite = async () => {
+    if (imgFiles.length === 0) {
+      setAlertText('이미지를 추가하여 작성해주세요!');
+      setAlertOpen(true);
+    } else {
+      setIsLoading(true);
+      const jsonData = JSON.stringify({
+        title,
+        content,
+        figures: {
+          recommend,
+          emotion,
+          revisit,
+        },
+        hashtags: hashtag,
+        recommendRoutes: tipsList,
+      });
+
+      const formData = new FormData();
+      const postData = new Blob([jsonData], { type: 'application/json' });
+
+      formData.append('post', postData);
+      imgFiles.forEach((file) => {
+        formData.append('images', file);
+      });
+
+      // blob url 제거하는 코드
+      previewImgs.forEach((img) => {
+        URL.revokeObjectURL(img.src);
+      });
+
+      try {
+        const res = await axios.post('api/post/write', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (res.data === 'OK') {
+          navigate(`/${loggedUser.id}`, { replace: true });
+        }
+      } catch (e: any) {
+        setIsLoading(false);
+        console.error(e);
+      }
+    }
   };
 
   return (
     <Wrapper>
-      <BtnsContainer>
-        <BackSpaceBtn onClick={handleBackSpace} />
-        <span style={{ flexGrow: 1 }} />
-        <Button onClick={page === 1 ? handleNextStep : handlePostWrite}>{page === 1 ? '다음' : '제출'}</Button>
-      </BtnsContainer>
-
-      {page === 1 ? (
-        // 첫번째 페이지, 이미지 추가 및 본문 작성 영역
-        <div style={{ display: 'flex', paddingLeft: '50px' }}>
-          <ImgPreviewer>
-            {previewImg ? (
-              <Img src={previewImg?.src} alt={previewImg?.alt} />
-            ) : (
-              <EmptyImg>이미지를 추가해주세요</EmptyImg>
-            )}
-            <ImgPreviewerList
-              selectImg={setPreviewImg}
-              setImgFiles={setImgFiles}
-              setPreviewImgs={setPreviewImgs}
-              previewImgs={previewImgs}
-            />
-          </ImgPreviewer>
-          <TextContainer>
-            <Input
-              id="title"
-              type="text"
-              placeholder="제목을 입력해주세요."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              size="medium"
-            />
-            <TextArea
-              placeholder="본문을 작성해주세요."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              width="245"
-              height="400"
-            />
-          </TextContainer>
-        </div>
+      {isLoading ? (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
       ) : (
-        // 두번째 페이지, 여행 추천 점수 및 팁 작성 영역
-        <div style={{ display: 'flex', paddingLeft: '50px' }}>
-          <AddTipScoreContainer>
-            <h3>여행 Tips</h3>
-            <Form onSubmit={handleTipSubmit}>
-              <Input
-                id="placeName"
-                type="text"
-                placeholder="추천 장소를 입력해주세요."
-                value={placeName}
-                onChange={(e) => setPlaceName(e.target.value)}
-              />
-              <TextArea
-                placeholder="여행지의 꿀팁을 알려주세요."
-                value={tip}
-                onChange={(e) => {
-                  if (e.target.value.length <= 100) {
-                    setTip(e.target.value);
-                  }
-                }}
-                width="400"
-                height="100"
-              />
-              <CharacterRange>{tip.length}/100</CharacterRange>
-              <SubmitBtn value="추가하기" />
-            </Form>
-            <div style={{ marginTop: '20px', position: 'relative' }}>
-              <h3 style={{ display: 'flex' }}>
-                여행 추천 점수
-                <BiBulb
-                  style={{ marginLeft: '5px' }}
-                  onMouseEnter={() => setScoreHover(true)}
-                  onMouseLeave={() => setScoreHover(false)}
-                />
-              </h3>
-              <ScoreTip hover={scoreHover}>최소 0점에서 최대 100점까지 입력 가능</ScoreTip>
-              <ScoreContainer>
-                <ScoreInput id="recommend" value={recommend} setValue={setRecommend} text="추천도" />
-                <ScoreInput id="emotion" value={emotion} setValue={setEmotion} text="감성" />
-                <ScoreInput id="revisit" value={revisit} setValue={setRevisit} text="재방문" />
-              </ScoreContainer>
-            </div>
-          </AddTipScoreContainer>
+        <>
+          <BtnsContainer>
+            <BackSpaceBtn onClick={handleBackSpace} />
+            <span style={{ flexGrow: 1 }} />
+            <Button onClick={page === 1 ? handleNextStep : handlePostWrite}>{page === 1 ? '다음' : '제출'}</Button>
+          </BtnsContainer>
 
-          <TipsContainer>
-            <CardList list={tipsList} setList={setTipsList} />
-          </TipsContainer>
-        </div>
+          {page === 1 ? (
+            // 첫번째 페이지, 이미지 추가 및 본문 작성 영역
+            <div style={{ display: 'flex', paddingLeft: '50px' }}>
+              <ImgPreviewer>
+                {previewImg ? (
+                  <Img src={previewImg?.src} alt={previewImg?.alt} />
+                ) : (
+                  <EmptyImg>이미지를 추가해주세요</EmptyImg>
+                )}
+                <ImgPreviewerList
+                  selectImg={setPreviewImg}
+                  setImgFiles={setImgFiles}
+                  setPreviewImgs={setPreviewImgs}
+                  previewImgs={previewImgs}
+                />
+              </ImgPreviewer>
+              <TextContainer>
+                <Input
+                  id="title"
+                  type="text"
+                  placeholder="제목을 입력해주세요."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  size="medium"
+                />
+                <TextArea
+                  placeholder="본문을 작성해주세요."
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  width="245"
+                  height="400"
+                />
+              </TextContainer>
+            </div>
+          ) : (
+            // 두번째 페이지, 여행 추천 점수 및 팁 작성 영역
+            <div style={{ display: 'flex', paddingLeft: '50px' }}>
+              <AddTipScoreContainer>
+                <h3>여행 Tips</h3>
+                <Form onSubmit={handleTipSubmit}>
+                  <Input
+                    id="placeName"
+                    type="text"
+                    placeholder="추천 장소를 입력해주세요."
+                    value={placeName}
+                    onChange={(e) => setPlaceName(e.target.value)}
+                  />
+                  <TextArea
+                    placeholder="여행지의 꿀팁을 알려주세요."
+                    value={tip}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 100) {
+                        setTip(e.target.value);
+                      }
+                    }}
+                    width="400"
+                    height="100"
+                  />
+                  <CharacterRange>{tip.length}/100</CharacterRange>
+                  <SubmitBtn value="추가하기" />
+                </Form>
+                <div style={{ marginTop: '20px', position: 'relative' }}>
+                  <h3 style={{ display: 'flex' }}>
+                    여행 추천 점수
+                    <BiBulb
+                      style={{ marginLeft: '5px' }}
+                      onMouseEnter={() => setScoreHover(true)}
+                      onMouseLeave={() => setScoreHover(false)}
+                    />
+                  </h3>
+                  <ScoreTip hover={scoreHover}>최소 0점에서 최대 100점까지 입력 가능</ScoreTip>
+                  <ScoreContainer>
+                    <ScoreInput id="recommend" value={recommend} setValue={setRecommend} text="추천도" />
+                    <ScoreInput id="emotion" value={emotion} setValue={setEmotion} text="감성" />
+                    <ScoreInput id="revisit" value={revisit} setValue={setRevisit} text="재방문" />
+                  </ScoreContainer>
+                </div>
+              </AddTipScoreContainer>
+
+              <TipsContainer>
+                <CardList list={tipsList} setList={setTipsList} />
+              </TipsContainer>
+            </div>
+          )}
+          {confirmOpen && (
+            <Confirm
+              text={`현재까지 작성하신 게시글이 삭제됩니다.\n\n돌아가시겠습니까?`}
+              open={setConfirmOpen}
+              setResult={setConfirmResult}
+              yes="돌아가기"
+              no="취소"
+            />
+          )}
+          {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
+        </>
       )}
-      {confirmOpen && (
-        <Confirm
-          text={`현재까지 작성하신 게시글이 삭제됩니다.\n\n돌아가시겠습니까?`}
-          open={setConfirmOpen}
-          setResult={setConfirmResult}
-          yes="돌아가기"
-          no="취소"
-        />
-      )}
-      {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
     </Wrapper>
   );
 }
@@ -275,6 +322,14 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding-bottom: 30px;
+  height: 100%;
+`;
+
+const LoadingWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const BtnsContainer = styled.div`
