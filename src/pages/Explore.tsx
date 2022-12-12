@@ -10,15 +10,11 @@ type SearchDataType = {
   img: string;
 };
 
-type TagDataType = {
-  tag: string;
-};
-
 function Explore() {
   const { result } = useParams();
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState<SearchDataType[]>([]);
-  const [hashtagData, setHashtagData] = useState<TagDataType[]>([]);
+  const [hashtagData, setHashtagData] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const getData = useCallback(() => {
@@ -30,18 +26,35 @@ function Explore() {
       axios.get(`/api/post/tag/${result}`),
     ]).then((res) =>
       res.forEach((resData, index) => {
+        setIsLoading(false);
         // 유저 검색 부분
-        if (index === 0 && resData.status === 'fulfilled') {
-          resData.value.data.forEach((user: { userId: string; profileImg: string }) => {
-            setSearchData((prev) => [...prev, { id: user.userId, img: user.profileImg }]);
-          });
+        if (index === 0) {
+          if (resData.status === 'fulfilled') {
+            resData.value.data.forEach((user: { userId: string; profileImg: string }) => {
+              setSearchData((prev) => [...prev, { id: user.userId, img: user.profileImg }]);
+            });
+          } else if (resData.reason.response.data.status === 500) {
+            setSearchData([]);
+          }
         }
-        //   // 해시태그 검색 부분
-        //   if (index === 1 && resData.status === 'fulfilled') {
-        //     resData.value.data.forEach((tag: TagDataType) => {
-        //       setHashtagData((prev) => [...prev, tag]);
-        //     });
-        //   }
+        // 해시태그 검색 부분
+        if (index === 1) {
+          // FIXME 백엔드 에러 뱉는 코드 수정필요
+          if (resData.status === 'fulfilled' && resData.value.data.length > 0) {
+            resData.value.data.forEach((tag: string) => {
+              setHashtagData((prev) => [...prev, tag]);
+            });
+          } else if (resData.status === 'fulfilled' && resData.value.data.length === 0) {
+            setHashtagData([]);
+          }
+          // if (resData.status === 'fulfilled') {
+          //   resData.value.data.forEach((tag: string) => {
+          //     setHashtagData((prev) => [...prev, tag]);
+          //   });
+          // } else if (resData.reason.response.data.status === 404) {
+          //   setHashtagData([]);
+          // }
+        }
       }),
     );
   }, [result]);
@@ -49,7 +62,6 @@ function Explore() {
   useEffect(() => {
     setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [getData]);
 
   return (
@@ -86,10 +98,11 @@ function Explore() {
           <div>
             {hashtagData.length !== 0 ? (
               <TagData>
-                {hashtagData.map((data, index) => {
+                {hashtagData.map((tag, index) => {
+                  const tagName = tag.split('#')[1];
                   return (
-                    <p key={`${data.tag}-${index + 1}`}>
-                      <Link to={`/tag/${data.tag}`}>#{data.tag}</Link>
+                    <p key={`${tag}-${index + 1}`}>
+                      <Link to={`/tag/${tagName}`}>{tag}</Link>
                     </p>
                   );
                 })}

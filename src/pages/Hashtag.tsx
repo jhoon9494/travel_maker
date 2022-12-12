@@ -7,8 +7,8 @@ import PostBox from '../components/atoms/PostBox';
 import Loading from '../components/atoms/Loading';
 
 type TagDataType = {
-  img: string;
-  id: string;
+  postImg: string;
+  idx: string;
 };
 
 function Hashtag() {
@@ -20,17 +20,23 @@ function Hashtag() {
   const getData = useCallback(async () => {
     try {
       const res = await axios.get('/api/post/tag', { params: { word: tag } });
-      // setHashtagData(res.data);
-      console.log(res);
+      setIsLoading(false);
+      res.data.forEach((data: { postImg: string; idx: string }) => {
+        const postImg = data.postImg.split(',')[0];
+        const { idx } = data;
+        setHashtagData((prev) => [...prev, { postImg, idx }]);
+      });
     } catch (e: any) {
-      console.log(e);
+      setIsLoading(false);
+      if (e.response.data.status === 500) {
+        setHashtagData([]);
+      }
     }
   }, [tag]);
 
   useEffect(() => {
     setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [getData]);
 
   return (
@@ -38,22 +44,20 @@ function Hashtag() {
       <BackSpaceBtn onClick={() => navigate(-1)} />
       <ResultWrapper>
         <h3>#{tag}</h3>
+        <p>게시글 수 : {hashtagData.length.toLocaleString()}개</p>
         {isLoading ? (
           <Loading />
         ) : (
-          <>
-            <p>게시글 수 : {hashtagData.length.toLocaleString()}개</p>
-
+          // TODO 무한스크롤 적용
+          <DataContainer>
             {hashtagData.length !== 0 ? (
-              <DataContainer>
-                {hashtagData.map((data, index) => {
-                  return <PostBox id={data.id} img={data.img} key={`${data.id}-${index + 1}`} />;
-                })}
-              </DataContainer>
+              hashtagData.map((data, index) => {
+                return <PostBox id={data.idx} img={data.postImg} key={`${data.idx}-${index + 1}`} />;
+              })
             ) : (
               <NoResult>해시태그와 연관된 게시글이 없습니다.</NoResult>
             )}
-          </>
+          </DataContainer>
         )}
       </ResultWrapper>
     </Wrapper>
@@ -96,6 +100,7 @@ const DataContainer = styled.div`
   }
 `;
 
-const NoResult = styled.div`
+const NoResult = styled.p`
+  width: 100%;
   margin-left: 15px;
 `;
