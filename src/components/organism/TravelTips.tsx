@@ -94,12 +94,14 @@ const CheckPointIcon = styled.img`
 `;
 
 const PlaceName = styled.span`
+  text-align: center;
   margin-top: 5px;
   min-width: 60px;
 `;
 
 const TipsContainer = styled.div<{ hide: boolean; leftDist: number; topDist: number }>`
   position: absolute;
+  overflow-wrap: break-word;
   width: 200px;
   padding: 10px;
   border-radius: 5px;
