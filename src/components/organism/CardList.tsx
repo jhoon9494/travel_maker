@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 type TipsType = {
   placeName: string;
-  tip: string;
+  tips: string;
 };
 
 interface IProps {
@@ -33,9 +33,9 @@ function CardList({ list, setList }: IProps) {
   return (
     <Container empty={list.length === 0}>
       {list.length > 0 ? (
-        list.map(({ placeName, tip }, index) => {
+        list.map(({ placeName, tips }, index) => {
           return (
-            <Card placeName={placeName} tip={tip} setPlace={setDeletePlace} key={`${placeName}-${index + 1}-key`} />
+            <Card placeName={placeName} tip={tips} setPlace={setDeletePlace} key={`${placeName}-${index + 1}-key`} />
           );
         })
       ) : (
