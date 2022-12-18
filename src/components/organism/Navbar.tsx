@@ -56,11 +56,17 @@ function Navbar() {
 export default Navbar;
 
 const Container = styled.div`
+  max-width: 935px;
   display: flex;
   align-items: center;
   height: 65px;
   background-color: white;
-  position: relative;
+  margin: 0 auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 998;
 
   > form {
     margin: 0 auto;

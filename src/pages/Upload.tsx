@@ -322,11 +322,10 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding-bottom: 30px;
-  height: 100%;
 `;
 
 const LoadingWrapper = styled.div`
-  height: 100%;
+  height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;

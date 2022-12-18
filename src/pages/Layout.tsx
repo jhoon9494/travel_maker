@@ -41,8 +41,8 @@ const Wrapper = styled.div`
 `;
 
 const Body = styled.div`
-  height: calc(100vh - 65px);
-  overflow-y: scroll;
+  position: relative;
+  top: 65px;
 
   ::-webkit-scrollbar {
     width: 7px; /*스크롤바의 너비*/
