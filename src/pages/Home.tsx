@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BiEdit } from 'react-icons/bi';
 import Loading from '../components/atoms/Loading';
 
@@ -25,26 +25,35 @@ type PostData = {
 function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [postList, setPostList] = useState<PostData[]>([]);
+
+  // 상세 게시글페이지 이동 후 이전 게시글 목록 유지를 위해 세션스토리지를 이용
+  const savedList = sessionStorage.getItem('postList');
+  const [postList, setPostList] = useState<PostData[]>(savedList ? JSON.parse(savedList) : []);
 
   // 무한 스크롤 관련 부분
   const boxRef = useRef<HTMLDivElement>(null);
 
+  const saveScrollYAndNavi = (pathName: string) => {
+    sessionStorage.setItem('mainPageScrollY', String(window.scrollY));
+    sessionStorage.setItem('postList', JSON.stringify(postList));
+    navigate(pathName);
+  };
+
   const getData = useCallback(async () => {
     try {
-      const res = await axios.get('/api/post/list');
       setIsLoading(false);
-      setPostList((prevList) => [...prevList, ...res.data]);
+      // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
+      // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
+      if (!sessionStorage.getItem('postList')) {
+        const res = await axios.get('/api/post/list');
+        setPostList((prevList) => [...prevList, ...res.data]);
+      }
     } catch (e: any) {
+      setIsLoading(false);
       // TODO 무한스크롤로 더이상 받아올 정보가 없는 경우에는 기존에 모아진 배열 그대로 다시 반환하면 될듯
       // 추가로 boxRef.current = null로 변경해서 옵저버 관찰 없애기
     }
   }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-    getData();
-  }, [getData]);
 
   const intersectionObserver = useCallback(
     (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
@@ -59,6 +68,18 @@ function Home() {
     [getData],
   );
 
+  useEffect(() => {
+    setIsLoading(true);
+    getData();
+
+    // 스크롤 위치 복구
+    setTimeout(() => {
+      window.scrollTo({ top: Number(sessionStorage.getItem('mainPageScrollY')) });
+      sessionStorage.removeItem('mainPageScrollY');
+      sessionStorage.removeItem('postList');
+    }, 100);
+  }, [getData]);
+
   // postList가 갱신될 때마다 observer 설정
   useEffect(() => {
     let io;
@@ -72,7 +93,9 @@ function Home() {
     <Wrapper>
       {/* eslint-disable */}
       {isLoading ? (
-        <Loading />
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
       ) : postList.length === 0 ? (
         <EmptyPost>
           <h2>표시할 게시글이 없습니다.</h2>
@@ -87,18 +110,16 @@ function Home() {
                 <Img
                   src={data.postImg.split(',')[0]}
                   alt={`${data.title}-1번째 이미지`}
-                  onClick={() => navigate(`/p/${data.idx}`)}
+                  onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
                 />
                 <PostText>
-                  <H2Tag onClick={() => navigate(`/p/${data.idx}`)}>{data.title}</H2Tag>
-                  <p>
-                    <Link to={`/${data.userId}`}>{data.userId}</Link>
-                  </p>
+                  <H2Tag onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</H2Tag>
+                  <p onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</p>
                   <TagList>
                     {data.hashtags.map((tag) => {
                       const tagName = tag.split('#')[1];
                       return (
-                        <li onClick={() => navigate(`/tag/${tagName}`)} key={`${tagName}`}>
+                        <li onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)} key={`${tagName}`}>
                           {tag}
                         </li>
                       );
@@ -113,18 +134,16 @@ function Home() {
               <Img
                 src={data.postImg.split(',')[0]}
                 alt={`${data.title}-1번째 이미지`}
-                onClick={() => navigate(`/p/${data.idx}`)}
+                onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
               />
               <PostText>
-                <H2Tag onClick={() => navigate(`/p/${data.idx}`)}>{data.title}</H2Tag>
-                <p>
-                  <Link to={`/${data.userId}`}>{data.userId}</Link>
-                </p>
+                <H2Tag onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</H2Tag>
+                <p onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</p>
                 <TagList>
                   {data.hashtags.map((tag) => {
                     const tagName = tag.split('#')[1];
                     return (
-                      <li onClick={() => navigate(`/tag/${tagName}`)} key={`${tagName}`}>
+                      <li onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)} key={`${tagName}`}>
                         {tag}
                       </li>
                     );
@@ -145,12 +164,20 @@ function Home() {
 export default Home;
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: white;
   min-height: 100%;
   justify-content: center;
   align-items: center;
+`;
+
+const LoadingWrapper = styled.div`
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const EmptyPost = styled.div`
@@ -185,6 +212,10 @@ const PostText = styled.div`
   flex-direction: column;
   padding: 25px;
   width: 100%;
+
+  > p {
+    cursor: pointer;
+  }
 `;
 
 const H2Tag = styled.h2`
@@ -207,9 +238,13 @@ const TagList = styled.ul`
 `;
 
 const UploadBtn = styled.button`
-  position: absolute;
-  bottom: 90px;
-  right: 30px;
+  display: block;
+  width: 935px;
+  margin: 0 auto;
+  position: fixed;
+  top: 650px;
+  left: 700px;
+  right: 0;
 
   width: 50px;
   height: 50px;
@@ -217,5 +252,9 @@ const UploadBtn = styled.button`
   > svg {
     width: 100%;
     height: 100%;
+  }
+
+  @media screen and (max-width: 934px) {
+    left: 550px;
   }
 `;
