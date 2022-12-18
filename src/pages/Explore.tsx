@@ -39,21 +39,13 @@ function Explore() {
         }
         // 해시태그 검색 부분
         if (index === 1) {
-          // FIXME 백엔드 에러 뱉는 코드 수정필요
-          if (resData.status === 'fulfilled' && resData.value.data.length > 0) {
+          if (resData.status === 'fulfilled') {
             resData.value.data.forEach((tag: string) => {
               setHashtagData((prev) => [...prev, tag]);
             });
-          } else if (resData.status === 'fulfilled' && resData.value.data.length === 0) {
+          } else if (resData.reason.response.data.status === 500) {
             setHashtagData([]);
           }
-          // if (resData.status === 'fulfilled') {
-          //   resData.value.data.forEach((tag: string) => {
-          //     setHashtagData((prev) => [...prev, tag]);
-          //   });
-          // } else if (resData.reason.response.data.status === 404) {
-          //   setHashtagData([]);
-          // }
         }
       }),
     );
