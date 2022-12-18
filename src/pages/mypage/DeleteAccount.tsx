@@ -1,11 +1,16 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Alert from 'components/atoms/Alert';
 import Input from '../../components/atoms/Input';
 
 function DeleteAccount() {
+  const navigate = useNavigate();
   const [isOk, setIsOk] = useState<boolean>(false);
   const [pw, setPw] = useState<string>('');
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState('');
 
   const handleIsOk = () => {
     setIsOk((curr) => !curr);
@@ -13,7 +18,7 @@ function DeleteAccount() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(
+      const res = await axios.post(
         '/api/sign-out',
         {
           password: pw,
@@ -24,8 +29,14 @@ function DeleteAccount() {
           },
         },
       );
+      if (res.data === 'OK') {
+        navigate('/', { replace: true });
+      }
     } catch (e: any) {
-      console.error(e);
+      if (e.response.data.status === 401) {
+        setAlertText('비밀번호를 다시 확인해주세요.');
+        setAlertOpen(true);
+      }
     }
   };
 
@@ -34,7 +45,7 @@ function DeleteAccount() {
       <WarningBox>
         {!isOk ? (
           <>
-            <p>탈퇴 후 복구할 수 없습니다.</p>
+            <p>탈퇴 후 사진 및 데이터를 복구할 수 없습니다.</p>
             <p>탈퇴 하시겠습니까?</p>
             <DeleteButton onClick={handleIsOk}>탈퇴하기</DeleteButton>
           </>
@@ -55,6 +66,7 @@ function DeleteAccount() {
           </>
         )}
       </WarningBox>
+      {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
     </Wrapper>
   );
 }

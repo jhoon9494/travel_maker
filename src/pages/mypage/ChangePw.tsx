@@ -1,44 +1,67 @@
 import styled from 'styled-components';
-import { useState, FormEvent, FormEventHandler, useContext } from 'react';
+import { useState, FormEvent, FormEventHandler, useContext, useEffect, useCallback } from 'react';
 import ValidateInput from 'components/organism/ValidateInput';
 import Input from 'components/atoms/Input';
 import axios from 'axios';
 import userContext from 'context/userContext';
+import { useNavigate } from 'react-router-dom';
+import Confirm from 'components/atoms/Confirm';
+import Alert from 'components/atoms/Alert';
 import { validatePw } from '../../utils/validate';
 import SubmitBtn from '../../components/atoms/SubmitBtn';
 
 function ChangePw() {
+  const navigate = useNavigate();
   const loggedUser = useContext(userContext);
   const [currPw, setCurrPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+  const [alertOpen, setAlertpOpen] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // FIXME 비밀번호 변경 후 로그인하면 비밀번호 일치하지 않는다고 나옴
-    try {
-      const res = await axios.post(
-        '/api/user/pass',
-        {
-          nowPassword: currPw,
-          newPassword: newPw,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
+  const submitFn = useCallback(async () => {
+    if (validatePw(newPw) && newPw === confirmPw) {
+      try {
+        const res = await axios.post(
+          '/api/user/pass',
+          {
+            nowPassword: currPw,
+            newPassword: newPw,
           },
-        },
-      );
-      console.log(res);
-    } catch (error: any) {
-      console.error(error);
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        if (res.data === 'OK') {
+          navigate('/user', { replace: true });
+        }
+      } catch (error: any) {
+        setConfirmResult(null);
+        setConfirmOpen(false);
+        if (error.response.data.status === 401) {
+          setAlertpOpen(true);
+        }
+      }
     }
+  }, [confirmPw, currPw, newPw, navigate]);
+
+  const handleConfirm = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setConfirmOpen(true);
   };
+
+  useEffect(() => {
+    if (confirmResult) {
+      submitFn();
+    }
+  }, [confirmResult, submitFn]);
 
   return (
     <Wrapper>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleConfirm}>
         <div>{loggedUser.id}</div>
         <Input
           id="currPw"
@@ -68,8 +91,18 @@ function ChangePw() {
           validateValue="비밀번호 동일"
           validationCheck={confirmPw.length >= 8 && newPw === confirmPw}
         />
-        <SubmitBtn value="수정하기" />
+        <SubmitBtn value="변경하기" />
       </Form>
+      {alertOpen && <Alert text="비밀번호를 다시 확인해세요." open={setAlertpOpen} />}
+      {confirmOpen && (
+        <Confirm
+          text="비밀번호를 변경하시겠습니까?"
+          yes="변경하기"
+          no="취소"
+          open={setConfirmOpen}
+          setResult={setConfirmResult}
+        />
+      )}
     </Wrapper>
   );
 }
