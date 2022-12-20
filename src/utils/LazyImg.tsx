@@ -36,7 +36,5 @@ export default function LazyImg({ src, alt, onClick }: LazyImgProps) {
     }
   }, [lazyLoadObserver]);
 
-  // eslint-disable-next-line
-  // return <>{isLoad ? <Img ref={inputRef} src={src} alt={alt} onClick={onClick} /> : <NoImage />}</>;
   return <Img ref={inputRef} src={isLoad ? src : '/icons/noImage.png'} alt={alt} onClick={onClick} />;
 }
