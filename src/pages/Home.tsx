@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit } from 'react-icons/bi';
+import LazyImg from 'utils/LazyImg';
 import Loading from '../components/atoms/Loading';
 
 type FiguresType = {
@@ -25,13 +26,15 @@ type PostData = {
 function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  // lazyLoad 관련 부분
+  const [isImgLoad, setIsImgLoad] = useState(false);
 
   // 상세 게시글페이지 이동 후 이전 게시글 목록 유지를 위해 세션스토리지를 이용
   const savedList = sessionStorage.getItem('postList');
   const [postList, setPostList] = useState<PostData[]>(savedList ? JSON.parse(savedList) : []);
 
   // 무한 스크롤 관련 부분
-  const boxRef = useRef<HTMLDivElement>(null);
+  const lastIdxRef = useRef<HTMLImageElement>(null);
 
   const saveScrollYAndNavi = (pathName: string) => {
     sessionStorage.setItem('mainPageScrollY', String(window.scrollY));
@@ -46,7 +49,17 @@ function Home() {
       // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
       if (!sessionStorage.getItem('postList')) {
         const res = await axios.get('/api/post/list');
-        setPostList((prevList) => [...prevList, ...res.data]);
+        const postData = res.data.map((data: PostData) => ({
+          idx: data.idx,
+          title: data.title,
+          content: data.content,
+          like: data.like,
+          userId: data.userId,
+          figures: data.figures,
+          postImg: data.postImg.split(',')[0],
+          hashtags: data.hashtags,
+        }));
+        setPostList((prevList) => [...prevList, ...postData]);
       }
     } catch (e: any) {
       setIsLoading(false);
@@ -62,6 +75,7 @@ function Home() {
         if (entry.isIntersecting) {
           observer.unobserve(entry.target); // entry 관찰 해제
           getData(); // 데이터 가져오기
+          setIsImgLoad(true);
         }
       });
     },
@@ -83,9 +97,9 @@ function Home() {
   // postList가 갱신될 때마다 observer 설정
   useEffect(() => {
     let io;
-    if (boxRef.current) {
+    if (lastIdxRef.current) {
       io = new IntersectionObserver(intersectionObserver); // IntersectionObserver
-      io.observe(boxRef.current);
+      io.observe(lastIdxRef.current);
     }
   }, [postList, intersectionObserver]);
 
@@ -106,9 +120,10 @@ function Home() {
           // 마지막 게시글을 담고 있는 컴포넌트에 무한스크롤을 적용시키기 위해 ref를 담아줌
           if (postList.length - 1 === index) {
             return (
-              <Post ref={boxRef} key={`${data.title}-${index + 1}-key`}>
+              <Post key={`${data.title}-${index + 1}-key`}>
                 <Img
-                  src={data.postImg.split(',')[0]}
+                  ref={lastIdxRef}
+                  src={isImgLoad ? data.postImg : '/icons/noImage.png'}
                   alt={`${data.title}-1번째 이미지`}
                   onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
                 />
@@ -131,8 +146,8 @@ function Home() {
           }
           return (
             <Post key={`${data.title}-${index + 1}-key`}>
-              <Img
-                src={data.postImg.split(',')[0]}
+              <LazyImg
+                src={data.postImg}
                 alt={`${data.title}-1번째 이미지`}
                 onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
               />
@@ -168,7 +183,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
-  min-height: 100%;
   justify-content: center;
   align-items: center;
 `;
@@ -181,7 +195,7 @@ const LoadingWrapper = styled.div`
 `;
 
 const EmptyPost = styled.div`
-  flex-grow: 1;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -202,7 +216,7 @@ const Post = styled.div`
 `;
 
 const Img = styled.img`
-  width: 370px;
+  min-width: 370px;
   height: 300px;
   cursor: pointer;
 `;
@@ -242,7 +256,7 @@ const UploadBtn = styled.button`
   width: 935px;
   margin: 0 auto;
   position: fixed;
-  top: 650px;
+  top: 80vh;
   left: 700px;
   right: 0;
 
