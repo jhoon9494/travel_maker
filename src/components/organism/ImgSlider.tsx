@@ -79,6 +79,6 @@ const ImgContainer = styled.div<{ length: number; dist: number }>`
 `;
 
 const Img = styled.img`
-  width: 550px;
+  min-width: 550px;
   height: 390px;
 `;
