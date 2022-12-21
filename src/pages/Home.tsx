@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit } from 'react-icons/bi';
-import LazyImg from 'utils/LazyImg';
+import LazyImg from 'components/atoms/LazyImg';
 import Loading from '../components/atoms/Loading';
 
 type FiguresType = {
@@ -26,15 +26,13 @@ type PostData = {
 function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  // lazyLoad 관련 부분
-  const [isImgLoad, setIsImgLoad] = useState(false);
 
   // 상세 게시글페이지 이동 후 이전 게시글 목록 유지를 위해 세션스토리지를 이용
   const savedList = sessionStorage.getItem('postList');
   const [postList, setPostList] = useState<PostData[]>(savedList ? JSON.parse(savedList) : []);
 
   // 무한 스크롤 관련 부분
-  const lastIdxRef = useRef<HTMLImageElement>(null);
+  const lastIdxRef = useRef<HTMLDivElement>(null);
 
   const saveScrollYAndNavi = (pathName: string) => {
     sessionStorage.setItem('mainPageScrollY', String(window.scrollY));
@@ -75,7 +73,6 @@ function Home() {
         if (entry.isIntersecting) {
           observer.unobserve(entry.target); // entry 관찰 해제
           getData(); // 데이터 가져오기
-          setIsImgLoad(true);
         }
       });
     },
@@ -120,13 +117,15 @@ function Home() {
           // 마지막 게시글을 담고 있는 컴포넌트에 무한스크롤을 적용시키기 위해 ref를 담아줌
           if (postList.length - 1 === index) {
             return (
-              <Post key={`${data.title}-${index + 1}-key`}>
-                <Img
-                  ref={lastIdxRef}
-                  src={isImgLoad ? data.postImg : '/icons/noImage.png'}
-                  alt={`${data.title}-1번째 이미지`}
-                  onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
-                />
+              <Post ref={lastIdxRef} key={`${data.title}-${index + 1}-key`}>
+                <ImgWrapper>
+                  <LazyImg
+                    src={data.postImg}
+                    alt={`${data.title}-1번째 이미지`}
+                    onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
+                  />
+                </ImgWrapper>
+
                 <PostText>
                   <H2Tag onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</H2Tag>
                   <p onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</p>
@@ -146,11 +145,14 @@ function Home() {
           }
           return (
             <Post key={`${data.title}-${index + 1}-key`}>
-              <LazyImg
-                src={data.postImg}
-                alt={`${data.title}-1번째 이미지`}
-                onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
-              />
+              <ImgWrapper>
+                <LazyImg
+                  src={data.postImg}
+                  alt={`${data.title}-1번째 이미지`}
+                  onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
+                />
+              </ImgWrapper>
+
               <PostText>
                 <H2Tag onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</H2Tag>
                 <p onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</p>
@@ -213,33 +215,62 @@ const Post = styled.div`
   width: 800px;
   height: 300px;
   margin: 30px 60px;
+
+  @media screen and (max-width: 700px) {
+    width: 600px;
+    height: 225px;
+  }
+
+  @media screen and (max-width: 550px) {
+    flex-direction: column;
+    width: 500px;
+    height: 600px;
+  }
 `;
 
-const Img = styled.img`
-  min-width: 370px;
-  height: 300px;
+const ImgWrapper = styled.div`
+  flex: 2 2 0;
   cursor: pointer;
+
+  > img {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 550px) {
+    height: 80%;
+    flex: none;
+  }
 `;
 
 const PostText = styled.div`
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   padding: 25px;
-  width: 100%;
 
   > p {
+    flex: 1 1 0;
     cursor: pointer;
+  }
+
+  @media screen and (max-width: 550px) {
+    flex: none;
+
+    > p {
+      flex: none;
+    }
   }
 `;
 
 const H2Tag = styled.h2`
-  margin-bottom: 15px;
   cursor: pointer;
+  flex-basis: 40px;
 `;
 
 const TagList = styled.ul`
+  flex: 1 1 0;
   display: flex;
-  margin-top: 120px;
   flex-wrap: wrap;
 
   > li {
@@ -256,7 +287,7 @@ const UploadBtn = styled.button`
   width: 935px;
   margin: 0 auto;
   position: fixed;
-  top: 80vh;
+  bottom: 13vh;
   left: 700px;
   right: 0;
 
@@ -268,7 +299,11 @@ const UploadBtn = styled.button`
     height: 100%;
   }
 
-  @media screen and (max-width: 934px) {
+  @media screen and (max-width: 700px) {
     left: 550px;
+  }
+
+  @media screen and (max-width: 550px) {
+    left: 350px;
   }
 `;
