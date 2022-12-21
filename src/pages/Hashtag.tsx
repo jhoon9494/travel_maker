@@ -95,8 +95,25 @@ const DataContainer = styled.div`
   padding: 0 20px;
 
   > div {
-    min-width: 250px;
-    min-height: 250px;
+    width: 250px;
+    height: 250px;
+  }
+
+  @media screen and (max-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+
+    > div {
+      width: 270px;
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    grid-template-columns: 1fr;
+
+    > div {
+      width: 400px;
+      height: 350px;
+    }
   }
 `;
 

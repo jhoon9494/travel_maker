@@ -81,6 +81,12 @@ const Logo = styled.img`
   width: 164px;
   height: 30px;
   margin: 16px;
+
+  @media screen and (max-width: 550px) {
+    width: 110px;
+    height: 20px;
+    margin: 10px;
+  }
 `;
 
 const MenuBtn = styled.button`
