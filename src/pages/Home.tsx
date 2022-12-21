@@ -82,13 +82,10 @@ function Home() {
   useEffect(() => {
     setIsLoading(true);
     getData();
-
     // 스크롤 위치 복구
-    setTimeout(() => {
-      window.scrollTo({ top: Number(sessionStorage.getItem('mainPageScrollY')) });
-      sessionStorage.removeItem('mainPageScrollY');
-      sessionStorage.removeItem('postList');
-    }, 100);
+    window.scrollTo({ top: Number(sessionStorage.getItem('mainPageScrollY')) });
+    sessionStorage.removeItem('mainPageScrollY');
+    sessionStorage.removeItem('postList');
   }, [getData]);
 
   // postList가 갱신될 때마다 observer 설정
