@@ -1,12 +1,7 @@
 import { useCallback, useRef, useState, MouseEventHandler, useEffect } from 'react';
 import styled from 'styled-components';
 
-const Img = styled.img`
-  min-width: 370px;
-  height: 300px;
-  cursor: pointer;
-  background-color: gray;
-`;
+const Img = styled.img``;
 
 interface LazyImgProps {
   src: string;
