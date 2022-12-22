@@ -20,18 +20,13 @@ function UserPage() {
   const navigate = useNavigate();
   const [postData, setPostData] = useState<PostDataProps[]>([]);
   const [userImage, setUserImage] = useState<string>('');
-  const [followerList, setFollowerList] = useState([]);
-  const [followingList, setFollowingList] = useState([]);
+  const [followerNumber, setFollowerNumber] = useState(0);
+  const [followingNumber, setFollowingNumber] = useState(0);
   const [deletePostIndex, setDeletePostIndex] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
-  const getData = useCallback(() => {
-    Promise.allSettled([
-      axios.get(`/api/post/user/list/${userId}`),
-      axios.get(`/api/info/${userId}`),
-      axios.get(`/api/follow/follower/${userId}`),
-      axios.get(`/api/follow/following/${userId}`),
-    ]).then((res) => {
+  const getInitData = useCallback(() => {
+    Promise.allSettled([axios.get(`/api/post/user/list/${userId}`), axios.get(`/api/info/${userId}`)]).then((res) => {
       res.forEach((resData, index) => {
         // 게시글 정보
         if (index === 0) {
@@ -46,44 +41,36 @@ function UserPage() {
         if (index === 1) {
           if (resData.status === 'fulfilled') {
             setUserImage(resData.value.data.profileImg);
+            setFollowerNumber(resData.value.data.follower);
+            setFollowingNumber(resData.value.data.following);
           } else if (resData.reason.response.status === 404) {
             navigate('/*', { replace: true });
           }
-        }
-
-        // 팔로워 정보
-        if (index === 2) {
-          console.log(resData);
-          if (resData.status === 'fulfilled') {
-            setFollowerList(resData.value.data);
-          } // TODO null_value 일때 에러처리 해주기
-        }
-
-        // 팔로잉 정보
-        if (index === 3) {
-          // FIXME 팔로잉 유저 목록 안뜸
-          console.log(resData);
-          if (resData.status === 'fulfilled') {
-            setFollowingList(resData.value.data);
-          } // TODO null_value 일때 에러처리 해주기
         }
       });
       setIsLoading(false);
     });
   }, [userId, navigate]);
 
+  const getUserData = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/info/${userId}`);
+      setFollowerNumber(res.data.follower);
+      setFollowingNumber(res.data.following);
+    } catch (e: any) {
+      console.log(e);
+    }
+  }, [userId]);
+
   useEffect(() => {
-    getData();
-  }, [getData, deletePostIndex]);
+    getInitData();
+  }, [getInitData, deletePostIndex]);
 
   const handleFollow = async () => {
     try {
       const res = await axios.get(`/api/follow/${userId}`);
-      console.log(res);
       if (res.data === 'OK') {
-        // TODO 팔로우 혹은 유저정보만 불러오게 하는게 나을듯
-        // TODO 유저정보랑 게시글정보 불러오는 함수 나누기
-        getData();
+        getUserData();
       }
     } catch (e: any) {
       console.error(e);
@@ -104,11 +91,11 @@ function UserPage() {
             <InfoWrapper>게시물 {postData?.length}</InfoWrapper>
             <InfoWrapper>
               <Link to={`/${userId}/follower`}>팔로워 </Link>
-              {followerList.length.toLocaleString()}
+              {followerNumber}
             </InfoWrapper>
             <InfoWrapper>
               <Link to={`/${userId}/follow`}>팔로우 </Link>
-              {followingList.length.toLocaleString()}
+              {followingNumber}
             </InfoWrapper>
           </div>
         </UserInfo>
