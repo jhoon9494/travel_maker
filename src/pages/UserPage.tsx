@@ -23,7 +23,7 @@ function UserPage() {
   const [followerList, setFollowerList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
   const [deletePostIndex, setDeletePostIndex] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getData = useCallback(() => {
     Promise.allSettled([
@@ -32,7 +32,6 @@ function UserPage() {
       axios.get(`/api/follow/follower/${userId}`),
       axios.get(`/api/follow/following/${userId}`),
     ]).then((res) => {
-      setIsLoading(false);
       res.forEach((resData, index) => {
         // 게시글 정보
         if (index === 0) {
@@ -54,23 +53,26 @@ function UserPage() {
 
         // 팔로워 정보
         if (index === 2) {
+          console.log(resData);
           if (resData.status === 'fulfilled') {
             setFollowerList(resData.value.data);
-          }
+          } // TODO null_value 일때 에러처리 해주기
         }
 
         // 팔로잉 정보
         if (index === 3) {
+          // FIXME 팔로잉 유저 목록 안뜸
+          console.log(resData);
           if (resData.status === 'fulfilled') {
             setFollowingList(resData.value.data);
-          }
+          } // TODO null_value 일때 에러처리 해주기
         }
       });
+      setIsLoading(false);
     });
   }, [userId, navigate]);
 
   useEffect(() => {
-    setIsLoading(true);
     getData();
   }, [getData, deletePostIndex]);
 
@@ -184,20 +186,39 @@ const PostContainer = styled.div<{ isLoading: boolean }>`
   display: grid;
   grid-template-columns: ${({ isLoading }) => (isLoading ? '1fr' : 'repeat(3, 1fr)')};
   grid-gap: 20px;
-  margin-top: 20px;
-  margin-bottom: 30px;
+  margin: 20px auto 30px;
   padding: 0 20px;
 
   > div {
-    min-width: 250px;
-    min-height: 250px;
+    width: 250px;
+    height: 250px;
+  }
+
+  @media screen and (max-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+
+    > div {
+      width: 270px;
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    grid-template-columns: 1fr;
+
+    > div {
+      width: 400px;
+      height: 350px;
+    }
   }
 `;
-
 const UploadBtn = styled.button`
-  position: absolute;
-  bottom: 90px;
-  right: 30px;
+  display: block;
+  width: 935px;
+  margin: 0 auto;
+  position: fixed;
+  top: 650px;
+  left: 700px;
+  right: 0;
 
   width: 50px;
   height: 50px;
@@ -205,5 +226,9 @@ const UploadBtn = styled.button`
   > svg {
     width: 100%;
     height: 100%;
+  }
+
+  @media screen and (max-width: 934px) {
+    left: 550px;
   }
 `;

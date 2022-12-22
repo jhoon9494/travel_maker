@@ -15,27 +15,26 @@ function Hashtag() {
   const { tag } = useParams();
   const navigate = useNavigate();
   const [hashtagData, setHashtagData] = useState<TagDataType[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getData = useCallback(async () => {
     try {
       const res = await axios.get('/api/post/tag', { params: { word: tag } });
-      setIsLoading(false);
       res.data.forEach((data: { postImg: string; idx: string }) => {
         const postImg = data.postImg.split(',')[0];
         const { idx } = data;
         setHashtagData((prev) => [...prev, { postImg, idx }]);
       });
-    } catch (e: any) {
       setIsLoading(false);
+    } catch (e: any) {
       if (e.response.data.status === 500) {
         setHashtagData([]);
       }
+      setIsLoading(false);
     }
   }, [tag]);
 
   useEffect(() => {
-    setIsLoading(true);
     getData();
   }, [getData]);
 

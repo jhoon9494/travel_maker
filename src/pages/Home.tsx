@@ -25,16 +25,14 @@ type PostData = {
 
 function Home() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-
-  // 상세 게시글페이지 이동 후 이전 게시글 목록 유지를 위해 세션스토리지를 이용
-  const savedList = sessionStorage.getItem('postList');
-  const [postList, setPostList] = useState<PostData[]>(savedList ? JSON.parse(savedList) : []);
+  const [isLoading, setIsLoading] = useState(true);
+  const [postList, setPostList] = useState<PostData[]>([]);
 
   // 무한 스크롤 관련 부분
   const lastIdxRef = useRef<HTMLDivElement>(null);
 
   const saveScrollYAndNavi = (pathName: string) => {
+    // 상세 게시글페이지 이동 후 이전 게시글 목록 및 스크롤 위치 값을 유지하기 위해 세션스토리지를 이용
     sessionStorage.setItem('mainPageScrollY', String(window.scrollY));
     sessionStorage.setItem('postList', JSON.stringify(postList));
     navigate(pathName);
@@ -42,7 +40,6 @@ function Home() {
 
   const getData = useCallback(async () => {
     try {
-      setIsLoading(false);
       // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
       // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
       if (!sessionStorage.getItem('postList')) {
@@ -58,7 +55,10 @@ function Home() {
           hashtags: data.hashtags,
         }));
         setPostList((prevList) => [...prevList, ...postData]);
+      } else {
+        setPostList(JSON.parse(sessionStorage.getItem('postList') as string));
       }
+      setIsLoading(false);
     } catch (e: any) {
       setIsLoading(false);
       // TODO 무한스크롤로 더이상 받아올 정보가 없는 경우에는 기존에 모아진 배열 그대로 다시 반환하면 될듯
@@ -80,7 +80,6 @@ function Home() {
   );
 
   useEffect(() => {
-    setIsLoading(true);
     getData();
     // 스크롤 위치 복구
     window.scrollTo({ top: Number(sessionStorage.getItem('mainPageScrollY')) });

@@ -15,7 +15,7 @@ function Explore() {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState<SearchDataType[]>([]);
   const [hashtagData, setHashtagData] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getData = useCallback(() => {
     setSearchData([]);
@@ -26,7 +26,6 @@ function Explore() {
       axios.get(`/api/post/tag/${result}`),
     ]).then((res) =>
       res.forEach((resData, index) => {
-        setIsLoading(false);
         // 유저 검색 부분
         if (index === 0) {
           if (resData.status === 'fulfilled') {
@@ -49,10 +48,10 @@ function Explore() {
         }
       }),
     );
+    setIsLoading(false);
   }, [result]);
 
   useEffect(() => {
-    setIsLoading(true);
     getData();
   }, [getData]);
 
