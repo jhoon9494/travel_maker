@@ -4,6 +4,8 @@ import { VscSettingsGear } from 'react-icons/vsc';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import userContext from 'context/userContext';
 import axios from 'axios';
+import Loading from 'components/atoms/Loading';
+import Alert from 'components/atoms/Alert';
 import Input from '../../components/atoms/Input';
 import ValidateInput from '../../components/organism/ValidateInput';
 import { validatePhone, validateEmail } from '../../utils/validate';
@@ -18,10 +20,12 @@ function EditProfile() {
   const [password, setPassword] = useState('');
   const [previewImg, setPreviewImg] = useState('');
   const [profileImg, setProfileImg] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Confirm 관련
+  // Confirm, Alert
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const loggedUser = useContext(userContext);
 
@@ -44,7 +48,7 @@ function EditProfile() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsLoading(true);
     // 메모리 누수 방지를 위해 revokeObjectURL 메소드로 url을 무효화 시켜줌
     URL.revokeObjectURL(previewImg);
 
@@ -61,34 +65,32 @@ function EditProfile() {
       { type: 'application/json' },
     );
 
-    // 1. 기본 이미지 그대로 두고 정보만 수정, previewImg == DEFAULT, profileImg == null
-    // 2. 이미지, 정보 둘다 수정, previewImg !== DEFAULT, profileImg !== null
-    // 3. 변경된 이미지 그대로 두고 정보만 수정 previewImg !== DEFAULT, profileImg == null
-
-    formData.append('userData', userData);
+    formData.append('user', userData);
     if (previewImg === DEFAULT_PROFILE_URL) {
+      // 프로필 이미지가 기본 이미지 그대로인 경우
       formData.append('profileImg', DEFAULT_PROFILE_URL);
     } else {
-      // FIXME 의도대로 동작은 하는데 ts자체적으로 에러나서 null 값을 제대로 못줌, 스트링으로 줄수있는데 어떻게 하는게 나을지?
-      formData.append('profileImg', profileImg || 'null');
+      // 프로필 이미지, 회원 정보 모두 수정 or 프로필 이미지 (기본 이미지 X) 변경 X + 회원 정보만 수정
+      formData.append('profileImg', profileImg || '');
     }
-    // try {
-    //   const res = await axios.post(
-    //     '/api/user',
-    //     { formData },
-    //     {
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data',
-    //       },
-    //     },
-    //   );
+    try {
+      const res = await axios.post('/api/user', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-    // TODO api 요청이 정상적으로 이루어졌다면 수정된 데이터 받아와서 state 업데이트 시켜주거나, 유저정보 api 호출 한번 더 해서 state 변경시켜주기
-    // console.log(res);
-
-    // } catch (error: any) {
-    //   console.error(error);
-    // }
+      if (res.data === 'OK') {
+        getUserData();
+        setPassword('');
+        setIsLoading(false);
+      }
+    } catch (error: any) {
+      if (error.response.data.status === 401) {
+        setAlertOpen(true);
+      }
+      setIsLoading(false);
+    }
   };
 
   const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
@@ -164,7 +166,13 @@ function EditProfile() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <SubmitBtn value="수정하기" />
+        {isLoading ? (
+          <LoadingWrapper>
+            <Loading />
+          </LoadingWrapper>
+        ) : (
+          <SubmitBtn value="수정하기" />
+        )}
       </Form>
       {confirmOpen && (
         <Confirm
@@ -175,6 +183,7 @@ function EditProfile() {
           no="취소"
         />
       )}
+      {alertOpen && <Alert text="비밀번호가 일치하지 않습니다." open={setAlertOpen} />}
     </Wrapper>
   );
 }
@@ -222,4 +231,13 @@ const CustomGear = styled(VscSettingsGear)`
 
 const ImgDeleteBtn = styled.button`
   color: #4dabf7;
+`;
+
+const LoadingWrapper = styled.div`
+  > div {
+    margin-top: 20px;
+    > span {
+      display: none;
+    }
+  }
 `;
