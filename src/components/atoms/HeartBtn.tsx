@@ -1,63 +1,62 @@
 import axios from 'axios';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
 import { debounce } from 'lodash';
-
-type TravelTips = {
-  placeName: string;
-  tips: string;
-};
-
-type FiguresType = {
-  recommend: number;
-  emotion: number;
-  revisit: number;
-};
-
-interface PostData {
-  id: string;
-  postImg: string;
-  recommendRoutes: TravelTips[] | [];
-  title: string;
-  content: string;
-  hashTags: string[];
-  figures: FiguresType;
-  like: number;
-  userId: string;
-}
+import { useParams } from 'react-router-dom';
 
 interface IProps {
-  like: number;
-  setLike: Dispatch<SetStateAction<PostData>>;
+  heart: number;
+  setStatus: Dispatch<SetStateAction<boolean | null>>;
 }
 
-function HeartBtn({ like, setLike }: IProps) {
+function HeartBtn({ heart, setStatus }: IProps) {
   // TODO 내가 좋아요 누른 상태인지 체크하여 boolean 초기값 설정해주기
   const [heartStatus, setHeartStatus] = useState<boolean>(false);
   const { id } = useParams();
 
-  const debounceLike = useMemo(() => {
-    return debounce(async (status) => {
-      setHeartStatus(status);
-      if (status) {
-        await axios.get(`/api/post/like?idx=${id}&like=${like + 1}`);
-        setLike((prev) => ({ ...prev, like: like + 1 }));
-      } else {
-        await axios.get(`/api/post/like?idx=${id}&like=${like - 1}`);
-        setLike((prev) => ({ ...prev, like: like - 1 }));
+  const handlelike = useCallback(async () => {
+    try {
+      const res = await axios.get('/api/post/unlike', {
+        params: {
+          idx: id,
+        },
+      });
+      if (res.data === 'OK') {
+        setStatus(false);
       }
-    }, 100);
-  }, [setHeartStatus, id, like, setLike]);
+    } catch (e: any) {
+      console.log(e);
+    }
+    setHeartStatus(false);
+  }, [id, setStatus]);
+
+  const handleUnlike = useCallback(async () => {
+    try {
+      const res = await axios.get('/api/post/like', {
+        params: {
+          idx: id,
+        },
+      });
+      if (res.data === 'OK') {
+        setStatus(true);
+      }
+    } catch (e: any) {
+      console.log(e.response.data.message);
+    }
+    setHeartStatus(true);
+  }, [id, setStatus]);
+
+  const debounceLike = debounce(handlelike, 100);
+  const debounceUnlike = debounce(handleUnlike, 100);
 
   return (
     <HeartContainer>
       {heartStatus ? (
-        <ImgContainer src="/icons/color-heart.png" alt="heartImg" onClick={() => debounceLike(false)} />
+        <ImgContainer src="/icons/color-heart.png" alt="heartImg" onClick={debounceLike} />
       ) : (
-        <ImgContainer src="/icons/empty-heart.png" alt="emptyHeartImg" onClick={() => debounceLike(true)} />
+        <ImgContainer src="/icons/empty-heart.png" alt="emptyHeartImg" onClick={debounceUnlike} />
       )}
-      <span>{like}</span>
+      <span>{heart}</span>
     </HeartContainer>
   );
 }
