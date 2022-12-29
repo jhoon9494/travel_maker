@@ -27,7 +27,7 @@ interface PostData {
   content: string;
   hashTags: string[];
   figures: FiguresType;
-  like: number;
+  heart: number;
   userId: string;
 }
 
@@ -43,7 +43,7 @@ const initialSet: PostData = {
     emotion: 0,
     revisit: 0,
   },
-  like: 0,
+  heart: 0,
   userId: '',
 };
 
@@ -64,6 +64,7 @@ function createContent(content: string) {
 
 function DetailPage() {
   const [data, setData] = useState<PostData>(initialSet);
+  const [heartStatus, setHeartStatus] = useState<boolean | null>(null);
   const [imgList, setImgList] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -84,7 +85,7 @@ function DetailPage() {
 
   useEffect(() => {
     getData();
-  }, [getData, data.like]);
+  }, [getData, heartStatus]);
 
   return (
     <Wrapper>
@@ -93,8 +94,7 @@ function DetailPage() {
         <PostContainer>
           <ImgSlider img={imgList} />
           {/* TODO 내가 좋아요 누른상태인지 체크하기 */}
-          {/* TODO 좋아요 누른 상태인 경우 해제만 가능하도록 변경 or 좋아요 누를때 이미 좋아요 눌렀다고 알려주기? */}
-          <HeartBtn like={data.like} setLike={setData} />
+          <HeartBtn heart={data.heart} setStatus={setHeartStatus} />
           {data.recommendRoutes.length !== 0 ? (
             <TravelTips tips={data.recommendRoutes} />
           ) : (

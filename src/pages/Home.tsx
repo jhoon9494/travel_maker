@@ -16,7 +16,7 @@ type PostData = {
   idx: string;
   title: string;
   content: string;
-  like: number;
+  heart: number;
   userId: string;
   figures: FiguresType;
   postImg: string;
@@ -48,7 +48,7 @@ function Home() {
           idx: data.idx,
           title: data.title,
           content: data.content,
-          like: data.like,
+          heart: data.heart,
           userId: data.userId,
           figures: data.figures,
           postImg: data.postImg.split(',')[0],
