@@ -24,9 +24,14 @@ function UserPage() {
   const [followingNumber, setFollowingNumber] = useState(0);
   const [deletePostIndex, setDeletePostIndex] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [followStatus, setFollowStatus] = useState<boolean>(false);
 
   const getInitData = useCallback(() => {
-    Promise.allSettled([axios.get(`/api/post/user/list/${userId}`), axios.get(`/api/info/${userId}`)]).then((res) => {
+    Promise.allSettled([
+      axios.get(`/api/post/user/list/${userId}`),
+      axios.get(`/api/info/${userId}`),
+      axios.get(`/api/follow/check/${userId}`),
+    ]).then((res) => {
       res.forEach((resData, index) => {
         // 게시글 정보
         if (index === 0) {
@@ -47,20 +52,49 @@ function UserPage() {
             navigate('/*', { replace: true });
           }
         }
+
+        // 팔로우 상황
+        if (index === 2) {
+          if (resData.status === 'fulfilled') {
+            // 팔로우하지 않은 상태
+            setFollowStatus(false);
+          } else if (resData.reason.response.status === 403) {
+            // 이미 팔로우 중인 상태
+            setFollowStatus(true);
+          }
+        }
       });
       setIsLoading(false);
     });
   }, [userId, navigate]);
 
-  const getUserData = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/info/${userId}`);
-      setFollowerNumber(res.data.follower);
-      setFollowingNumber(res.data.following);
-    } catch (e: any) {
-      console.log(e);
-    }
-  }, [userId]);
+  const getUserData = useCallback(() => {
+    Promise.allSettled([axios.get(`/api/info/${userId}`), axios.get(`/api/follow/check/${userId}`)]).then((res) => {
+      res.forEach((resData, index) => {
+        // 유저 정보
+        if (index === 0) {
+          if (resData.status === 'fulfilled') {
+            setUserImage(resData.value.data.profileImg);
+            setFollowerNumber(resData.value.data.follower);
+            setFollowingNumber(resData.value.data.following);
+          } else if (resData.reason.response.status === 404) {
+            navigate('/*', { replace: true });
+          }
+        }
+
+        // 팔로우 상황
+        if (index === 1) {
+          if (resData.status === 'fulfilled') {
+            // 팔로우하지 않은 상태
+            setFollowStatus(false);
+          } else if (resData.reason.response.status === 403) {
+            // 이미 팔로우 중인 상태
+            setFollowStatus(true);
+          }
+        }
+      });
+    });
+  }, [userId, navigate]);
 
   useEffect(() => {
     getInitData();
@@ -77,6 +111,17 @@ function UserPage() {
     }
   };
 
+  const handleUnFollow = async () => {
+    try {
+      const res = await axios.get(`/api/follow/cancel/${userId}`);
+      if (res.data === 'OK') {
+        getUserData();
+      }
+    } catch (e: any) {
+      console.error(e);
+    }
+  };
+
   return (
     <Container>
       <UserContainer>
@@ -84,7 +129,11 @@ function UserPage() {
         <UserInfo>
           <h2>
             {userId}
-            {id !== userId && <FollowBtn onClick={handleFollow}>팔로우</FollowBtn>}
+            {id !== userId && (
+              <FollowBtn onClick={followStatus ? handleUnFollow : handleFollow} status={followStatus}>
+                {followStatus ? '해제하기' : '팔로우'}
+              </FollowBtn>
+            )}
           </h2>
 
           <div>
@@ -153,14 +202,14 @@ const UserInfo = styled.div`
   margin: 20px 0 20px 60px;
 `;
 
-const FollowBtn = styled.button`
+const FollowBtn = styled.button<{ status: boolean }>`
   width: 80px;
   height: 40px;
   margin-left: 25px;
   color: white;
   font-size: 18px;
   border-radius: 5px;
-  background-color: ${GlobalColor.mainColor};
+  background-color: ${({ status }) => (status ? '#8e8e8e' : GlobalColor.mainColor)};
 `;
 
 const InfoWrapper = styled.span`
