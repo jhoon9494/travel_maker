@@ -6,7 +6,7 @@ const Img = styled.img``;
 interface LazyImgProps {
   src: string;
   alt: string;
-  onClick: MouseEventHandler<HTMLImageElement> | undefined;
+  onClick?: MouseEventHandler<HTMLImageElement>;
 }
 
 export default function LazyImg({ src, alt, onClick }: LazyImgProps) {
@@ -33,3 +33,9 @@ export default function LazyImg({ src, alt, onClick }: LazyImgProps) {
 
   return <Img ref={inputRef} src={isLoad ? src : '/icons/noImage.png'} alt={alt} onClick={onClick} />;
 }
+
+const defaultProps = {
+  onClick: undefined,
+};
+
+LazyImg.defaultProps = defaultProps;
