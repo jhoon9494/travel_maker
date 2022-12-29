@@ -1,23 +1,28 @@
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { BsThreeDots } from 'react-icons/bs';
-import { useCallback, useEffect, useState, Dispatch, SetStateAction } from 'react';
+import { useCallback, useEffect, useState, Dispatch, SetStateAction, useRef } from 'react';
 import axios from 'axios';
 import Confirm from './Confirm';
+import LazyImg from './LazyImg';
 
 interface IProps {
+  isRef?: boolean;
+  setIsScroll?: Dispatch<SetStateAction<boolean>>;
   id: string;
   img: string;
   edit?: boolean;
   setDeleteIndex?: Dispatch<SetStateAction<string>>;
 }
 
-function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
+function PostBox({ isRef, setIsScroll, id, img, edit, setDeleteIndex }: IProps) {
   const [editBox, setEditBox] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
   const navigate = useNavigate();
+  const boxRef = useRef<HTMLDivElement>(null);
 
+  // 게시글 삭제 부분
   const deletePost = useCallback(async () => {
     try {
       const res = await axios.get(`/api/post/${id}`);
@@ -36,10 +41,31 @@ function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
     }
   }, [confirmResult, deletePost]);
 
+  // postBox 무한스크롤 부분
+  const intersectionObserver = useCallback(
+    (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          observer.unobserve(entry.target);
+          if (setIsScroll) setIsScroll(true);
+        }
+      });
+    },
+    [setIsScroll],
+  );
+
+  useEffect(() => {
+    let io;
+    if (boxRef && boxRef.current) {
+      io = new IntersectionObserver(intersectionObserver);
+      io.observe(boxRef.current);
+    }
+  }, [boxRef, intersectionObserver]);
+
   return (
-    <Container>
+    <Container ref={isRef ? boxRef : null}>
       <Link to={`/p/${id}`}>
-        <Img src={img} alt={`${id}-썸네일`} />
+        <LazyImg src={img} alt={`${id}-썸네일`} />
       </Link>
       {edit && (
         <EditBtn onClick={() => setEditBox((prev) => !prev)}>
@@ -74,7 +100,9 @@ function PostBox({ id, img, edit, setDeleteIndex }: IProps) {
 }
 
 const defaultProps = {
+  isRef: false,
   edit: false,
+  setIsScroll: undefined,
   setDeleteIndex: undefined,
 };
 
@@ -84,11 +112,11 @@ export default PostBox;
 
 const Container = styled.div`
   position: relative;
-`;
 
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const EditBtn = styled.button`

@@ -16,6 +16,7 @@ function Hashtag() {
   const navigate = useNavigate();
   const [hashtagData, setHashtagData] = useState<TagDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isScroll, setIsScroll] = useState(false);
 
   const getData = useCallback(async () => {
     try {
@@ -26,6 +27,9 @@ function Hashtag() {
         setHashtagData((prev) => [...prev, { postImg, idx }]);
       });
       setIsLoading(false);
+      // postbox 마지막 인덱스가 관찰되면 isScroll 상태가 변경되어 getData 함수가 실행되고,
+      // 정상적으로 getData 함수가 실행되었다면 다시 마지막 인덱스를 관찰대상으로 지정하게 되므로, isScroll값을 false로 되돌려 줌.
+      // setIsScroll(false);
     } catch (e: any) {
       if (e.response.data.status === 500) {
         setHashtagData([]);
@@ -36,7 +40,7 @@ function Hashtag() {
 
   useEffect(() => {
     getData();
-  }, [getData]);
+  }, [getData, isScroll]);
 
   return (
     <Wrapper>
@@ -47,10 +51,20 @@ function Hashtag() {
         {isLoading ? (
           <Loading />
         ) : (
-          // TODO 무한스크롤 적용
           <DataContainer>
             {hashtagData.length !== 0 ? (
               hashtagData.map((data, index) => {
+                if (index === hashtagData.length - 1) {
+                  return (
+                    <PostBox
+                      isRef
+                      setIsScroll={setIsScroll}
+                      id={data.idx}
+                      img={data.postImg}
+                      key={`${data.idx}-${index + 1}`}
+                    />
+                  );
+                }
                 return <PostBox id={data.idx} img={data.postImg} key={`${data.idx}-${index + 1}`} />;
               })
             ) : (
