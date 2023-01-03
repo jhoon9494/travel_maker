@@ -26,6 +26,7 @@ function EditProfile() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState('');
 
   const loggedUser = useContext(userContext);
 
@@ -87,6 +88,7 @@ function EditProfile() {
       }
     } catch (error: any) {
       if (error.response.data.status === 401) {
+        setAlertText('비밀번호가 일치하지 않습니다.');
         setAlertOpen(true);
       }
       setIsLoading(false);
@@ -95,9 +97,15 @@ function EditProfile() {
 
   const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
+    const maxSize = 5 * 1024 * 1024;
 
     if (files) {
       Array.from(files).forEach((file) => {
+        if (file.size > maxSize) {
+          setAlertText('첨부파일 사이즈는 5MB 이내로 등록 가능합니다.');
+          setAlertOpen(true);
+          return;
+        }
         setProfileImg(file);
         setPreviewImg(URL.createObjectURL(file));
       });
@@ -183,7 +191,7 @@ function EditProfile() {
           no="취소"
         />
       )}
-      {alertOpen && <Alert text="비밀번호가 일치하지 않습니다." open={setAlertOpen} />}
+      {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
     </Wrapper>
   );
 }
