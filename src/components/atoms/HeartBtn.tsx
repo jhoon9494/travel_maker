@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { debounce } from 'lodash';
 import { useParams } from 'react-router-dom';
@@ -10,9 +10,30 @@ interface IProps {
 }
 
 function HeartBtn({ heart, setStatus }: IProps) {
-  // TODO 내가 좋아요 누른 상태인지 체크하여 boolean 초기값 설정해주기
   const [heartStatus, setHeartStatus] = useState<boolean>(false);
   const { id } = useParams();
+
+  const getHeartStatus = useCallback(async () => {
+    try {
+      const res = await axios.get('/api/post/check/like', {
+        params: {
+          idx: id,
+        },
+      });
+      if (res.data === 'OK') {
+        setHeartStatus(false);
+      }
+    } catch (e: any) {
+      // 이미 좋아요를 누른 게시글인 경우
+      if (e.response.data.status === 403) {
+        setHeartStatus(true);
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
+    getHeartStatus();
+  }, [getHeartStatus]);
 
   const handlelike = useCallback(async () => {
     try {

@@ -93,7 +93,6 @@ function DetailPage() {
       <DataContainer>
         <PostContainer>
           <ImgSlider img={imgList} />
-          {/* TODO 내가 좋아요 누른상태인지 체크하기 */}
           <HeartBtn heart={data.heart} setStatus={setHeartStatus} />
           {data.recommendRoutes.length !== 0 ? (
             <TravelTips tips={data.recommendRoutes} />
