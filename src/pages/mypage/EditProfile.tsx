@@ -6,6 +6,7 @@ import userContext from 'context/userContext';
 import axios from 'axios';
 import Loading from 'components/atoms/Loading';
 import Alert from 'components/atoms/Alert';
+import resizeFn from 'utils/imageResize';
 import Input from '../../components/atoms/Input';
 import ValidateInput from '../../components/organism/ValidateInput';
 import { validatePhone, validateEmail } from '../../utils/validate';
@@ -97,15 +98,9 @@ function EditProfile() {
 
   const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
-    const maxSize = 5 * 1024 * 1024;
 
     if (files) {
-      Array.from(files).forEach((file) => {
-        if (file.size > maxSize) {
-          setAlertText('첨부파일 사이즈는 5MB 이내로 등록 가능합니다.');
-          setAlertOpen(true);
-          return;
-        }
+      resizeFn(files[0]).then((file) => {
         setProfileImg(file);
         setPreviewImg(URL.createObjectURL(file));
       });

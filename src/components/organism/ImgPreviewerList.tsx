@@ -1,9 +1,10 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { useState, ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 import { BsFillPlusCircleFill } from 'react-icons/bs';
 import { AiFillMinusCircle } from 'react-icons/ai';
+import resizeFn from 'utils/imageResize';
+import Alert from 'components/atoms/Alert';
 import { GlobalColor } from '../../styles/GlobalColor';
-import Alert from '../atoms/Alert';
 
 type PreviewImgType = {
   src: string;
@@ -15,35 +16,49 @@ interface IProps {
   setImgFiles: Dispatch<SetStateAction<File[]>>;
   previewImgs: PreviewImgType[];
   setPreviewImgs: Dispatch<SetStateAction<PreviewImgType[]>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: IProps) {
+function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs, setIsLoading }: IProps) {
   const [alertOpen, setAlertOpen] = useState(false);
-  // 이미지 삭제를 위한 state
   const [currImg, setCurrImg] = useState<string>('');
 
-  const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    const maxSize = 5 * 1024 * 1024;
-    if (files) {
-      for (let i = 0; i < files.length; i += 1) {
-        const file = files[i];
-        if (file.size > maxSize) {
-          setAlertOpen(true);
-          break;
-        }
+  const resizeLoop = useCallback(
+    async (files: File[]) => {
+      const resizedList = [...files].map(async (file) => {
+        const resizedFile = await resizeFn(file);
+        return resizedFile;
+      });
+
+      const results = await Promise.all(resizedList);
+      results.forEach((data, index) => {
         const previewFile = {
-          src: URL.createObjectURL(file),
-          alt: `${previewImgs.length}-${i + 1}-previewFile`,
+          src: URL.createObjectURL(data),
+          alt: `${previewImgs.length}-${index + 1}-previewFile`,
         };
 
-        if (i === 0) {
+        if (index === 0) {
           selectImg(previewFile);
         }
 
-        setImgFiles((prevList) => [...prevList, file]);
+        setImgFiles((prevList) => [...prevList, data]);
         setPreviewImgs((prevList) => [...prevList, previewFile]);
+      });
+      setIsLoading(false);
+    },
+    [previewImgs.length, selectImg, setImgFiles, setIsLoading, setPreviewImgs],
+  );
+
+  const loadImg = (e: ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+
+    if (files) {
+      if (files.length > 10 || files.length + previewImgs.length > 10) {
+        setAlertOpen(true);
+        return;
       }
+      setIsLoading(true);
+      resizeLoop([...files]);
     }
     // 동일한 파일을 업로드할 수 있도록 현재 선택된 value를 비워줌
     e.target.value = '';
@@ -104,7 +119,7 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs }: I
           <input id="fileUpload" style={{ display: 'none' }} multiple type="file" accept="image/*" onChange={loadImg} />
         </label>
       </AddImg>
-      {alertOpen && <Alert text="첨부파일 사이즈는 5MB 이내로 등록 가능합니다." open={setAlertOpen} />}
+      {alertOpen && <Alert text="이미지는 최대 10장까지 업로드 가능합니다" open={setAlertOpen} />}
     </Wrapper>
   );
 }

@@ -32,7 +32,6 @@ function Upload() {
 
   // 이미지 파일 및 미리보기 부분
   const [imgFiles, setImgFiles] = useState<File[]>([]);
-  // TODO 이미지 파일 용량 제한시키기
   const [previewImg, setPreviewImg] = useState<PreviewImgType | null>(null);
   const [previewImgs, setPreviewImgs] = useState<PreviewImgType[]>([]);
 
@@ -69,6 +68,7 @@ function Upload() {
 
   // 업로드 로딩
   const [isLoading, setIsLoading] = useState(false);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const getEditData = useCallback(async () => {
     try {
@@ -155,49 +155,60 @@ function Upload() {
   };
 
   const handlePostWrite = async () => {
-    if (imgFiles.length === 0) {
-      setAlertText('이미지를 추가하여 작성해주세요!');
+    if (title === '') {
+      setAlertText('제목을 작성해주세요!');
       setAlertOpen(true);
-    } else {
-      setIsLoading(true);
-      const jsonData = JSON.stringify({
-        title,
-        content,
-        figures: {
-          recommend,
-          emotion,
-          revisit,
+      return;
+    }
+    if (content === '') {
+      setAlertText('본문을 작성해주세요!');
+      setAlertOpen(true);
+      return;
+    }
+
+    if (imgFiles.length === 0) {
+      setAlertText('이미지를 추가해주세요!');
+      setAlertOpen(true);
+      return;
+    }
+    setIsLoading(true);
+    const jsonData = JSON.stringify({
+      title,
+      content,
+      figures: {
+        recommend,
+        emotion,
+        revisit,
+      },
+      hashtags: hashtag,
+      recommendRoutes: tipsList,
+    });
+
+    const formData = new FormData();
+    const postData = new Blob([jsonData], { type: 'application/json' });
+
+    formData.append('post', postData);
+    imgFiles.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    // blob url 제거하는 코드
+    previewImgs.forEach((img) => {
+      URL.revokeObjectURL(img.src);
+    });
+
+    try {
+      const res = await axios.post('api/post/write', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-        hashtags: hashtag,
-        recommendRoutes: tipsList,
       });
-
-      const formData = new FormData();
-      const postData = new Blob([jsonData], { type: 'application/json' });
-
-      formData.append('post', postData);
-      imgFiles.forEach((file) => {
-        formData.append('images', file);
-      });
-
-      // blob url 제거하는 코드
-      previewImgs.forEach((img) => {
-        URL.revokeObjectURL(img.src);
-      });
-
-      try {
-        const res = await axios.post('api/post/write', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        if (res.data === 'OK') {
-          navigate(`/${loggedUser.id}`, { replace: true });
-        }
-      } catch (e: any) {
-        setIsLoading(false);
-        console.error(e);
+      if (res.data === 'OK') {
+        navigate(`/${loggedUser.id}`, { replace: true });
       }
+    } catch (e: any) {
+      setIsLoading(false);
+      console.error(e);
     }
   };
 
@@ -219,12 +230,22 @@ function Upload() {
             // 첫번째 페이지, 이미지 추가 및 본문 작성 영역
             <div style={{ display: 'flex', paddingLeft: '50px' }}>
               <ImgPreviewer>
-                {previewImg ? (
+                {/* eslint-disable-next-line */}
+                {isPreviewLoading ? (
+                  <PreviewWrapper>
+                    <Loading />
+                  </PreviewWrapper>
+                ) : previewImg ? (
                   <Img src={previewImg?.src} alt={previewImg?.alt} />
                 ) : (
-                  <EmptyImg>이미지를 추가해주세요</EmptyImg>
+                  <PreviewWrapper>
+                    <p>이미지를 추가해주세요</p>
+                    <br />
+                    <p>최대 10장까지 업로드 가능합니다.</p>
+                  </PreviewWrapper>
                 )}
                 <ImgPreviewerList
+                  setIsLoading={setIsPreviewLoading}
                   selectImg={setPreviewImg}
                   setImgFiles={setImgFiles}
                   setPreviewImgs={setPreviewImgs}
@@ -355,12 +376,13 @@ const ImgPreviewer = styled.div`
   margin-top: 20px;
 `;
 
-const EmptyImg = styled.div`
+const PreviewWrapper = styled.div`
   width: 550px;
   height: 390px;
   border: 1px solid lightgray;
   margin-bottom: 10px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   color: #999999;
