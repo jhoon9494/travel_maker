@@ -64,7 +64,6 @@ export default ImgSlider;
 
 const ImgViewer = styled.div`
   width: 550px;
-  height: 390px;
   overflow: hidden;
   position: relative;
   margin-bottom: 10px;
@@ -72,13 +71,13 @@ const ImgViewer = styled.div`
 
 const ImgContainer = styled.div<{ length: number; dist: number }>`
   width: ${({ length }) => length * 550}px;
-  height: 390px;
   display: flex;
   margin-left: ${({ dist }) => dist}px;
-  transition: all 0.3s ease;
+  transition: margin 0.3s ease;
+  background-color: black;
 `;
 
 const Img = styled.img`
-  min-width: 550px;
-  height: 390px;
+  width: 550px;
+  object-fit: contain;
 `;
