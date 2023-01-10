@@ -7,7 +7,7 @@ const resizeFn = async (file: File) => {
   };
 
   const resizeImg = await imageCompression(file, options);
-  const imgFile = new File([resizeImg], file.name);
+  const imgFile = new File([resizeImg], file.name, { type: file.type });
   return imgFile;
 };
 
