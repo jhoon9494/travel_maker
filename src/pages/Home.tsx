@@ -52,7 +52,7 @@ function Home() {
           userId: data.userId,
           figures: data.figures,
           postImg: data.postImg.split(',')[0],
-          hashtags: data.hashtags,
+          hashtags: data.hashtags.slice(0, 4),
         }));
         setPostList((prevList) => [...prevList, ...postData]);
       } else {
@@ -123,18 +123,22 @@ function Home() {
                 </ImgWrapper>
 
                 <PostText>
-                  <H2Tag onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</H2Tag>
-                  <p onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</p>
-                  <TagList>
+                  <h2>
+                    <span onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</span>
+                  </h2>
+                  <div>
+                    <span onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</span>
+                  </div>
+                  <ul>
                     {data.hashtags.map((tag) => {
                       const tagName = tag.split('#')[1];
                       return (
-                        <li onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)} key={`${tagName}`}>
-                          {tag}
+                        <li key={`${tagName}`}>
+                          <span onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)}>{tag}</span>
                         </li>
                       );
                     })}
-                  </TagList>
+                  </ul>
                 </PostText>
               </Post>
             );
@@ -150,18 +154,22 @@ function Home() {
               </ImgWrapper>
 
               <PostText>
-                <H2Tag onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</H2Tag>
-                <p onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</p>
-                <TagList>
+                <h2>
+                  <span onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</span>
+                </h2>
+                <div>
+                  <span onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</span>
+                </div>
+                <ul>
                   {data.hashtags.map((tag) => {
                     const tagName = tag.split('#')[1];
                     return (
-                      <li onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)} key={`${tagName}`}>
-                        {tag}
+                      <li key={`${tagName}`}>
+                        <span onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)}>{tag}</span>
                       </li>
                     );
                   })}
-                </TagList>
+                </ul>
               </PostText>
             </Post>
           );
@@ -178,11 +186,12 @@ export default Home;
 
 const Wrapper = styled.div`
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(500px, 900px));
   background-color: white;
   justify-content: center;
   align-items: center;
+  margin: 0 30px;
 `;
 
 const LoadingWrapper = styled.div`
@@ -208,34 +217,41 @@ const EmptyPost = styled.div`
 
 const Post = styled.div`
   display: flex;
-  width: 800px;
-  height: 300px;
-  margin: 30px 60px;
+  width: 100%;
+  height: 350px;
+  margin: 15px auto;
+  padding: 15px;
+  background-color: #f1f1f1da;
+  border-radius: 5px;
+  box-shadow: 7px 7px 20px #cbcbcb;
 
-  @media screen and (max-width: 700px) {
-    width: 600px;
-    height: 225px;
+  @media screen and (max-width: 720px) {
+    flex-direction: column;
+    height: 500px;
   }
 
-  @media screen and (max-width: 550px) {
-    flex-direction: column;
-    width: 500px;
-    height: 600px;
+  :hover {
+    transform: scale(1.05);
+    transition: all ease 0.3s;
   }
 `;
 
 const ImgWrapper = styled.div`
-  flex: 2 2 0;
   cursor: pointer;
+  width: 60%;
+  height: 100%;
 
   > img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px lightgray solid;
   }
 
-  @media screen and (max-width: 550px) {
-    height: 80%;
-    flex: none;
+  @media screen and (max-width: 720px) {
+    width: 100%;
+    height: 65%;
   }
 `;
 
@@ -245,36 +261,31 @@ const PostText = styled.div`
   flex-direction: column;
   padding: 25px;
 
-  > p {
+  span {
+    cursor: pointer;
+  }
+
+  /* 제목 */
+  > h2 {
+    flex-basis: 40px;
+  }
+
+  /* 작성자 */
+  > div {
+    flex: 2 2 0;
+  }
+
+  /* 해시태그 */
+  > ul {
     flex: 1 1 0;
-    cursor: pointer;
-  }
+    display: flex;
+    flex-wrap: wrap;
 
-  @media screen and (max-width: 550px) {
-    flex: none;
-
-    > p {
-      flex: none;
+    > li {
+      margin-right: 8px;
+      font-size: 18px;
+      font-weight: bold;
     }
-  }
-`;
-
-const H2Tag = styled.h2`
-  cursor: pointer;
-  flex-basis: 40px;
-`;
-
-const TagList = styled.ul`
-  flex: 1 1 0;
-  display: flex;
-  flex-wrap: wrap;
-
-  > li {
-    margin-right: 8px;
-    font-size: 18px;
-    font-weight: bold;
-
-    cursor: pointer;
   }
 `;
 
@@ -295,11 +306,15 @@ const UploadBtn = styled.button`
     height: 100%;
   }
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 900px) {
     left: 550px;
   }
 
-  @media screen and (max-width: 550px) {
+  @media screen and (max-width: 770px) {
+    left: 450px;
+  }
+
+  @media screen and (max-width: 600px) {
     left: 350px;
   }
 `;

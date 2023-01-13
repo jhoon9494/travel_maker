@@ -56,7 +56,7 @@ function TravelTips({ tips }: IProps) {
 export default TravelTips;
 
 const TravelTipsContainer = styled.ul`
-  width: 550px;
+  width: 100%;
   height: 100px;
   display: flex;
   align-items: center;

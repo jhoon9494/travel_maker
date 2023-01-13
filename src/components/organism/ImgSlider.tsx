@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { debounce } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { LeftBtn, RightBtn } from '../atoms/ArrowBtn';
 import ImgIndicator from '../atoms/ImgIndicator';
@@ -11,14 +12,17 @@ function ImgSlider({ img }: IProps) {
   // 이미지를 좌우로 이동시키기 위한 state
   const [dist, setDist] = useState<number>(0);
   const [imgIndex, setImgIndex] = useState<number>(0);
+  const [imageWidth, SetImageWidth] = useState(0);
+  const imgRef = useRef<HTMLDivElement>(null);
 
   const handleLeftClick = () => {
     // 이미지 슬라이더 이동거리 관련 set함수
     setDist((currDist) => {
-      if (currDist + 550 > 0) {
+      if (currDist + imageWidth > 0) {
         return currDist;
       }
-      return currDist + 550;
+
+      return currDist + imageWidth;
     });
     // 선택된 이미지 인덱스 관련 set함수
     setImgIndex((currIndex) => {
@@ -32,10 +36,11 @@ function ImgSlider({ img }: IProps) {
   const handleRightClick = () => {
     // 이미지 슬라이더 이동거리 관련 set함수
     setDist((currDist) => {
-      if (currDist - 550 <= -img.length * 550) {
+      if (currDist - imageWidth <= -img.length * imageWidth) {
         return currDist;
       }
-      return currDist - 550;
+
+      return currDist - imageWidth;
     });
     // 선택된 이미지 인덱스 관련 set함수
     setImgIndex((currIndex) => {
@@ -46,12 +51,31 @@ function ImgSlider({ img }: IProps) {
     });
   };
 
+  const getImageWidth = debounce(() => {
+    if (imgRef.current?.offsetWidth) SetImageWidth(imgRef.current.offsetWidth);
+  }, 150);
+
+  useEffect(() => {
+    if (imgRef.current?.offsetWidth) SetImageWidth(imgRef.current.offsetWidth);
+    window.addEventListener('resize', getImageWidth);
+    return () => {
+      window.removeEventListener('resize', getImageWidth);
+    };
+  }, [getImageWidth]);
+
   return (
-    <ImgViewer>
+    <ImgViewer ref={imgRef}>
       {imgIndex !== 0 && <LeftBtn onClick={handleLeftClick} />}
       <ImgContainer length={img.length} dist={dist}>
         {img.map((image, index) => {
-          return <Img src={image} alt={`${index + 1}번째 그림`} key={`${image.slice(0, 5)}-${index + 1}-key`} />;
+          return (
+            <Img
+              length={img.length}
+              src={image}
+              alt={`${index + 1}번째 그림`}
+              key={`${image.slice(0, 5)}-${index + 1}-key`}
+            />
+          );
         })}
       </ImgContainer>
       {imgIndex !== img.length - 1 && <RightBtn onClick={handleRightClick} />}
@@ -63,21 +87,21 @@ function ImgSlider({ img }: IProps) {
 export default ImgSlider;
 
 const ImgViewer = styled.div`
-  width: 550px;
+  width: 100%;
   overflow: hidden;
   position: relative;
   margin-bottom: 10px;
 `;
 
 const ImgContainer = styled.div<{ length: number; dist: number }>`
-  width: ${({ length }) => length * 550}px;
+  width: ${({ length }) => length * 100}%;
   display: flex;
   margin-left: ${({ dist }) => dist}px;
   transition: margin 0.3s ease;
   background-color: black;
 `;
 
-const Img = styled.img`
-  width: 550px;
+const Img = styled.img<{ length: number }>`
+  width: ${({ length }) => 100 / length}%;
   object-fit: contain;
 `;

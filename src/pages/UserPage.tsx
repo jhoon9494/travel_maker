@@ -187,7 +187,8 @@ const UserContainer = styled.div`
   display: flex;
   min-height: 230px;
   border-bottom: 1px solid lightgray;
-  padding: 60px 100px;
+  justify-content: center;
+  align-items: center;
 
   > img {
     width: 120px;
@@ -200,6 +201,7 @@ const UserInfo = styled.div`
   flex-direction: column;
   justify-content: space-between;
   margin: 20px 0 20px 60px;
+  gap: 10px;
 `;
 
 const FollowBtn = styled.button<{ status: boolean }>`
@@ -218,41 +220,34 @@ const InfoWrapper = styled.span`
 `;
 
 const PostContainer = styled.div<{ isLoading: boolean }>`
-  flex-grow: 1;
   display: grid;
-  grid-template-columns: ${({ isLoading }) => (isLoading ? '1fr' : 'repeat(3, 1fr)')};
-  grid-gap: 20px;
-  margin: 20px auto 30px;
-  padding: 0 20px;
+  grid-template-columns: ${({ isLoading }) => (isLoading ? '1fr' : 'repeat(3, minmax(auto, 250px))')};
+  grid-gap: 15px;
+  margin: 20px 0 30px;
+  justify-content: center;
+  padding: 0 10px;
 
   > div {
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    height: ${({ isLoading }) => (isLoading ? '500px' : '250px')};
   }
 
-  @media screen and (max-width: 700px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media screen and (max-width: 720px) {
+    grid-template-columns: ${({ isLoading }) => (isLoading ? '1fr' : 'repeat(auto-fill, minmax(auto, 200px))')};
+    grid-gap: 5px;
 
     > div {
-      width: 270px;
-    }
-  }
-
-  @media screen and (max-width: 550px) {
-    grid-template-columns: 1fr;
-
-    > div {
-      width: 400px;
-      height: 350px;
+      height: ${({ isLoading }) => (isLoading ? '500px' : '200px')};
     }
   }
 `;
+
 const UploadBtn = styled.button`
   display: block;
   width: 935px;
   margin: 0 auto;
   position: fixed;
-  top: 650px;
+  bottom: 13vh;
   left: 700px;
   right: 0;
 
@@ -264,7 +259,15 @@ const UploadBtn = styled.button`
     height: 100%;
   }
 
-  @media screen and (max-width: 934px) {
+  @media screen and (max-width: 900px) {
     left: 550px;
+  }
+
+  @media screen and (max-width: 770px) {
+    left: 450px;
+  }
+
+  @media screen and (max-width: 600px) {
+    left: 350px;
   }
 `;

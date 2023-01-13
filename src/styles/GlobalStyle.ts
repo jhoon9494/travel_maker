@@ -8,18 +8,10 @@ export const GlobalStyle = createGlobalStyle`
   font-family: 'Noto Sans KR', sans-serif;
 }
 body {
-  width: 935px;
+  max-width: 935px;
   margin: 0 auto;
   font-family: 'Noto Sans KR', sans-serif;
   position: relative;
-
-  @media screen and (max-width: 700px){
-    width: 700px   
-  }
-
-  @media screen and (max-width: 550px){
-    width: 550px   
-  }
 }
 *, :after, :before {
     box-sizing: border-box;

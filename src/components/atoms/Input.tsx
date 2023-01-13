@@ -62,4 +62,13 @@ const InputContainer = styled.input<{ sz: string | undefined }>`
   &::placeholder {
     font-size: 16px;
   }
+
+  @media screen and (max-width: 720px) {
+    ${({ sz }) =>
+      sz === 'medium' &&
+      css`
+        width: 200px;
+        height: 40px;
+      `}
+  }
 `;

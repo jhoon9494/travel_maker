@@ -49,11 +49,11 @@ const initialSet: PostData = {
 
 // 게시글의 본문 및 해시태그 생성 함수
 function createContent(content: string) {
-  return content.split(/(#[^\s#]+)/g).map((str) => {
+  return content.split(/(#[^\s#]+)/g).map((str, idx) => {
     if (str[0] === '#') {
       const hashtag = str.split('#')[1];
       return (
-        <Link to={`/tag/${hashtag}`} key={`${hashtag}`}>
+        <Link to={`/tag/${hashtag}`} key={`${hashtag}-${idx + 1}`}>
           {str}
         </Link>
       );
@@ -130,10 +130,14 @@ const DataContainer = styled.div`
   display: flex;
   padding: 20px 50px 50px;
   width: 100%;
+
+  @media screen and (max-width: 720px) {
+    flex-direction: column;
+  }
 `;
 
 const PostContainer = styled.div`
-  width: 550px;
+  flex: 2 2 0;
   /* 여행 추천 경로의 팁을 띄우기 위해 포지션 지정 */
   position: relative;
 `;
@@ -144,8 +148,14 @@ const TextArea = styled.div`
 `;
 
 const SideContainer = styled.div`
-  width: 285px;
+  flex: 1 1 0;
   padding: 15px;
+
+  @media screen and (max-width: 720px) {
+    margin-top: 30px;
+    padding: 0;
+    max-width: 450px;
+  }
 
   > p {
     margin: 0 0 10px 5px;
@@ -162,4 +172,9 @@ const ScoreContainer = styled.div`
   margin-top: 20px;
   display: flex;
   justify-content: space-around;
+
+  @media screen and (max-width: 720px) {
+    justify-content: flex-start;
+    gap: 30px;
+  }
 `;

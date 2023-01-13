@@ -82,9 +82,9 @@ const Logo = styled.img`
   height: 30px;
   margin: 16px;
 
-  @media screen and (max-width: 550px) {
-    width: 110px;
-    height: 20px;
+  @media screen and (max-width: 720px) {
+    width: 125px;
+    height: 25px;
     margin: 10px;
   }
 `;
