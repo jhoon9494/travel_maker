@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import UserImage from 'components/atoms/UserImage';
 import { BiEdit } from 'react-icons/bi';
 import PostBox from '../components/atoms/PostBox';
@@ -229,16 +229,18 @@ const PostContainer = styled.div<{ isLoading: boolean }>`
 
   > div {
     width: 100%;
-    height: ${({ isLoading }) => (isLoading ? '500px' : '250px')};
+    aspect-ratio: 1 / 1;
+
+    ${({ isLoading }) =>
+      isLoading &&
+      css`
+        height: 500px;
+      `}
   }
 
   @media screen and (max-width: 720px) {
     grid-template-columns: ${({ isLoading }) => (isLoading ? '1fr' : 'repeat(auto-fill, minmax(auto, 200px))')};
     grid-gap: 5px;
-
-    > div {
-      height: ${({ isLoading }) => (isLoading ? '500px' : '200px')};
-    }
   }
 `;
 

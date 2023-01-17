@@ -100,33 +100,21 @@ const ResultWrapper = styled.div`
 
 const DataContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  justify-items: center;
-  grid-gap: 20px;
+  grid-template-columns: repeat(3, minmax(auto, 250px));
+  justify-content: center;
+  grid-gap: 15px;
   margin-top: 20px;
   margin-bottom: 30px;
   padding: 0 20px;
 
   > div {
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
   }
 
-  @media screen and (max-width: 700px) {
-    grid-template-columns: repeat(2, 1fr);
-
-    > div {
-      width: 270px;
-    }
-  }
-
-  @media screen and (max-width: 550px) {
-    grid-template-columns: 1fr;
-
-    > div {
-      width: 400px;
-      height: 350px;
-    }
+  @media screen and (max-width: 720px) {
+    grid-template-columns: repeat(2, minmax(auto, 200px));
+    grid-gap: 10px;
   }
 `;
 

@@ -113,10 +113,16 @@ export default PostBox;
 const Container = styled.div`
   position: relative;
 
-  img {
+  > a {
+    position: absolute;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+
+    > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 `;
 

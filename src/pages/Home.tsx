@@ -218,7 +218,7 @@ const EmptyPost = styled.div`
 const Post = styled.div`
   display: flex;
   width: 100%;
-  height: 350px;
+  aspect-ratio: 21 / 9;
   margin: 15px auto;
   padding: 15px;
   background-color: #f1f1f1da;
@@ -227,7 +227,7 @@ const Post = styled.div`
 
   @media screen and (max-width: 720px) {
     flex-direction: column;
-    height: 500px;
+    aspect-ratio: 1 / 1;
   }
 
   :hover {
@@ -238,7 +238,7 @@ const Post = styled.div`
 
 const ImgWrapper = styled.div`
   cursor: pointer;
-  width: 60%;
+  width: 55%;
   height: 100%;
 
   > img {
