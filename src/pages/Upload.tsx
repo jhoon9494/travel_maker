@@ -394,8 +394,8 @@ const ImgPreviewer = styled.div`
 `;
 
 const PreviewWrapper = styled.div`
-  width: 100%;
-  height: 350px;
+  max-width: 550px;
+  aspect-ratio: 4 / 3;
   border: 1px solid lightgray;
   margin-bottom: 10px;
   display: flex;
@@ -403,12 +403,21 @@ const PreviewWrapper = styled.div`
   justify-content: center;
   align-items: center;
   color: #999999;
+
+  @media screen and (max-width: 720px) {
+    max-width: 100%;
+  }
 `;
 
 const Img = styled.img`
-  width: 100%;
-  height: 390px;
+  max-width: 550px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
   margin-bottom: 10px;
+
+  @media screen and (max-width: 720px) {
+    max-width: 100%;
+  }
 `;
 
 const TextContainer = styled.div`

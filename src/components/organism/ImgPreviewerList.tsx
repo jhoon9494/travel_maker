@@ -127,10 +127,14 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs, set
 export default ImgPreviewer;
 
 const Wrapper = styled.div`
-  width: 100%;
+  max-width: 550px;
   height: 100px;
   border: 1px solid lightgray;
   display: flex;
+
+  @media screen and (max-width: 720px) {
+    max-width: 100%;
+  }
 `;
 
 const ImgWrapper = styled.div`
