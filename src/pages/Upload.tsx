@@ -3,7 +3,6 @@ import { useState, FormEvent, useEffect, useCallback, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgPreviewerList from 'components/organism/ImgPreviewerList';
-import Input from 'components/atoms/Input';
 import ScoreInput from 'components/atoms/ScoreInput';
 import CardList from 'components/organism/CardList';
 import Confirm from 'components/atoms/Confirm';
@@ -213,7 +212,7 @@ function Upload() {
   };
 
   return (
-    <Wrapper>
+    <Container>
       {isLoading ? (
         <LoadingWrapper>
           <Loading />
@@ -228,7 +227,7 @@ function Upload() {
 
           {page === 1 ? (
             // 첫번째 페이지, 이미지 추가 및 본문 작성 영역
-            <div style={{ display: 'flex', paddingLeft: '50px' }}>
+            <UploadContainer>
               <ImgPreviewer>
                 {/* eslint-disable-next-line */}
                 {isPreviewLoading ? (
@@ -254,30 +253,26 @@ function Upload() {
               </ImgPreviewer>
               <TextContainer>
                 <Input
-                  id="title"
                   type="text"
                   placeholder="제목을 입력해주세요."
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  size="medium"
                 />
                 <TextArea
                   placeholder="본문을 작성해주세요."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  width="245"
                   height="400"
                 />
               </TextContainer>
-            </div>
+            </UploadContainer>
           ) : (
             // 두번째 페이지, 여행 추천 점수 및 팁 작성 영역
-            <div style={{ display: 'flex', paddingLeft: '50px' }}>
+            <UploadContainer>
               <AddTipScoreContainer>
                 <h3>여행 Tips</h3>
                 <Form onSubmit={handleTipSubmit}>
                   <Input
-                    id="placeName"
                     type="text"
                     placeholder="추천 장소를 입력해주세요."
                     value={placeName}
@@ -291,14 +286,13 @@ function Upload() {
                         setTip(e.target.value);
                       }
                     }}
-                    width="400"
-                    height="100"
+                    height="200"
                   />
                   <CharacterRange>{tip.length}/100</CharacterRange>
                   <SubmitBtn value="추가하기" />
                 </Form>
                 <div style={{ marginTop: '20px', position: 'relative' }}>
-                  <h3 style={{ display: 'flex' }}>
+                  <h3 style={{ display: 'flex', padding: '0 12px' }}>
                     여행 추천 점수
                     <BiBulb
                       style={{ marginLeft: '5px' }}
@@ -318,7 +312,7 @@ function Upload() {
               <TipsContainer>
                 <CardList list={tipsList} setList={setTipsList} />
               </TipsContainer>
-            </div>
+            </UploadContainer>
           )}
           {confirmOpen && (
             <Confirm
@@ -332,13 +326,13 @@ function Upload() {
           {alertOpen && <Alert text={alertText} open={setAlertOpen} />}
         </>
       )}
-    </Wrapper>
+    </Container>
   );
 }
 
 export default Upload;
 
-const Wrapper = styled.div`
+const Container = styled.div`
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -359,7 +353,7 @@ const BtnsContainer = styled.div`
 
 const Button = styled.button`
   font-size: 16px;
-  margin: 20px 70px 0 0;
+  margin: 20px 50px 0 0;
   background-color: ${GlobalColor.mainColor};
   color: white;
   padding: 4px 12px;
@@ -370,15 +364,38 @@ const Button = styled.button`
   }
 `;
 
+const UploadContainer = styled.div`
+  display: flex;
+  margin: 0 20px;
+  padding: 0 20px;
+
+  @media screen and (max-width: 720px) {
+    flex-direction: column;
+  }
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: lightgray 1px solid;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 14px;
+
+  &::placeholder {
+    font-size: 14px;
+  }
+`;
+
 const ImgPreviewer = styled.div`
+  flex: 2 2 0;
   display: flex;
   flex-direction: column;
   margin-top: 20px;
 `;
 
 const PreviewWrapper = styled.div`
-  width: 550px;
-  height: 390px;
+  width: 100%;
+  height: 350px;
   border: 1px solid lightgray;
   margin-bottom: 10px;
   display: flex;
@@ -389,19 +406,24 @@ const PreviewWrapper = styled.div`
 `;
 
 const Img = styled.img`
-  width: 550px;
+  width: 100%;
   height: 390px;
   margin-bottom: 10px;
 `;
 
 const TextContainer = styled.div`
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  margin: 15px 0 0 20px;
+  margin: 20px 0 0 20px;
+
+  @media screen and (max-width: 720px) {
+    margin: 20px 0 0;
+  }
 `;
 
-const TextArea = styled.textarea<{ width: string; height: string }>`
-  width: ${({ width }) => width}px;
+const TextArea = styled.textarea<{ height: string }>`
+  width: 100%;
   height: ${({ height }) => height}px;
   margin: 10px 0;
   border: 1px solid lightgray;
@@ -410,27 +432,35 @@ const TextArea = styled.textarea<{ width: string; height: string }>`
 `;
 
 const AddTipScoreContainer = styled.div`
+  flex: 3 3 0;
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  margin: 20px 0 0;
+
+  > h3 {
+    padding: 12px;
+  }
 `;
 
 const Form = styled.form`
-  width: 400px;
+  width: 100%;
   text-align: center;
   position: relative;
+  padding: 0 10px;
+  margin-bottom: 20px;
 
   > button {
+    width: 100%;
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
   }
 `;
 
 const CharacterRange = styled.div`
   position: absolute;
   font-size: 14px;
-  bottom: 65px;
-  right: 10px;
+  bottom: 70px;
+  right: 25px;
 
   color: gray;
 `;
@@ -438,7 +468,7 @@ const CharacterRange = styled.div`
 const ScoreTip = styled.div<{ hover: boolean }>`
   position: absolute;
   top: -2px;
-  right: 20px;
+  left: 150px;
   font-size: 14px;
   padding: 4px 12px;
   border-radius: 5px;
@@ -450,14 +480,23 @@ const ScoreTip = styled.div<{ hover: boolean }>`
 
 const ScoreContainer = styled.div`
   display: flex;
-  width: 400px;
+  width: 100%;
   height: 100px;
   justify-content: center;
   align-items: center;
+  gap: 10px;
 `;
 
 const TipsContainer = styled.div`
+  flex: 2 2 0;
   display: flex;
   flex-direction: column;
-  margin: 47px 0 20px 20px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  margin: 67px 0 20px;
+  padding: 10px 0;
+
+  @media screen and (max-width: 720px) {
+    margin: 20px 10px;
+  }
 `;

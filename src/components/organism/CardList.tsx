@@ -49,7 +49,7 @@ export default CardList;
 
 const Container = styled.div<{ empty: boolean }>`
   height: 400px;
-  width: 400px;
+  width: 100%;
   border-radius: 5px;
   overflow-y: scroll;
   display: flex;

@@ -174,6 +174,7 @@ const ScoreContainer = styled.div`
   justify-content: space-around;
 
   @media screen and (max-width: 720px) {
+    margin-left: 5px;
     justify-content: flex-start;
     gap: 30px;
   }

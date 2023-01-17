@@ -29,8 +29,15 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  border: 1px solid lightgray;
+  background-color: #99ccff47;
+  box-shadow: 3px 3px 15px #cbcbcb;
   position: relative;
+
+  > h3 {
+    border-bottom: 1px solid #cbcbcb;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+  }
 `;
 
 const CustomMark = styled(HiX)`
