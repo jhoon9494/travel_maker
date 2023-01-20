@@ -18,7 +18,7 @@ interface IProps {
 function PostBox({ isRef, setIsScroll, id, img, edit, setDeleteIndex }: IProps) {
   const [editBox, setEditBox] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+  const [confirmResult, setConfirmResult] = useState<boolean>(false);
   const navigate = useNavigate();
   const boxRef = useRef<HTMLDivElement>(null);
 

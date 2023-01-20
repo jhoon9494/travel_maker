@@ -36,7 +36,7 @@ function Upload() {
 
   // Confirm 부분
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+  const [confirmResult, setConfirmResult] = useState<boolean>(false);
 
   // Alert 부분
   const [alertOpen, setAlertOpen] = useState(false);

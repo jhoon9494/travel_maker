@@ -25,7 +25,7 @@ function EditProfile() {
 
   // Confirm, Alert
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+  const [confirmResult, setConfirmResult] = useState<boolean>(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertText, setAlertText] = useState('');
 

@@ -5,7 +5,7 @@ import { GlobalColor } from '../../styles/GlobalColor';
 interface IProps {
   text: string;
   open: Dispatch<SetStateAction<boolean>>;
-  setResult: Dispatch<SetStateAction<boolean | null>>;
+  setResult: Dispatch<SetStateAction<boolean>>;
   yes: string;
   no: string;
 }
@@ -19,7 +19,7 @@ function Confirm({ text, open, setResult, yes, no }: IProps) {
           <Button onClick={() => setResult(true)}>{yes}</Button>
           <Button
             onClick={() => {
-              setResult(null);
+              setResult(false);
               open(false);
             }}
           >

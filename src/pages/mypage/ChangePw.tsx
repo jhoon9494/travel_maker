@@ -17,7 +17,7 @@ function ChangePw() {
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmResult, setConfirmResult] = useState<boolean | null>(null);
+  const [confirmResult, setConfirmResult] = useState<boolean>(false);
   const [alertOpen, setAlertpOpen] = useState(false);
 
   const submitFn = useCallback(async () => {
@@ -39,7 +39,7 @@ function ChangePw() {
           navigate('/user', { replace: true });
         }
       } catch (error: any) {
-        setConfirmResult(null);
+        setConfirmResult(false);
         setConfirmOpen(false);
         if (error.response.data.status === 401) {
           setAlertpOpen(true);
