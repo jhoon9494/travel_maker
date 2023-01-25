@@ -31,7 +31,14 @@ export default function LazyImg({ src, alt, onClick }: LazyImgProps) {
     }
   }, [lazyLoadObserver]);
 
-  return <Img ref={inputRef} src={isLoad ? src : '/icons/noImage.png'} alt={alt} onClick={onClick} />;
+  return (
+    <Img
+      ref={inputRef}
+      src={isLoad ? `https://my-travel-maker.s3.amazonaws.com/Downloads/${src}` : '/icons/noImage.png'}
+      alt={alt}
+      onClick={onClick}
+    />
+  );
 }
 
 const defaultProps = {

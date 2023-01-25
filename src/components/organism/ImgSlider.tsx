@@ -71,7 +71,7 @@ function ImgSlider({ img }: IProps) {
           return (
             <Img
               length={img.length}
-              src={image}
+              src={`https://my-travel-maker.s3.amazonaws.com/Downloads/${image}`}
               alt={`${index + 1}번째 그림`}
               key={`${image.slice(0, 5)}-${index + 1}-key`}
             />
