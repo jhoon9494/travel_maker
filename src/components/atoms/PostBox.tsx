@@ -8,14 +8,14 @@ import LazyImg from './LazyImg';
 
 interface IProps {
   isRef?: boolean;
-  setIsScroll?: Dispatch<SetStateAction<boolean>>;
+  setPageCount?: Dispatch<SetStateAction<number>>;
   id: string;
   img: string;
   edit?: boolean;
   setDeleteIndex?: Dispatch<SetStateAction<string>>;
 }
 
-function PostBox({ isRef, setIsScroll, id, img, edit, setDeleteIndex }: IProps) {
+function PostBox({ isRef, setPageCount, id, img, edit, setDeleteIndex }: IProps) {
   const [editBox, setEditBox] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean>(false);
@@ -47,11 +47,11 @@ function PostBox({ isRef, setIsScroll, id, img, edit, setDeleteIndex }: IProps) 
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           observer.unobserve(entry.target);
-          if (setIsScroll) setIsScroll(true);
+          if (setPageCount) setPageCount((curr) => curr + 1);
         }
       });
     },
-    [setIsScroll],
+    [setPageCount],
   );
 
   useEffect(() => {
@@ -102,7 +102,7 @@ function PostBox({ isRef, setIsScroll, id, img, edit, setDeleteIndex }: IProps) 
 const defaultProps = {
   isRef: false,
   edit: false,
-  setIsScroll: undefined,
+  setPageCount: undefined,
   setDeleteIndex: undefined,
 };
 

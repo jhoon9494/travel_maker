@@ -16,31 +16,27 @@ function Hashtag() {
   const navigate = useNavigate();
   const [hashtagData, setHashtagData] = useState<TagDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isScroll, setIsScroll] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
 
   const getData = useCallback(async () => {
     try {
-      const res = await axios.get('/api/post/tag', { params: { word: tag } });
+      const res = await axios.get('/api/post/tag', { params: { word: tag, page: pageCount } });
       res.data.forEach((data: { postImg: string; idx: string }) => {
         const postImg = data.postImg.split(',')[0];
         const { idx } = data;
         setHashtagData((prev) => [...prev, { postImg, idx }]);
       });
       setIsLoading(false);
-      // postbox 마지막 인덱스가 관찰되면 isScroll 상태가 변경되어 getData 함수가 실행되고,
-      // 정상적으로 getData 함수가 실행되었다면 다시 마지막 인덱스를 관찰대상으로 지정하게 되므로, isScroll값을 false로 되돌려 줌.
-      // setIsScroll(false);
     } catch (e: any) {
-      if (e.response.data.status === 500) {
+      if (pageCount === 0 && e.response.data.status === 500) {
         setHashtagData([]);
       }
-      setIsLoading(false);
     }
-  }, [tag]);
+  }, [tag, pageCount]);
 
   useEffect(() => {
     getData();
-  }, [getData, isScroll]);
+  }, [getData, pageCount]);
 
   return (
     <Wrapper>
@@ -54,11 +50,11 @@ function Hashtag() {
           <DataContainer>
             {hashtagData.length !== 0 ? (
               hashtagData.map((data, index) => {
-                if (index === hashtagData.length - 1) {
+                if ((index > 0 && index % 8 === 0) || index === hashtagData.length - 1) {
                   return (
                     <PostBox
                       isRef
-                      setIsScroll={setIsScroll}
+                      setPageCount={setPageCount}
                       id={data.idx}
                       img={data.postImg}
                       key={`${data.idx}-${index + 1}`}
