@@ -52,8 +52,11 @@ function ImgSlider({ img }: IProps) {
   };
 
   const getImageWidth = debounce(() => {
-    if (imgRef.current?.offsetWidth) SetImageWidth(imgRef.current.offsetWidth);
-  }, 150);
+    if (imgRef.current?.offsetWidth) {
+      SetImageWidth(imgRef.current.offsetWidth);
+      setDist(-1 * imgIndex * Number(imgRef.current?.offsetWidth));
+    }
+  }, 100);
 
   useEffect(() => {
     if (imgRef.current?.offsetWidth) SetImageWidth(imgRef.current.offsetWidth);
