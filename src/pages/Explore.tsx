@@ -22,7 +22,7 @@ function Explore() {
     setHashtagData([]);
 
     Promise.allSettled([
-      axios.get('/api/user', { params: { word: result } }),
+      axios.get('/api/user', { params: { word: result, page: 0 } }),
       axios.get(`/api/post/tag/${result}`),
     ]).then((res) =>
       res.forEach((resData, index) => {
