@@ -50,7 +50,7 @@ function Hashtag() {
           <DataContainer>
             {hashtagData.length !== 0 ? (
               hashtagData.map((data, index) => {
-                if ((index > 0 && index % 8 === 0) || index === hashtagData.length - 1) {
+                if (index === hashtagData.length - 1) {
                   return (
                     <PostBox
                       isRef
