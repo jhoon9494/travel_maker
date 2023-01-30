@@ -40,17 +40,19 @@ function FollowListPage() {
     try {
       const API_URL = `/api/follow/${currPage === 'follow' ? 'following' : 'follower'}/${userId}`;
       const res = await axios.get(API_URL, { params: { page: pageCount } });
-      const result = [...res.data].map(async (item) => {
+      const userListData = [...res.data].map(async (item) => {
         const followStatus = await followCheck(item.userId);
-        // FIXME 비동기 순서 뒤죽박죽임. 수정하기
         return {
           userId: item.userId,
           profileImg: item.profileImg,
           followStatus,
         };
       });
-      result.forEach((promise) => {
-        promise.then((data) => setUserList((prev) => [...prev, data]));
+
+      Promise.all(userListData).then((list) => {
+        list.forEach((user) => {
+          setUserList((prev) => [...prev, user]);
+        });
       });
     } catch (e: any) {
       console.error(e);
@@ -59,7 +61,7 @@ function FollowListPage() {
 
   useEffect(() => {
     getData();
-  }, [getData, pageCount]);
+  }, [getData]);
 
   // 무한스크롤 부분
   const intersectionObserver = useCallback((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
