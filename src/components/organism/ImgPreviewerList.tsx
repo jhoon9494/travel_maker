@@ -26,6 +26,7 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs, set
   const resizeLoop = useCallback(
     async (files: File[]) => {
       const resizedList = [...files].map(async (file) => {
+        if (file.size / 1024 / 1024 <= 1) return file;
         const resizedFile = await resizeFn(file);
         return resizedFile;
       });
