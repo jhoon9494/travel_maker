@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { BsThreeDots } from 'react-icons/bs';
 import { useCallback, useEffect, useState, Dispatch, SetStateAction, useRef } from 'react';
 import axios from 'axios';
-import Confirm from './Confirm';
-import LazyImg from './LazyImg';
+import Confirm from '../atoms/Confirm';
+import LazyImg from '../atoms/LazyImg';
 
 interface IProps {
   isRef?: boolean;

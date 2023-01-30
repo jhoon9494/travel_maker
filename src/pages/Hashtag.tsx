@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import axios from 'axios';
-import PostBox from '../components/atoms/PostBox';
+import PostBox from '../components/organism/PostBox';
 import Loading from '../components/atoms/Loading';
 
 type TagDataType = {

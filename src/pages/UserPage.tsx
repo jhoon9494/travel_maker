@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import UserImage from 'components/atoms/UserImage';
 import { BiEdit } from 'react-icons/bi';
 import FollowBtn from 'components/atoms/FollowBtn';
-import PostBox from '../components/atoms/PostBox';
+import PostBox from '../components/organism/PostBox';
 import userContext from '../context/userContext';
 import Loading from '../components/atoms/Loading';
 
