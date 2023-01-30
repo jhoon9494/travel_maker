@@ -1,41 +1,52 @@
 import styled from 'styled-components';
 import axios from 'axios';
 import { GlobalColor } from 'styles/GlobalColor';
-import { useState } from 'react';
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react';
 
 interface BtnProps {
   followStatus: boolean;
   userId: string;
+  setText?: Dispatch<SetStateAction<string | null>>;
 }
 
-function FollowBtn({ followStatus, userId }: BtnProps) {
-  const [followState, setFollowState] = useState(followStatus);
+function FollowBtn({ followStatus, userId, setText }: BtnProps) {
+  const [follow, setFollow] = useState(followStatus);
 
-  const handleFollow = async (id: string) => {
+  useEffect(() => {
+    setFollow(followStatus);
+  }, [followStatus]);
+
+  const handleFollow = async (event: MouseEvent, id: string) => {
+    if (setText) setText(event.currentTarget.textContent);
     try {
       await axios.get(`/api/follow/${id}`);
-      setFollowState(true);
+      setFollow(true);
     } catch (e: any) {
       console.error(e);
     }
   };
 
-  const handleUnFollow = async (id: string) => {
+  const handleUnFollow = async (event: MouseEvent, id: string) => {
+    if (setText) setText(event.currentTarget.textContent);
     try {
       await axios.get(`/api/follow/cancel/${id}`);
-      setFollowState(false);
+      setFollow(false);
     } catch (e: any) {
       console.error(e);
     }
   };
   return (
-    <Button onClick={followState ? () => handleUnFollow(userId) : () => handleFollow(userId)} status={followState}>
-      {followState ? '해제하기' : '팔로우'}
+    <Button onClick={follow ? (e) => handleUnFollow(e, userId) : (e) => handleFollow(e, userId)} status={follow}>
+      {follow ? '해제하기' : '팔로우'}
     </Button>
   );
 }
 
 export default FollowBtn;
+
+FollowBtn.defaultProps = {
+  setText: null,
+};
 
 const Button = styled.button<{ status: boolean }>`
   width: 80px;
