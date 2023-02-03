@@ -97,10 +97,15 @@ function EditProfile() {
     const { files } = e.target;
 
     if (files) {
-      resizeFn(files[0]).then((file) => {
-        setProfileImg(file);
-        setPreviewImg(URL.createObjectURL(file));
-      });
+      if (files[0].size / 1024 / 1024 <= 1) {
+        setProfileImg(files[0]);
+        setPreviewImg(URL.createObjectURL(files[0]));
+      } else {
+        resizeFn(files[0]).then((file) => {
+          setProfileImg(file);
+          setPreviewImg(URL.createObjectURL(file));
+        });
+      }
     }
   };
 
