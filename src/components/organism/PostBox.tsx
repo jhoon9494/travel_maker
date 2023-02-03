@@ -25,9 +25,9 @@ function PostBox({ isRef, setPageCount, id, img, edit, setDeleteIndex }: IProps)
   // 게시글 삭제 부분
   const deletePost = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/post/${id}`);
+      await axios.get(`/api/post/${id}`);
       // 게시글 삭제되었을 경우 게시글 목록을 새로 받아오기 위한 부분
-      if (res.data === 'OK' && setDeleteIndex) {
+      if (setDeleteIndex) {
         setDeleteIndex(id);
       }
     } catch (e: any) {

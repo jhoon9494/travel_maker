@@ -35,7 +35,7 @@ function Register() {
       pw === confirmPw
     ) {
       try {
-        const res = await axios.post(
+        await axios.post(
           '/api/register',
           {
             id,
@@ -50,11 +50,10 @@ function Register() {
             },
           },
         );
-        if (res.data === 'OK') {
-          setLoggedIn(id);
-          localStorage.setItem('id', id);
-          navigate('/main');
-        }
+
+        setLoggedIn(id);
+        localStorage.setItem('id', id);
+        navigate('/main');
       } catch (e: any) {
         console.error(e);
       }
@@ -70,10 +69,8 @@ function Register() {
   const handleIdCheck = async () => {
     if (validateId(id)) {
       try {
-        const res = await axios.get('/api/check', { params: { id } });
-        if (res.data === 'OK') {
-          setCheckId(true);
-        }
+        await axios.get('/api/check', { params: { id } });
+        setCheckId(true);
       } catch (e: any) {
         if (e.response.data.code === 'ID_EXISTS') {
           setAlertOpen(true);

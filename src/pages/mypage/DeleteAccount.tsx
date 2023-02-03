@@ -18,7 +18,7 @@ function DeleteAccount() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(
+      await axios.post(
         '/api/sign-out',
         {
           password: pw,
@@ -29,9 +29,8 @@ function DeleteAccount() {
           },
         },
       );
-      if (res.data === 'OK') {
-        navigate('/', { replace: true });
-      }
+
+      navigate('/', { replace: true });
     } catch (e: any) {
       if (e.response.data.status === 401) {
         setAlertText('비밀번호를 다시 확인해주세요.');

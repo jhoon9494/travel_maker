@@ -76,17 +76,14 @@ function EditProfile() {
       formData.append('profileImg', profileImg || '');
     }
     try {
-      const res = await axios.post('/api/user', formData, {
+      await axios.post('/api/user', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      if (res.data === 'OK') {
-        getUserData();
-        setPassword('');
-        setIsLoading(false);
-      }
+      getUserData();
+      setPassword('');
+      setIsLoading(false);
     } catch (error: any) {
       if (error.response.data.status === 401) {
         setAlertText('비밀번호가 일치하지 않습니다.');

@@ -15,14 +15,13 @@ function HeartBtn({ heart, setStatus }: IProps) {
 
   const getHeartStatus = useCallback(async () => {
     try {
-      const res = await axios.get('/api/post/check/like', {
+      await axios.get('/api/post/check/like', {
         params: {
           idx: id,
         },
       });
-      if (res.data === 'OK') {
-        setHeartStatus(false);
-      }
+
+      setHeartStatus(false);
     } catch (e: any) {
       // 이미 좋아요를 누른 게시글인 경우
       if (e.response.data.status === 403) {
@@ -37,32 +36,30 @@ function HeartBtn({ heart, setStatus }: IProps) {
 
   const handlelike = useCallback(async () => {
     try {
-      const res = await axios.get('/api/post/unlike', {
+      await axios.get('/api/post/unlike', {
         params: {
           idx: id,
         },
       });
-      if (res.data === 'OK') {
-        setStatus(false);
-      }
+
+      setStatus(false);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
     }
     setHeartStatus(false);
   }, [id, setStatus]);
 
   const handleUnlike = useCallback(async () => {
     try {
-      const res = await axios.get('/api/post/like', {
+      await axios.get('/api/post/like', {
         params: {
           idx: id,
         },
       });
-      if (res.data === 'OK') {
-        setStatus(true);
-      }
+
+      setStatus(true);
     } catch (e: any) {
-      console.log(e.response.data.message);
+      console.error(e);
     }
     setHeartStatus(true);
   }, [id, setStatus]);

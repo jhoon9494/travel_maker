@@ -23,7 +23,7 @@ function ChangePw() {
   const submitFn = useCallback(async () => {
     if (validatePw(newPw) && newPw === confirmPw) {
       try {
-        const res = await axios.post(
+        await axios.post(
           '/api/user/pass',
           {
             nowPassword: currPw,
@@ -35,9 +35,7 @@ function ChangePw() {
             },
           },
         );
-        if (res.data === 'OK') {
-          navigate('/user', { replace: true });
-        }
+        navigate('/user', { replace: true });
       } catch (error: any) {
         setConfirmResult(false);
         setConfirmOpen(false);
