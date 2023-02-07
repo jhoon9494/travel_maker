@@ -31,6 +31,8 @@ function Hashtag() {
       if (pageCount === 0 && e.response.data.status === 500) {
         setHashtagData([]);
       }
+
+      setIsLoading(false);
     }
   }, [tag, pageCount]);
 
