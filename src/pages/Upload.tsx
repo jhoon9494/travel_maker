@@ -71,41 +71,46 @@ function Upload() {
 
   const getEditData = useCallback(async () => {
     try {
-      // TODO 이미지 file 받아오는 로직 구현한 다음 진행
       const res = await axios.get(`/api/post/detail/${id}`);
-      console.log(res);
+      const editData = res.data;
+      const imgList: string[] = editData.postImg.trim().split(',').slice();
+      // 마지막 index는 빈 값이라 제거해줌
+      imgList.pop();
 
-      // setTitle(editData.title);
-      // setContent(editData.content);
+      setPreviewImg({
+        src: `https://my-travel-maker.s3.amazonaws.com/Downloads/${imgList[0]}`,
+        alt: `${editData.title}-thumbnailImage`,
+      });
+      setPreviewImgs(
+        imgList.map((img, index) => ({
+          src: `https://my-travel-maker.s3.amazonaws.com/Downloads/${img}`,
+          alt: `${editData.title}-${index + 1}-image`,
+        })),
+      );
+      setTipsList(
+        editData.recommendRoutes.map((route: TipsType) => ({ placeName: route.placeName, tips: route.tips })),
+      );
 
-      // // 이미지 미리보기 부분
-      // setPreviewImg({ src: editData.post_img[0], alt: `${editData.title}-썸네일` });
-      // editData.post_img.forEach((img: string, index: number) => {
-      //   setPreviewImgs((prev) => [...prev, { src: img, alt: `${editData.title}-${index + 1}-img` }]);
-      // });
+      setTitle(editData.title);
+      setContent(editData.content);
 
-      // setRecommend(editData.figures.recommend);
-      // setEmotion(editData.figures.emotion);
-      // setRevisit(editData.figures.revisit);
-
-      // // 여행 추천 경로 부분
-      // editData.recommendRoutes.forEach((route: { placeName: string; tips: string }) => {
-      //   setTipsList((prev) => [...prev, { placeName: route.placeName, tip: route.tips }]);
-      // });
+      setRecommend(editData.figures.recommend);
+      setEmotion(editData.figures.emotion);
+      setRevisit(editData.figures.revisit);
     } catch (e: any) {
       console.error(e);
     }
   }, [id]);
 
+  // 게시글 수정 시 데이터 불러오기
   useEffect(() => {
-    // 수정하기로 들어온 경우 실행
     if (id) {
       getEditData();
     }
   }, [getEditData, id]);
 
+  // 파일업로드 첫번째 페이지에서 돌아가기 클릭 시 동작
   useEffect(() => {
-    // 파일업로드 첫번째 페이지에서 돌아가기 클릭 시 동작
     if (confirmResult) {
       navigate(-1);
     }
@@ -153,6 +158,7 @@ function Upload() {
     return setTip('');
   };
 
+  // 게시글 작성
   const handlePostWrite = async () => {
     if (title === '') {
       setAlertText('제목을 작성해주세요!');
@@ -197,14 +203,72 @@ function Upload() {
     });
 
     try {
-      const res = await axios.post('api/post/write', formData, {
+      await axios.post('api/post/write', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      if (res.data === 'OK') {
-        navigate(`/${loggedUser.id}`, { replace: true });
-      }
+
+      navigate(`/${loggedUser.id}`, { replace: true });
+    } catch (e: any) {
+      setIsLoading(false);
+      console.error(e);
+    }
+  };
+
+  // 게시글 수정
+  const handleEdit = async () => {
+    if (title === '') {
+      setAlertText('제목을 작성해주세요!');
+      setAlertOpen(true);
+      return;
+    }
+    if (content === '') {
+      setAlertText('본문을 작성해주세요!');
+      setAlertOpen(true);
+      return;
+    }
+
+    if (previewImgs.length === 0) {
+      setAlertText('이미지를 추가해주세요!');
+      setAlertOpen(true);
+      return;
+    }
+    setIsLoading(true);
+    const jsonData = JSON.stringify({
+      title,
+      content,
+      figures: {
+        recommend,
+        emotion,
+        revisit,
+      },
+      hashtags: hashtag,
+      recommendRoutes: tipsList,
+    });
+
+    const formData = new FormData();
+    const postData = new Blob([jsonData], { type: 'application/json' });
+
+    formData.append('post', postData);
+    if (imgFiles.length > 0) {
+      imgFiles.forEach((file) => {
+        formData.append('images', file);
+      });
+    } else {
+      // FIXME
+      formData.append('images', 'null');
+    }
+    try {
+      console.log(formData.getAll('images'));
+      const res = await axios.post(`/api/post/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(res);
+
+      navigate(`/${loggedUser.id}`, { replace: true });
     } catch (e: any) {
       setIsLoading(false);
       console.error(e);
@@ -222,7 +286,10 @@ function Upload() {
           <BtnsContainer>
             <BackSpaceBtn onClick={handleBackSpace} />
             <span style={{ flexGrow: 1 }} />
-            <Button onClick={page === 1 ? handleNextStep : handlePostWrite}>{page === 1 ? '다음' : '제출'}</Button>
+            {/* eslint-disable-next-line */}
+            <Button onClick={page === 1 ? handleNextStep : id ? handleEdit : handlePostWrite}>
+              {page === 1 ? '다음' : '제출'}
+            </Button>
           </BtnsContainer>
 
           {page === 1 ? (
