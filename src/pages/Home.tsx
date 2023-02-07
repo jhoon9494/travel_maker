@@ -26,6 +26,7 @@ type PostData = {
 function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [pageCount, setPageCount] = useState(0);
   const [postList, setPostList] = useState<PostData[]>([]);
 
   // 무한 스크롤 관련 부분
@@ -43,7 +44,7 @@ function Home() {
       // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
       // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
       if (!sessionStorage.getItem('postList')) {
-        const res = await axios.get('/api/post/list');
+        const res = await axios.get('/api/post/list', { params: { page: pageCount } });
         const postData = res.data.map((data: PostData) => ({
           idx: data.idx,
           title: data.title,
@@ -61,23 +62,18 @@ function Home() {
       setIsLoading(false);
     } catch (e: any) {
       setIsLoading(false);
-      // TODO 무한스크롤로 더이상 받아올 정보가 없는 경우에는 기존에 모아진 배열 그대로 다시 반환하면 될듯
-      // 추가로 boxRef.current = null로 변경해서 옵저버 관찰 없애기
     }
-  }, []);
+  }, [pageCount]);
 
-  const intersectionObserver = useCallback(
-    (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-      entries.forEach((entry) => {
-        // 관찰대상 entry가 화면에 보여지는 경우 실행
-        if (entry.isIntersecting) {
-          observer.unobserve(entry.target); // entry 관찰 해제
-          getData(); // 데이터 가져오기
-        }
-      });
-    },
-    [getData],
-  );
+  const intersectionObserver = useCallback((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+    entries.forEach((entry) => {
+      // 관찰대상 entry가 화면에 보여지는 경우 실행
+      if (entry.isIntersecting) {
+        observer.unobserve(entry.target); // entry 관찰 해제
+        if (setPageCount) setPageCount((curr) => curr + 1);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     getData();
