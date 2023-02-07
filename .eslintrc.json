@@ -34,7 +34,9 @@
         "tsx": "never"
       }
     ],
-    "no-use-before-define": 0
+    "no-use-before-define": 0,
+    "no-console": 0,
+    "@typescript-eslint/no-explicit-any": 0
   },
   "settings": {
     "import/resolver": {

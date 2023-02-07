@@ -1,4 +1,3 @@
-import { MouseEventHandler } from 'react';
 import { HiArrowCircleLeft, HiArrowCircleRight } from 'react-icons/hi';
 
 import styled from 'styled-components';
