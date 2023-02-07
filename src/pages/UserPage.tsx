@@ -71,7 +71,13 @@ function UserPage() {
 
   useEffect(() => {
     getInitData();
-  }, [getInitData, deletePostIndex]);
+  }, [getInitData]);
+
+  useEffect(() => {
+    if (deletePostIndex !== '') {
+      setPostData((prev) => prev.filter((item) => item.idx !== deletePostIndex));
+    }
+  }, [deletePostIndex]);
 
   // 팔로우, 언팔로우 시 유저 팔로워 증감 상태
   useEffect(() => {

@@ -28,6 +28,7 @@ function PostBox({ isRef, setPageCount, id, img, edit, setDeleteIndex }: IProps)
       await axios.get(`/api/post/${id}`);
       // 게시글 삭제되었을 경우 게시글 목록을 새로 받아오기 위한 부분
       if (setDeleteIndex) {
+        setConfirmOpen(false);
         setDeleteIndex(id);
       }
     } catch (e: any) {
