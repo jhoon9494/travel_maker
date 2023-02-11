@@ -11,7 +11,7 @@ import Loading from '../components/atoms/Loading';
 
 interface PostDataProps {
   idx: string;
-  postImg: string;
+  postImg: string[];
 }
 
 function UserPage() {
@@ -37,7 +37,15 @@ function UserPage() {
         // 게시글 정보
         if (index === 0) {
           if (resData.status === 'fulfilled') {
-            setPostData(resData.value.data);
+            resData.value.data.forEach((data: { idx: string; postImg: string }) => {
+              setPostData((prev) => [
+                ...prev,
+                {
+                  idx: data.idx,
+                  postImg: data.postImg.split(',').filter((img) => img.length !== 0),
+                },
+              ]);
+            });
           } else if (resData.reason.response.status === 500) {
             setPostData([]);
           }
@@ -118,7 +126,7 @@ function UserPage() {
             return (
               <PostBox
                 id={data.idx}
-                img={data.postImg.split(',')[0]}
+                img={data.postImg[0]}
                 key={`${data.idx}-${index + 1}`}
                 edit={id === userId}
                 setDeleteIndex={setDeletePostIndex}

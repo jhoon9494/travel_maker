@@ -73,8 +73,7 @@ function DetailPage() {
     try {
       const res = await axios.get(`/api/post/detail/${id}`);
       setData(res.data);
-      const postImgList = res.data.postImg.split(',');
-      postImgList.pop();
+      const postImgList = res.data.postImg.split(',').filter((src: string) => src.length !== 0);
       setImgList(postImgList);
     } catch (e: any) {
       if (e.response.data.status === 500) {

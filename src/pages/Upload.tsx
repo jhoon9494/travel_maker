@@ -73,9 +73,10 @@ function Upload() {
     try {
       const res = await axios.get(`/api/post/detail/${id}`);
       const editData = res.data;
-      const imgList: string[] = editData.postImg.trim().split(',').slice();
-      // 마지막 index는 빈 값이라 제거해줌
-      imgList.pop();
+      const imgList: string[] = editData.postImg
+        .trim()
+        .split(',')
+        .filter((img: string) => img.length !== 0);
 
       setPreviewImg({
         src: `https://my-travel-maker.s3.amazonaws.com/Downloads/${imgList[0]}`,
