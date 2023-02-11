@@ -235,6 +235,11 @@ function Upload() {
       return;
     }
     setIsLoading(true);
+
+    const postImg = previewImgs.map((img) =>
+      img.src.replace('https://my-travel-maker.s3.amazonaws.com/Downloads/', ''),
+    );
+
     const jsonData = JSON.stringify({
       title,
       content,
@@ -245,6 +250,7 @@ function Upload() {
       },
       hashtags: hashtag,
       recommendRoutes: tipsList,
+      postImg,
     });
 
     const formData = new FormData();
@@ -256,18 +262,16 @@ function Upload() {
         formData.append('images', file);
       });
     } else {
-      // FIXME
       formData.append('images', 'null');
     }
     try {
-      console.log(formData.getAll('images'));
       const res = await axios.post(`/api/post/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       console.log(res);
-
+      setIsLoading(false);
       navigate(`/${loggedUser.id}`, { replace: true });
     } catch (e: any) {
       setIsLoading(false);
