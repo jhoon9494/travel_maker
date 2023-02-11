@@ -236,9 +236,9 @@ function Upload() {
     }
     setIsLoading(true);
 
-    const postImg = previewImgs.map((img) =>
-      img.src.replace('https://my-travel-maker.s3.amazonaws.com/Downloads/', ''),
-    );
+    const postImg = previewImgs
+      .filter((img) => !img.src.includes('blob'))
+      .map((img) => img.src.replace('https://my-travel-maker.s3.amazonaws.com/Downloads/', ''));
 
     const jsonData = JSON.stringify({
       title,
@@ -265,12 +265,11 @@ function Upload() {
       formData.append('images', 'null');
     }
     try {
-      const res = await axios.post(`/api/post/${id}`, formData, {
+      await axios.post(`/api/post/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(res);
       setIsLoading(false);
       navigate(`/${loggedUser.id}`, { replace: true });
     } catch (e: any) {
