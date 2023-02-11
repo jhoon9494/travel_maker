@@ -12,7 +12,6 @@
     "@types/react-dom": "^18.0.0",
     "axios": "^0.27.2",
     "browser-image-compression": "^2.0.0",
-    "http-proxy-middleware": "^2.0.6",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -30,6 +29,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'"
   },
+  "homepage": "https://travel-maker.netlify.app",
   "eslintConfig": {
     "extends": [
       "react-app",
