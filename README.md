@@ -1,46 +1,54 @@
-# Getting Started with Create React App
+# ✈️ Travel Maker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚩 프로젝트 목적
 
-## Available Scripts
+Typescript와 Java Spring Boot를 연습하기 위해 진행한 프로젝트
 
-In the project directory, you can run:
+<br />
 
-### `yarn start`
+## 👨‍💻 팀원 소개
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Front End : <a href="https://github.com/jhoon9494">최정훈</a>
+<br />
+Back End : <a href="https://github.com/kjjee99">김정은</a>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+<br />
 
-### `yarn test`
+## 🔗 배포 주소
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<br />
 
-### `yarn build`
+## 🚀 주요 기능
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+프론트엔드 주요 기능
+<a href="https://github.com/jhoon9494/travel_maker/wiki">wiki</a> <br/>
+백엔드 주요 기능
+<a href="https://github.com/kjjee99/travel_maker/wiki">wiki</a> <br/>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<br />
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⚒️ 사용 기술
 
-### `yarn eject`
+### <a href="https://github.com/jhoon9494/travel_maker">Front-End</a>
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=black"/>
+<img src="https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=Typescript&logoColor=white"/>
+<img src="https://img.shields.io/badge/styled components-DB7093?style=flat-square&logo=styled-components&logoColor=white"/>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### <a href="https://github.com/kjjee99/travel_maker">Back-End</a>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=SpringBoot&logoColor=white" />
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>
+<img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white"/>
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+<br />
 
-## Learn More
+## 와이어 프레임
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<a href="https://www.figma.com/file/6rqjRnqO6tI4udaTUHn4In/Travel-Maker?node-id=31%3A2&t=7jI2ybhgyT3ttAsW-0">Figma Link</a>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<br />
+
+## API 설계서
+
+<a href="https://documenter.getpostman.com/view/23403372/2s8Z75UVxM">Postman Link</a>
