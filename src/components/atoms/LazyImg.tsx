@@ -1,16 +1,11 @@
-import { useRef, useState, MouseEventHandler, useEffect } from 'react';
+import { ILazyImg } from 'interface/atoms.d';
+import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import infiniteScroll from 'utils/InfiniteScroll';
 
 const Img = styled.img``;
 
-interface LazyImgProps {
-  src: string;
-  alt: string;
-  onClick?: MouseEventHandler<HTMLImageElement>;
-}
-
-export default function LazyImg({ src, alt, onClick }: LazyImgProps) {
+export default function LazyImg({ src, alt, onClick }: ILazyImg) {
   const [isLoad, setIsLoad] = useState(false);
   const inputRef = useRef<HTMLImageElement>(null);
 

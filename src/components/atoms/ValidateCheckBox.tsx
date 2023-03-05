@@ -1,12 +1,8 @@
+import { ICheckBox } from 'interface/atoms.d';
 import { AiOutlineCheck } from 'react-icons/ai';
 import styled from 'styled-components';
 
-interface checkBoxProps {
-  text: string;
-  check: boolean;
-}
-
-function ValidateCheckBox({ text, check }: checkBoxProps) {
+function ValidateCheckBox({ text, check }: ICheckBox) {
   return (
     <Container check={check}>
       <AiOutlineCheck />

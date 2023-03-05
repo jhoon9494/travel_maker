@@ -1,17 +1,7 @@
 import styled, { css } from 'styled-components';
-import { ChangeEventHandler } from 'react';
+import { IInput } from 'interface/atoms';
 
-interface InputProps {
-  id: string;
-  placeholder?: string;
-  type: string;
-  label?: string;
-  size?: string;
-  value: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-}
-
-function Input({ id, label, placeholder, size, type, value, onChange }: InputProps) {
+function Input({ id, label, placeholder, size, type, value, onChange }: IInput) {
   return (
     <Container>
       {label && <Label htmlFor={id}>{label}</Label>}

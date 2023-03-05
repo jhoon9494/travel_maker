@@ -1,14 +1,7 @@
 import styled from 'styled-components';
-import { Dispatch, SetStateAction } from 'react';
+import { IScoreInput } from 'interface/atoms.d';
 
-interface IProps {
-  id: string;
-  value: number;
-  setValue: Dispatch<SetStateAction<number>>;
-  text: string;
-}
-
-function ScoreInput({ id, value, setValue, text }: IProps) {
+function ScoreInput({ id, value, setValue, text }: IScoreInput) {
   return (
     <ScoreItem>
       <Label htmlFor={id}>{text}</Label>

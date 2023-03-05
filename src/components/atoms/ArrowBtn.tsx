@@ -1,12 +1,8 @@
+import { IClick } from 'interface/atoms.d';
 import { HiArrowCircleLeft, HiArrowCircleRight } from 'react-icons/hi';
-
 import styled from 'styled-components';
 
-interface BtnProps {
-  onClick: () => void;
-}
-
-export function RightBtn({ onClick }: BtnProps) {
+export function RightBtn({ onClick }: IClick) {
   return (
     <CustomRightBtn onClick={onClick}>
       <HiArrowCircleRight style={{ color: 'white' }} />
@@ -14,7 +10,7 @@ export function RightBtn({ onClick }: BtnProps) {
   );
 }
 
-export function LeftBtn({ onClick }: BtnProps) {
+export function LeftBtn({ onClick }: IClick) {
   return (
     <CustomLeftBtn onClick={onClick}>
       <HiArrowCircleLeft style={{ color: 'white' }} />

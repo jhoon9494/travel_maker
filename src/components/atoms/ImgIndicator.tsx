@@ -1,12 +1,8 @@
+import { IImgIndicator } from 'interface/atoms.d';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-interface Iprops {
-  count: number;
-  selectedIndex: number;
-}
-
-function ImgIndicator({ count, selectedIndex }: Iprops) {
+function ImgIndicator({ count, selectedIndex }: IImgIndicator) {
   return (
     <Container>
       {Array(count)

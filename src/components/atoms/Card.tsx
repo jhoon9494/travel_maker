@@ -1,18 +1,12 @@
 import styled from 'styled-components';
 import { HiX } from 'react-icons/hi';
-import { Dispatch, SetStateAction } from 'react';
+import { ICard } from 'interface/atoms.d';
 
-interface IProps {
-  placeName: string;
-  tip: string;
-  setPlace: Dispatch<SetStateAction<string>>;
-}
-
-function Card({ placeName, tip, setPlace }: IProps) {
+function Card({ placeName, tips, setPlace }: ICard) {
   return (
     <Container>
       <h3>{placeName}</h3>
-      <p>{tip}</p>
+      <p>{tips}</p>
       <CloseBtn onClick={() => setPlace(placeName)}>
         <CustomMark />
       </CloseBtn>

@@ -1,12 +1,7 @@
+import { IUserImg } from 'interface/atoms.d';
 import styled from 'styled-components';
 
-interface IProps {
-  src: string | undefined;
-  alt: string;
-  name?: string;
-}
-
-function UserImage({ src, alt, name }: IProps) {
+function UserImage({ src, alt, name }: IUserImg) {
   return (
     <>
       <Img src={src} alt={alt} />

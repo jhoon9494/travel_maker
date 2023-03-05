@@ -1,15 +1,10 @@
 import styled from 'styled-components';
 import axios from 'axios';
 import { GlobalColor } from 'styles/GlobalColor';
-import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
+import { IFollowBtn } from 'interface/atoms.d';
 
-interface BtnProps {
-  followStatus: boolean;
-  userId: string;
-  setText?: Dispatch<SetStateAction<string | null>>;
-}
-
-function FollowBtn({ followStatus, userId, setText }: BtnProps) {
+function FollowBtn({ followStatus, userId, setText }: IFollowBtn) {
   const [follow, setFollow] = useState(followStatus);
 
   useEffect(() => {

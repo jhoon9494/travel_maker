@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-interface ButtonProps {
-  value: string;
-}
-
-export default function SubmitBtn({ value }: ButtonProps) {
+export default function SubmitBtn({ value }: { value: string }) {
   return <ButtonContainer>{value}</ButtonContainer>;
 }
 

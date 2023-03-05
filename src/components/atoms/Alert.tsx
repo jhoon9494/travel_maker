@@ -1,13 +1,9 @@
-import { Dispatch, SetStateAction, MouseEvent } from 'react';
+import { IAlert } from 'interface/atoms.d';
+import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-interface IProps {
-  text: string;
-  open: Dispatch<SetStateAction<boolean>>;
-}
-
-function Alert({ text, open }: IProps) {
+function Alert({ text, open }: IAlert) {
   return (
     <Outter onClick={() => open(false)}>
       <Inner onClick={(e: MouseEvent) => e.stopPropagation()}>

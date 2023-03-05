@@ -1,16 +1,9 @@
-import { Dispatch, SetStateAction, MouseEvent } from 'react';
+import { IConfirm } from 'interface/atoms.d';
+import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-interface IProps {
-  text: string;
-  open: Dispatch<SetStateAction<boolean>>;
-  setResult: Dispatch<SetStateAction<boolean>>;
-  yes: string;
-  no: string;
-}
-
-function Confirm({ text, open, setResult, yes, no }: IProps) {
+function Confirm({ text, open, setResult, yes, no }: IConfirm) {
   return (
     <Outter onClick={() => open(false)}>
       <Inner onClick={(e: MouseEvent) => e.stopPropagation()}>

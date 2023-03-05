@@ -1,11 +1,8 @@
+import { IClick } from 'interface/atoms';
 import { BiArrowBack } from 'react-icons/bi';
 import styled from 'styled-components';
 
-interface IProps {
-  onClick: () => void;
-}
-
-function BackSpaceBtn({ onClick }: IProps) {
+function BackSpaceBtn({ onClick }: IClick) {
   return (
     <BackSpace onClick={onClick}>
       <BiArrowBack />

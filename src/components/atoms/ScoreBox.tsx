@@ -1,11 +1,7 @@
+import { IScoreBox } from 'interface/atoms.d';
 import styled from 'styled-components';
 
-interface IProps {
-  title: string;
-  score: number;
-}
-
-function ScoreBox({ title, score }: IProps) {
+function ScoreBox({ title, score }: IScoreBox) {
   return (
     <Box>
       <Title>{title}</Title>
