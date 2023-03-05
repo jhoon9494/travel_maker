@@ -5,6 +5,7 @@ import { BiEdit } from 'react-icons/bi';
 import LazyImg from 'components/atoms/LazyImg';
 import { getAllPost } from 'api/post';
 import { AxiosError } from 'axios';
+import infiniteScroll from 'utils/InfiniteScroll';
 import Loading from '../../components/atoms/Loading';
 import { IPostData } from './home.d';
 
@@ -24,64 +25,66 @@ function Home() {
     navigate(pathName);
   };
 
-  const getData = useCallback(async () => {
-    try {
-      // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
-      // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
-      if (!sessionStorage.getItem('postList')) {
-        const res = await getAllPost(pageCount);
-        const postData = res.data.map((data: IPostData) => ({
-          idx: data.idx,
-          title: data.title,
-          content: data.content,
-          heart: data.heart,
-          userId: data.userId,
-          figures: data.figures,
-          postImg: data.postImg.split(',')[0],
-          hashtags: data.hashtags.slice(0, 4),
-        }));
-        setPostList((prevList) => [...prevList, ...postData]);
-      } else {
-        setPostList(JSON.parse(sessionStorage.getItem('postList') as string));
+  const getData = useCallback(
+    async (savedPostList?: string) => {
+      try {
+        // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
+        // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
+        if (!savedPostList) {
+          const res = await getAllPost(pageCount);
+          const postData = res.data.map((data: IPostData) => ({
+            idx: data.idx,
+            title: data.title,
+            content: data.content,
+            heart: data.heart,
+            userId: data.userId,
+            figures: data.figures,
+            postImg: data.postImg.split(',')[0],
+            hashtags: data.hashtags.slice(0, 4),
+          }));
+          setPostList((prevList) => [...prevList, ...postData]);
+        } else {
+          setPostList(JSON.parse(savedPostList));
+        }
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          console.error(e);
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        console.error(e);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [pageCount]);
-
-  const intersectionObserver = useCallback((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-    entries.forEach((entry) => {
-      // 관찰대상 entry가 화면에 보여지는 경우 실행
-      if (entry.isIntersecting) {
-        observer.unobserve(entry.target); // entry 관찰 해제
-        if (setPageCount) setPageCount((curr) => curr + 1);
-      }
-    });
-  }, []);
+    },
+    [pageCount],
+  );
 
   useEffect(() => {
-    getData();
+    const getSavedPostList = sessionStorage.getItem('postList');
+    const getScrollY = sessionStorage.getItem('mainPageScrollY');
+
+    if (getSavedPostList) {
+      getData(getSavedPostList);
+    } else {
+      getData();
+    }
 
     // 스크롤 위치 복구
-    setTimeout(() => {
-      window.scrollTo({ top: Number(sessionStorage.getItem('mainPageScrollY')) });
-      sessionStorage.removeItem('mainPageScrollY');
-      sessionStorage.removeItem('postList');
-    }, 0);
+    if (getSavedPostList) {
+      setTimeout(() => {
+        window.scrollTo({ top: Number(getScrollY) });
+        sessionStorage.removeItem('mainPageScrollY');
+        sessionStorage.removeItem('postList');
+      }, 0);
+    }
   }, [getData]);
 
   // postList가 갱신될 때마다 observer 설정
   useEffect(() => {
     let io;
     if (lastIdxRef.current) {
-      io = new IntersectionObserver(intersectionObserver); // IntersectionObserver
+      io = new IntersectionObserver(infiniteScroll(setPageCount));
       io.observe(lastIdxRef.current);
     }
-  }, [postList, intersectionObserver]);
+  }, [postList]);
 
   return (
     <Wrapper>

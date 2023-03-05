@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { BsThreeDots } from 'react-icons/bs';
 import { useCallback, useEffect, useState, Dispatch, SetStateAction, useRef } from 'react';
 import axios from 'axios';
+import infiniteScroll from 'utils/InfiniteScroll';
 import Confirm from '../atoms/Confirm';
 import LazyImg from '../atoms/LazyImg';
 
@@ -42,26 +43,15 @@ function PostBox({ isRef, setPageCount, id, img, edit, setDeleteIndex }: IProps)
     }
   }, [confirmResult, deletePost]);
 
-  // postBox 무한스크롤 부분
-  const intersectionObserver = useCallback(
-    (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          observer.unobserve(entry.target);
-          if (setPageCount) setPageCount((curr) => curr + 1);
-        }
-      });
-    },
-    [setPageCount],
-  );
-
   useEffect(() => {
-    let io;
-    if (boxRef && boxRef.current) {
-      io = new IntersectionObserver(intersectionObserver);
-      io.observe(boxRef.current);
+    if (setPageCount) {
+      let io;
+      if (boxRef && boxRef.current) {
+        io = new IntersectionObserver(infiniteScroll(setPageCount));
+        io.observe(boxRef.current);
+      }
     }
-  }, [boxRef, intersectionObserver]);
+  }, [boxRef, setPageCount]);
 
   return (
     <Container ref={isRef ? boxRef : null}>

@@ -4,6 +4,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import FollowBtn from 'components/atoms/FollowBtn';
+import infiniteScroll from 'utils/InfiniteScroll';
 import BackSpaceBtn from '../components/atoms/BackSpaceBtn';
 import UserImage from '../components/atoms/UserImage';
 
@@ -63,27 +64,13 @@ function FollowListPage() {
     getData();
   }, [getData]);
 
-  // 무한스크롤 부분
-  const intersectionObserver = useCallback((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-    entries.forEach(
-      (entry) => {
-        // 관찰대상 entry가 화면에 보여지는 경우 실행
-        if (entry.isIntersecting) {
-          observer.unobserve(entry.target); // entry 관찰 해제
-          setPageCount((curr) => curr + 1);
-        }
-      },
-      { root: rootRef.current },
-    );
-  }, []);
-
   useEffect(() => {
     let io;
     if (lastUserRef.current) {
-      io = new IntersectionObserver(intersectionObserver);
+      io = new IntersectionObserver(infiniteScroll(setPageCount, rootRef.current));
       io.observe(lastUserRef.current);
     }
-  }, [intersectionObserver, userList]);
+  }, [userList]);
 
   return (
     <Container>
