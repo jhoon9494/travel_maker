@@ -1,16 +1,12 @@
 import styled from 'styled-components';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
 import axios from 'axios';
+import { ISideBar } from 'interface/organism.d';
 import userContext from '../../context/userContext';
 
-interface IProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-function SideBar({ open, setOpen }: IProps) {
+function SideBar({ open, setOpen }: ISideBar) {
   const { id, setLoggedIn } = useContext(userContext);
   const navigate = useNavigate();
   const handleLogOut = async () => {

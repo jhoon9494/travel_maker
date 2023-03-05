@@ -1,18 +1,9 @@
 import Card from 'components/atoms/Card';
 import styled from 'styled-components';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ICardList } from 'interface/organism.d';
 
-type TipsType = {
-  placeName: string;
-  tips: string;
-};
-
-interface IProps {
-  list: TipsType[];
-  setList: Dispatch<SetStateAction<TipsType[]>>;
-}
-
-function CardList({ list, setList }: IProps) {
+function CardList({ list, setList }: ICardList) {
   // 선택된 tip card를 지우기 위한 state
   const [deletePlace, setDeletePlace] = useState('');
 
@@ -35,7 +26,7 @@ function CardList({ list, setList }: IProps) {
       {list.length > 0 ? (
         list.map(({ placeName, tips }, index) => {
           return (
-            <Card placeName={placeName} tip={tips} setPlace={setDeletePlace} key={`${placeName}-${index + 1}-key`} />
+            <Card placeName={placeName} tips={tips} setPlace={setDeletePlace} key={`${placeName}-${index + 1}-key`} />
           );
         })
       ) : (

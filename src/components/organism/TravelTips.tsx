@@ -1,21 +1,13 @@
+import { ITravelTips } from 'interface/post.d';
 import { useState, Fragment, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-type TipsType = {
-  placeName: string;
-  tips: string;
-};
-
-interface IProps {
-  tips: TipsType[] | undefined;
-}
-
-function TravelTips({ tips }: IProps) {
-  const [currPlace, setCurrPlace] = useState<string>('');
-  const [containerLeftDist, setContainerLeftDist] = useState<number>(0);
-  const [tipsTopDist, setTipsTopDist] = useState<number>(0);
-  const [tipsLeftDist, setTipsLeftDist] = useState<number>(0);
+function TravelTips({ tips }: { tips: ITravelTips[] | undefined }) {
+  const [currPlace, setCurrPlace] = useState('');
+  const [containerLeftDist, setContainerLeftDist] = useState(0);
+  const [tipsTopDist, setTipsTopDist] = useState(0);
+  const [tipsLeftDist, setTipsLeftDist] = useState(0);
   return (
     <TravelTipsContainer
       onMouseEnter={(e: MouseEvent<HTMLElement>) => {

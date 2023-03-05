@@ -4,11 +4,7 @@ import styled from 'styled-components';
 import { LeftBtn, RightBtn } from '../atoms/ArrowBtn';
 import ImgIndicator from '../atoms/ImgIndicator';
 
-interface IProps {
-  img: string[];
-}
-
-function ImgSlider({ img }: IProps) {
+function ImgSlider({ img }: { img: string[] }) {
   // 이미지를 좌우로 이동시키기 위한 state
   const [dist, setDist] = useState<number>(0);
   const [imgIndex, setImgIndex] = useState<number>(0);

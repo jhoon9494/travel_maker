@@ -1,22 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { BsThreeDots } from 'react-icons/bs';
-import { useCallback, useEffect, useState, Dispatch, SetStateAction, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import infiniteScroll from 'utils/InfiniteScroll';
+import { IPostBox } from 'interface/organism.d';
 import Confirm from '../atoms/Confirm';
 import LazyImg from '../atoms/LazyImg';
 
-interface IProps {
-  isRef?: boolean;
-  setPageCount?: Dispatch<SetStateAction<number>>;
-  id: string;
-  img: string;
-  edit?: boolean;
-  setDeleteIndex?: Dispatch<SetStateAction<string>>;
-}
-
-function PostBox({ isRef, setPageCount, id, img, edit, setDeleteIndex }: IProps) {
+function PostBox({ isRef, setPageCount, id, img, edit, setDeleteIndex }: IPostBox) {
   const [editBox, setEditBox] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmResult, setConfirmResult] = useState<boolean>(false);

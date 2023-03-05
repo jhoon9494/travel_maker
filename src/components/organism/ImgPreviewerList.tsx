@@ -1,25 +1,14 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
+import { useState, ChangeEvent, useCallback } from 'react';
 import { BsFillPlusCircleFill } from 'react-icons/bs';
 import { AiFillMinusCircle } from 'react-icons/ai';
 import resizeFn from 'utils/imageResize';
 import Alert from 'components/atoms/Alert';
+import { IPreviewImg } from 'interface/post';
+import { IImgPreviewList } from 'interface/organism.d';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-type PreviewImgType = {
-  src: string;
-  alt: string;
-};
-
-interface IProps {
-  selectImg: Dispatch<SetStateAction<PreviewImgType | null>>;
-  setImgFiles: Dispatch<SetStateAction<File[]>>;
-  previewImgs: PreviewImgType[];
-  setPreviewImgs: Dispatch<SetStateAction<PreviewImgType[]>>;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
-}
-
-function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs, setIsLoading }: IProps) {
+function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs, setIsLoading }: IImgPreviewList) {
   const [alertOpen, setAlertOpen] = useState(false);
   const [currImg, setCurrImg] = useState<string>('');
 
@@ -65,7 +54,7 @@ function ImgPreviewer({ selectImg, previewImgs, setImgFiles, setPreviewImgs, set
     e.target.value = '';
   };
 
-  const handleImgClick = (img: PreviewImgType) => {
+  const handleImgClick = (img: IPreviewImg) => {
     selectImg(img);
   };
 

@@ -1,19 +1,7 @@
-import { ChangeEventHandler } from 'react';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import ValidateCheckBox from 'components/atoms/ValidateCheckBox';
-
-interface ValidateInputProps {
-  id: string;
-  placeholder: string;
-  type: string;
-  validateValue: string;
-  validationCheck: boolean;
-  label?: string;
-  size?: string;
-  value: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-}
+import { IValidateInput } from 'interface/organism.d';
 
 function ValidateInput({
   id,
@@ -25,7 +13,7 @@ function ValidateInput({
   validationCheck,
   value,
   onChange,
-}: ValidateInputProps) {
+}: IValidateInput) {
   return (
     <Container>
       <Input
