@@ -1,5 +1,5 @@
 import { API } from 'api';
-import { ILogin, IRegister } from '../interface/api.d';
+import { ILogin, IRegister } from '../interface/auth.d';
 
 export const login = async (data: ILogin) => {
   return await API({
