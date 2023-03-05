@@ -7,8 +7,7 @@ import ImgSlider from 'components/organism/ImgSlider';
 import HeartBtn from 'components/atoms/HeartBtn';
 import TravelTips from 'components/organism/TravelTips';
 import { getPost } from 'api/post';
-import axios from 'axios';
-import { IPostData } from './post.d';
+import { IPostData } from '../interface/post.d';
 
 const initData: IPostData = {
   idx: '',

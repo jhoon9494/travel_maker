@@ -21,3 +21,8 @@ export interface IPostData {
   heart: number;
   userId: string;
 }
+
+export interface IPreviewImg {
+  src: string;
+  alt: string;
+}

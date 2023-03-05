@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { getHeart, like, unlike } from 'api/post';
-import { IHeartBtn } from './atoms.d';
+import { IHeartBtn } from '../../interface/atoms.d';
 
 function HeartBtn({ heart, getData }: IHeartBtn) {
   const [heartStatus, setHeartStatus] = useState(false);

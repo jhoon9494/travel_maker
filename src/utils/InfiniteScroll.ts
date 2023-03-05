@@ -1,4 +1,4 @@
-import { ISetState } from './utils.d';
+import { ISetState } from '../interface/utils.d';
 
 const infiniteScroll = (setState: ISetState, root?: Element | Document | null) => {
   return function intersectionObserver(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {

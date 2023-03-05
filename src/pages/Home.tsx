@@ -6,8 +6,8 @@ import LazyImg from 'components/atoms/LazyImg';
 import { getAllPost } from 'api/post';
 import { AxiosError } from 'axios';
 import infiniteScroll from 'utils/InfiniteScroll';
-import Loading from '../../components/atoms/Loading';
-import { IPostData } from '../DetailPage/post.d';
+import Loading from '../components/atoms/Loading';
+import { IPostData } from '../interface/post.d';
 
 function Home() {
   const navigate = useNavigate();
