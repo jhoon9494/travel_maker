@@ -1,0 +1,23 @@
+export interface ITravelTips {
+  placeName: string;
+  tips: string;
+}
+
+export interface IFigures {
+  recommend: number;
+  emotion: number;
+  revisit: number;
+}
+
+export interface IPostData {
+  idx: string;
+  postImg: string;
+  recommendRoutes?: ITravelTips[];
+  hashtags?: string[];
+  title: string;
+  content: string;
+  hashTags: string[];
+  figures: IFigures;
+  heart: number;
+  userId: string;
+}

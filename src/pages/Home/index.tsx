@@ -7,7 +7,7 @@ import { getAllPost } from 'api/post';
 import { AxiosError } from 'axios';
 import infiniteScroll from 'utils/InfiniteScroll';
 import Loading from '../../components/atoms/Loading';
-import { IPostData } from './home.d';
+import { IPostData } from '../DetailPage/post.d';
 
 function Home() {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ function Home() {
             userId: data.userId,
             figures: data.figures,
             postImg: data.postImg.split(',')[0],
-            hashtags: data.hashtags.slice(0, 4),
+            hashtags: data.hashtags?.slice(0, 4),
           }));
           setPostList((prevList) => [...prevList, ...postData]);
         } else {
@@ -120,7 +120,7 @@ function Home() {
                     <span onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</span>
                   </div>
                   <ul>
-                    {data.hashtags.map((tag) => {
+                    {data.hashtags?.map((tag) => {
                       const tagName = tag.split('#')[1];
                       return (
                         <li key={`${tagName}`}>
@@ -151,7 +151,7 @@ function Home() {
                   <span onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</span>
                 </div>
                 <ul>
-                  {data.hashtags.map((tag) => {
+                  {data.hashtags?.map((tag) => {
                     const tagName = tag.split('#')[1];
                     return (
                       <li key={`${tagName}`}>
