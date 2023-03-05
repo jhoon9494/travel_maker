@@ -1,33 +1,18 @@
 import styled from 'styled-components';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit } from 'react-icons/bi';
 import LazyImg from 'components/atoms/LazyImg';
-import Loading from '../components/atoms/Loading';
-
-type FiguresType = {
-  recommend: number;
-  revisit: number;
-  emotion: number;
-};
-
-type PostData = {
-  idx: string;
-  title: string;
-  content: string;
-  heart: number;
-  userId: string;
-  figures: FiguresType;
-  postImg: string;
-  hashtags: string[];
-};
+import { getAllPost } from 'api/post';
+import { AxiosError } from 'axios';
+import Loading from '../../components/atoms/Loading';
+import { IPostData } from './home.d';
 
 function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
-  const [postList, setPostList] = useState<PostData[]>([]);
+  const [postList, setPostList] = useState<IPostData[]>([]);
 
   // 무한 스크롤 관련 부분
   const lastIdxRef = useRef<HTMLDivElement>(null);
@@ -44,8 +29,8 @@ function Home() {
       // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
       // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
       if (!sessionStorage.getItem('postList')) {
-        const res = await axios.get('/api/post/list', { params: { page: pageCount } });
-        const postData = res.data.map((data: PostData) => ({
+        const res = await getAllPost(pageCount);
+        const postData = res.data.map((data: IPostData) => ({
           idx: data.idx,
           title: data.title,
           content: data.content,
@@ -59,8 +44,11 @@ function Home() {
       } else {
         setPostList(JSON.parse(sessionStorage.getItem('postList') as string));
       }
-      setIsLoading(false);
-    } catch (e: any) {
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        console.error(e);
+      }
+    } finally {
       setIsLoading(false);
     }
   }, [pageCount]);
