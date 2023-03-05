@@ -3,22 +3,18 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
+import { IUserData } from 'interface/user.d';
 import Loading from '../components/atoms/Loading';
-
-type SearchDataType = {
-  id: string;
-  img: string;
-};
 
 function Explore() {
   const { result } = useParams();
   const navigate = useNavigate();
-  const [searchData, setSearchData] = useState<SearchDataType[]>([]);
+  const [userData, setUserData] = useState<IUserData[]>([]);
   const [hashtagData, setHashtagData] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const getData = useCallback(() => {
-    setSearchData([]);
+    setUserData([]);
     setHashtagData([]);
 
     Promise.allSettled([
@@ -30,10 +26,10 @@ function Explore() {
         if (index === 0) {
           if (resData.status === 'fulfilled') {
             resData.value.data.forEach((user: { userId: string; profileImg: string }) => {
-              setSearchData((prev) => [...prev, { id: user.userId, img: user.profileImg }]);
+              setUserData((prev) => [...prev, { userId: user.userId, profileImg: user.profileImg }]);
             });
           } else if (resData.reason.response.data.status === 500) {
-            setSearchData([]);
+            setUserData([]);
           }
         }
         // 해시태그 검색 부분
@@ -64,13 +60,13 @@ function Explore() {
           <Loading />
         ) : (
           <UserDataContainer>
-            {searchData.length !== 0 ? (
-              searchData.map((data, index) => {
+            {userData.length !== 0 ? (
+              userData.map((data, index) => {
                 return (
-                  <Link to={`/${data.id}`} key={`${data.id}-${index + 1}`}>
+                  <Link to={`/${data.userId}`} key={`${data.userId}-${index + 1}`}>
                     <UserData>
-                      <img src={data.img} alt="검색된 유저 이미지" />
-                      <p>{data.id}</p>
+                      <img src={data.profileImg} alt="검색된 유저 이미지" />
+                      <p>{data.userId}</p>
                     </UserData>
                   </Link>
                 );

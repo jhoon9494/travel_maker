@@ -5,21 +5,16 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import FollowBtn from 'components/atoms/FollowBtn';
 import infiniteScroll from 'utils/InfiniteScroll';
+import { IFollow } from 'interface/user.d';
 import BackSpaceBtn from '../components/atoms/BackSpaceBtn';
 import UserImage from '../components/atoms/UserImage';
-
-type FollowType = {
-  userId: string;
-  profileImg: string;
-  followStatus: boolean;
-};
 
 function FollowListPage() {
   const loggedUser = useContext(userContext);
   const location = useLocation();
   const navigate = useNavigate();
   const { userId } = useParams();
-  const [userList, setUserList] = useState<FollowType[]>([]);
+  const [userList, setUserList] = useState<IFollow[]>([]);
   const currPage = location.pathname.split('/')[2];
 
   // 무한스크롤 관련 코드

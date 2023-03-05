@@ -3,18 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import axios from 'axios';
+import { IPostImg } from 'interface/post.d';
 import PostBox from '../components/organism/PostBox';
 import Loading from '../components/atoms/Loading';
-
-type TagDataType = {
-  postImg: string;
-  idx: string;
-};
 
 function Hashtag() {
   const { tag } = useParams();
   const navigate = useNavigate();
-  const [hashtagData, setHashtagData] = useState<TagDataType[]>([]);
+  const [hashtagData, setHashtagData] = useState<IPostImg[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
 

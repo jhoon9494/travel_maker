@@ -5,20 +5,16 @@ import styled, { css } from 'styled-components';
 import UserImage from 'components/atoms/UserImage';
 import { BiEdit } from 'react-icons/bi';
 import FollowBtn from 'components/atoms/FollowBtn';
+import { IPostImg } from 'interface/post.d';
 import PostBox from '../components/organism/PostBox';
 import userContext from '../context/userContext';
 import Loading from '../components/atoms/Loading';
-
-interface PostDataProps {
-  idx: string;
-  postImg: string[];
-}
 
 function UserPage() {
   const { id } = useContext(userContext);
   const { userId } = useParams();
   const navigate = useNavigate();
-  const [postData, setPostData] = useState<PostDataProps[]>([]);
+  const [postData, setPostData] = useState<IPostImg[]>([]);
   const [userImage, setUserImage] = useState<string>('');
   const [followerNumber, setFollowerNumber] = useState(0);
   const [followingNumber, setFollowingNumber] = useState(0);
@@ -42,7 +38,7 @@ function UserPage() {
                 ...prev,
                 {
                   idx: data.idx,
-                  postImg: data.postImg.split(',').filter((img) => img.length !== 0),
+                  postImg: data.postImg.split(',').filter((src) => src.length !== 0)[0],
                 },
               ]);
             });
@@ -126,7 +122,7 @@ function UserPage() {
             return (
               <PostBox
                 id={data.idx}
-                img={data.postImg[0]}
+                img={data.postImg}
                 key={`${data.idx}-${index + 1}`}
                 edit={id === userId}
                 setDeleteIndex={setDeletePostIndex}

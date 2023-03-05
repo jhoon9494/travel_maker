@@ -26,3 +26,8 @@ export interface IPreviewImg {
   src: string;
   alt: string;
 }
+
+export interface IPostImg {
+  idx: string;
+  postImg: string;
+}

@@ -13,16 +13,7 @@ import { BiBulb } from 'react-icons/bi';
 import axios from 'axios';
 import userContext from 'context/userContext';
 import Loading from '../components/atoms/Loading';
-
-type PreviewImgType = {
-  src: string;
-  alt: string;
-};
-
-type TipsType = {
-  placeName: string;
-  tips: string;
-};
+import { IPreviewImg, ITravelTips } from '../interface/post.d';
 
 function Upload() {
   const navigate = useNavigate();
@@ -31,8 +22,8 @@ function Upload() {
 
   // 이미지 파일 및 미리보기 부분
   const [imgFiles, setImgFiles] = useState<File[]>([]);
-  const [previewImg, setPreviewImg] = useState<PreviewImgType | null>(null);
-  const [previewImgs, setPreviewImgs] = useState<PreviewImgType[]>([]);
+  const [previewImg, setPreviewImg] = useState<IPreviewImg | null>(null);
+  const [previewImgs, setPreviewImgs] = useState<IPreviewImg[]>([]);
 
   // Confirm 부분
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -52,7 +43,7 @@ function Upload() {
   // 여행 tips 부분
   const [placeName, setPlaceName] = useState('');
   const [tip, setTip] = useState('');
-  const [tipsList, setTipsList] = useState<TipsType[]>([]);
+  const [tipsList, setTipsList] = useState<ITravelTips[]>([]);
 
   // 여행 추천 점수 부분
   const [recommend, setRecommend] = useState(0);
@@ -89,7 +80,7 @@ function Upload() {
         })),
       );
       setTipsList(
-        editData.recommendRoutes.map((route: TipsType) => ({ placeName: route.placeName, tips: route.tips })),
+        editData.recommendRoutes.map((route: ITravelTips) => ({ placeName: route.placeName, tips: route.tips })),
       );
 
       setTitle(editData.title);
