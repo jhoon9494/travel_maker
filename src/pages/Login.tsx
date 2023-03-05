@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { login } from 'api/auth';
 import userContext from '../context/userContext';
 
 function Login() {
@@ -19,15 +19,7 @@ function Login() {
     try {
       setIdError(false);
       setPwError(false);
-      await axios.post(
-        '/api/login',
-        { id, password: pw },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      await login({ id, password: pw });
       user.setLoggedIn(id);
       localStorage.setItem('id', id);
       navigate('/main');

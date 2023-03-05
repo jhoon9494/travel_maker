@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ValidateInput from 'components/organism/ValidateInput';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { register, idCheck } from 'api/auth';
 import Alert from 'components/atoms/Alert';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 import { GlobalColor } from '../styles/GlobalColor';
@@ -25,6 +25,13 @@ function Register() {
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const registerData = {
+      id,
+      password: pw,
+      email,
+      phoneNumber: phone,
+      profileImg: '/icons/default_profile.svg',
+    };
 
     if (
       validateId(id) &&
@@ -35,22 +42,7 @@ function Register() {
       pw === confirmPw
     ) {
       try {
-        await axios.post(
-          '/api/register',
-          {
-            id,
-            password: pw,
-            email,
-            phoneNumber: phone,
-            profileImg: '/icons/default_profile.svg',
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
+        await register(registerData);
         setLoggedIn(id);
         localStorage.setItem('id', id);
         navigate('/main');
@@ -69,7 +61,7 @@ function Register() {
   const handleIdCheck = async () => {
     if (validateId(id)) {
       try {
-        await axios.get('/api/check', { params: { id } });
+        await idCheck(id);
         setCheckId(true);
       } catch (e: any) {
         if (e.response.data.code === 'ID_EXISTS') {
