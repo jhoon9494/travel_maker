@@ -6,33 +6,12 @@ import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgSlider from 'components/organism/ImgSlider';
 import HeartBtn from 'components/atoms/HeartBtn';
 import TravelTips from 'components/organism/TravelTips';
+import { getPost } from 'api/post';
 import axios from 'axios';
+import { IPostData } from './post.d';
 
-type TravelTips = {
-  placeName: string;
-  tips: string;
-};
-
-type FiguresType = {
-  recommend: number;
-  emotion: number;
-  revisit: number;
-};
-
-interface PostData {
-  id: string;
-  postImg: string;
-  recommendRoutes: TravelTips[];
-  title: string;
-  content: string;
-  hashTags: string[];
-  figures: FiguresType;
-  heart: number;
-  userId: string;
-}
-
-const initialSet: PostData = {
-  id: '',
+const initData: IPostData = {
+  idx: '',
   postImg: '',
   recommendRoutes: [],
   title: '',
@@ -63,15 +42,14 @@ function createContent(content: string) {
 }
 
 function DetailPage() {
-  const [data, setData] = useState<PostData>(initialSet);
-  const [heartStatus, setHeartStatus] = useState<boolean | null>(null);
+  const [data, setData] = useState<IPostData>(initData);
   const [imgList, setImgList] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
   const getData = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/post/detail/${id}`);
+      const res = await getPost(id as string);
       setData(res.data);
       const postImgList = res.data.postImg.split(',').filter((src: string) => src.length !== 0);
       setImgList(postImgList);
@@ -84,7 +62,7 @@ function DetailPage() {
 
   useEffect(() => {
     getData();
-  }, [getData, heartStatus]);
+  }, [getData]);
 
   return (
     <Wrapper>
@@ -92,8 +70,8 @@ function DetailPage() {
       <DataContainer>
         <PostContainer>
           <ImgSlider img={imgList} />
-          <HeartBtn heart={data.heart} setStatus={setHeartStatus} />
-          {data.recommendRoutes.length !== 0 ? (
+          <HeartBtn heart={data.heart} getData={getData} />
+          {data.recommendRoutes?.length !== 0 ? (
             <TravelTips tips={data.recommendRoutes} />
           ) : (
             <div style={{ height: '40px' }} />
