@@ -62,7 +62,7 @@ function FollowListPage() {
   useEffect(() => {
     let io;
     if (lastUserRef.current) {
-      io = new IntersectionObserver(infiniteScroll(setPageCount, rootRef.current));
+      io = new IntersectionObserver(infiniteScroll(setPageCount), { root: rootRef.current });
       io.observe(lastUserRef.current);
     }
   }, [userList]);
