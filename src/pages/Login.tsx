@@ -4,7 +4,7 @@ import Input from 'components/atoms/Input';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from 'api/auth';
-import userContext from '../context/userContext';
+import { userContext } from '../context/ContextProvider';
 
 function Login() {
   const user = useContext(userContext);
@@ -20,7 +20,7 @@ function Login() {
       setIdError(false);
       setPwError(false);
       await login({ id, password: pw });
-      user.setLoggedIn(id);
+      if (user.setId) user.setId(id);
       localStorage.setItem('id', id);
       navigate('/main');
     } catch (e: any) {

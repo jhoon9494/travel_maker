@@ -1,17 +1,23 @@
-import { ReactNode, useContext, useState, useMemo } from 'react';
-import userContext from './userContext';
+import { ReactNode, useState, createContext, Dispatch, SetStateAction, useMemo } from 'react';
+
+export const userContext = createContext<{
+  id: string | null;
+  setId: Dispatch<SetStateAction<string | null>> | null;
+}>({
+  id: null,
+  setId: null,
+});
 
 type ContextProviderProps = {
   children: ReactNode;
 };
 
 function ContextProvider({ children }: ContextProviderProps) {
-  const { id } = useContext(userContext);
-  const [user, setUser] = useState(id);
+  const [id, setId] = useState(localStorage.getItem('id'));
 
   const loggedUser = useMemo(() => {
-    return { id: user, setLoggedIn: setUser };
-  }, [user]);
+    return { id, setId };
+  }, [id]);
 
   return <userContext.Provider value={loggedUser}>{children}</userContext.Provider>;
 }

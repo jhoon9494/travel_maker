@@ -3,7 +3,7 @@ import { useState, FormEvent, FormEventHandler, useContext, useEffect, useCallba
 import ValidateInput from 'components/organism/ValidateInput';
 import Input from 'components/atoms/Input';
 import axios from 'axios';
-import userContext from 'context/userContext';
+import { userContext } from 'context/ContextProvider';
 import { useNavigate } from 'react-router-dom';
 import Confirm from 'components/atoms/Confirm';
 import Alert from 'components/atoms/Alert';

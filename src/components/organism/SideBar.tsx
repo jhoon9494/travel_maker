@@ -4,16 +4,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
 import axios from 'axios';
 import { ISideBar } from 'interface/organism.d';
-import userContext from '../../context/userContext';
+import { userContext } from '../../context/ContextProvider';
 
 function SideBar({ open, setOpen }: ISideBar) {
-  const { id, setLoggedIn } = useContext(userContext);
+  const { id, setId } = useContext(userContext);
   const navigate = useNavigate();
   const handleLogOut = async () => {
     try {
       await axios.get('/api/logout');
       localStorage.removeItem('id');
-      setLoggedIn('');
+      if (setId) setId('');
       navigate('/', { replace: true });
     } catch (e: any) {
       console.error(e);

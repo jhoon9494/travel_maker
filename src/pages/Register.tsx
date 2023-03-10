@@ -7,11 +7,11 @@ import { register, idCheck } from 'api/auth';
 import Alert from 'components/atoms/Alert';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 import { GlobalColor } from '../styles/GlobalColor';
-import userContext from '../context/userContext';
+import { userContext } from '../context/ContextProvider';
 
 function Register() {
   const navigate = useNavigate();
-  const { setLoggedIn } = useContext(userContext);
+  const loggedUser = useContext(userContext);
   const [id, setId] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
@@ -43,7 +43,7 @@ function Register() {
     ) {
       try {
         await register(registerData);
-        setLoggedIn(id);
+        if (loggedUser.setId) loggedUser.setId(id);
         localStorage.setItem('id', id);
         navigate('/main');
       } catch (e: any) {

@@ -11,7 +11,7 @@ import SubmitBtn from 'components/atoms/SubmitBtn';
 import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
 import axios from 'axios';
-import userContext from 'context/userContext';
+import { userContext } from 'context/ContextProvider';
 import Loading from '../components/atoms/Loading';
 import { IPreviewImg, ITravelTips } from '../interface/post.d';
 

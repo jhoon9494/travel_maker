@@ -1,11 +1,11 @@
 import axios from 'axios';
-import userContext from 'context/userContext';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import FollowBtn from 'components/atoms/FollowBtn';
 import infiniteScroll from 'utils/InfiniteScroll';
 import { IFollow } from 'interface/user.d';
+import { userContext } from '../context/ContextProvider';
 import BackSpaceBtn from '../components/atoms/BackSpaceBtn';
 import UserImage from '../components/atoms/UserImage';
 

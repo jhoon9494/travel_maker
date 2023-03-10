@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import Navbar from 'components/organism/Navbar';
 import styled from 'styled-components';
 import Alert from 'components/atoms/Alert';
-import userContext from 'context/userContext';
+import { userContext } from '../context/ContextProvider';
 
 function Layout() {
   const [alert, setAlert] = useState(false);

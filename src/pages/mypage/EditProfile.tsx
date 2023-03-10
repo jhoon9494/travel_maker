@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FormEventHandler, useState, FormEvent, ChangeEvent, useEffect, useContext, useCallback } from 'react';
 import { VscSettingsGear } from 'react-icons/vsc';
 import SubmitBtn from 'components/atoms/SubmitBtn';
-import userContext from 'context/userContext';
+import { userContext } from 'context/ContextProvider';
 import axios from 'axios';
 import Loading from 'components/atoms/Loading';
 import Alert from 'components/atoms/Alert';

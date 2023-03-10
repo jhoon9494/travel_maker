@@ -7,7 +7,7 @@ import { BiEdit } from 'react-icons/bi';
 import FollowBtn from 'components/atoms/FollowBtn';
 import { IPostImg } from 'interface/post.d';
 import PostBox from '../components/organism/PostBox';
-import userContext from '../context/userContext';
+import { userContext } from '../context/ContextProvider';
 import Loading from '../components/atoms/Loading';
 
 function UserPage() {
