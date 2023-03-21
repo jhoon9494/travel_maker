@@ -13,7 +13,7 @@ import EditProfile from 'pages/mypage/EditProfile';
 import ChangePw from 'pages/mypage/ChangePw';
 import DeleteAccount from 'pages/mypage/DeleteAccount';
 import UserPage from 'pages/UserPage';
-import ContextProvider from 'context/ContextProvider';
+import ContextProvider from 'context/AuthContextProvider';
 import FollowListPage from 'pages/FollowListPage';
 import NotFound from 'pages/NotFound';
 import axios from 'axios';
