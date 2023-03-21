@@ -6,12 +6,12 @@ import { getUserData } from 'api/user';
 import { IPostImg } from 'interface/post.d';
 import FollowBtn from 'components/atoms/FollowBtn';
 import UserImage from 'components/atoms/UserImage';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 import PostBox from '../components/organism/PostBox';
 import Loading from '../components/atoms/Loading';
 
 function UserPage() {
-  const { state } = useGetUser();
+  const { state } = useAuth();
   const { userId } = useParams();
   const navigate = useNavigate();
   const [postData, setPostData] = useState<IPostImg[]>([]);

@@ -11,13 +11,13 @@ import SubmitBtn from 'components/atoms/SubmitBtn';
 import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
 import axios from 'axios';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 import Loading from '../components/atoms/Loading';
 import { IPreviewImg, ITravelTips } from '../interface/post.d';
 
 function Upload() {
   const navigate = useNavigate();
-  const { state } = useGetUser();
+  const { state } = useAuth();
   const { id } = useParams();
 
   // 이미지 파일 및 미리보기 부분

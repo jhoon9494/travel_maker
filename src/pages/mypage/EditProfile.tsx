@@ -6,7 +6,7 @@ import axios from 'axios';
 import Loading from 'components/atoms/Loading';
 import Alert from 'components/atoms/Alert';
 import resizeFn from 'utils/imageResize';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 import Input from '../../components/atoms/Input';
 import ValidateInput from '../../components/organism/ValidateInput';
 import { validatePhone, validateEmail } from '../../utils/validate';
@@ -29,7 +29,7 @@ function EditProfile() {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertText, setAlertText] = useState('');
 
-  const { state } = useGetUser();
+  const { state } = useAuth();
 
   const getUserData = useCallback(async () => {
     try {

@@ -5,13 +5,13 @@ import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import { register, idCheck } from 'api/auth';
 import Alert from 'components/atoms/Alert';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 import { GlobalColor } from '../styles/GlobalColor';
 
 function Register() {
   const navigate = useNavigate();
-  const { dispatch } = useGetUser();
+  const { dispatch } = useAuth();
   const [id, setId] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');

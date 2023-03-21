@@ -5,12 +5,12 @@ import styled from 'styled-components';
 import FollowBtn from 'components/atoms/FollowBtn';
 import infiniteScroll from 'utils/InfiniteScroll';
 import { IFollow } from 'interface/user.d';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 import BackSpaceBtn from '../components/atoms/BackSpaceBtn';
 import UserImage from '../components/atoms/UserImage';
 
 function FollowListPage() {
-  const { state } = useGetUser();
+  const { state } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { userId } = useParams();

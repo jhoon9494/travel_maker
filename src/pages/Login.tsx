@@ -4,10 +4,10 @@ import Input from 'components/atoms/Input';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from 'api/auth';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 
 function Login() {
-  const { dispatch } = useGetUser();
+  const { dispatch } = useAuth();
   const navigate = useNavigate();
   const [id, setId] = useState<string>('');
   const [pw, setPw] = useState<string>('');

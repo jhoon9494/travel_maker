@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
 import axios from 'axios';
 import { ISideBar } from 'interface/organism.d';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 
 function SideBar({ open, setOpen }: ISideBar) {
-  const { state, dispatch } = useGetUser();
+  const { state, dispatch } = useAuth();
   const navigate = useNavigate();
   const handleLogOut = async () => {
     try {

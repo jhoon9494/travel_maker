@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { userContext } from '../context/AuthContextProvider';
 
-const useGetUser = () => {
+const useAuth = () => {
   const value = useContext(userContext);
 
   if (!value?.state) throw new Error('Cannot find userContextProvider');
@@ -9,4 +9,4 @@ const useGetUser = () => {
   return { state: value.state, dispatch: value.dispatch };
 };
 
-export default useGetUser;
+export default useAuth;

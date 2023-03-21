@@ -6,13 +6,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Confirm from 'components/atoms/Confirm';
 import Alert from 'components/atoms/Alert';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 import { validatePw } from '../../utils/validate';
 import SubmitBtn from '../../components/atoms/SubmitBtn';
 
 function ChangePw() {
   const navigate = useNavigate();
-  const { state } = useGetUser();
+  const { state } = useAuth();
   const [currPw, setCurrPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');

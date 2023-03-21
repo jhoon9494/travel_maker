@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import Navbar from 'components/organism/Navbar';
 import styled from 'styled-components';
 import Alert from 'components/atoms/Alert';
-import useGetUser from 'hooks/useGetUser';
+import useAuth from 'hooks/useAuth';
 
 function Layout() {
   const [alert, setAlert] = useState(false);
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
-  const { state } = useGetUser();
+  const { state } = useAuth();
 
   useEffect(() => {
     if (!state.id) {
