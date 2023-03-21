@@ -2,6 +2,7 @@ import { ILazyImg } from 'interface/atoms.d';
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import infiniteScroll from 'utils/InfiniteScroll';
+import { IMAGE_PREFIX } from 'constant/prefix';
 
 const Img = styled.img``;
 
@@ -18,12 +19,7 @@ export default function LazyImg({ src, alt, onClick }: ILazyImg) {
   }, []);
 
   return (
-    <Img
-      ref={inputRef}
-      src={isLoad ? `https://my-travel-maker.s3.amazonaws.com/Downloads/${src}` : '/icons/noImage.png'}
-      alt={alt}
-      onClick={onClick}
-    />
+    <Img ref={inputRef} src={isLoad ? `${IMAGE_PREFIX}${src}` : '/icons/noImage.png'} alt={alt} onClick={onClick} />
   );
 }
 

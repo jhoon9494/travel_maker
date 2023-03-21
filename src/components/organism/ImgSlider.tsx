@@ -1,3 +1,4 @@
+import { IMAGE_PREFIX } from 'constant/prefix';
 import { debounce } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -70,7 +71,7 @@ function ImgSlider({ img }: { img: string[] }) {
           return (
             <Img
               length={img.length}
-              src={`https://my-travel-maker.s3.amazonaws.com/Downloads/${image}`}
+              src={`${IMAGE_PREFIX}${image}`}
               alt={`${index + 1}번째 그림`}
               key={`${image.slice(0, 5)}-${index + 1}-key`}
             />

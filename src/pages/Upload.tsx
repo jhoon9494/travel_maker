@@ -12,6 +12,7 @@ import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
 import axios from 'axios';
 import useAuth from 'hooks/useAuth';
+import { IMAGE_PREFIX } from 'constant/prefix';
 import Loading from '../components/atoms/Loading';
 import { IPreviewImg, ITravelTips } from '../interface/post.d';
 
@@ -70,12 +71,12 @@ function Upload() {
         .filter((img: string) => img.length !== 0);
 
       setPreviewImg({
-        src: `https://my-travel-maker.s3.amazonaws.com/Downloads/${imgList[0]}`,
+        src: `${IMAGE_PREFIX}${imgList[0]}`,
         alt: `${editData.title}-thumbnailImage`,
       });
       setPreviewImgs(
         imgList.map((img, index) => ({
-          src: `https://my-travel-maker.s3.amazonaws.com/Downloads/${img}`,
+          src: `${IMAGE_PREFIX}${img}`,
           alt: `${editData.title}-${index + 1}-image`,
         })),
       );
@@ -230,7 +231,7 @@ function Upload() {
 
     const postImg = previewImgs
       .filter((img) => !img.src.includes('blob'))
-      .map((img) => img.src.replace('https://my-travel-maker.s3.amazonaws.com/Downloads/', ''));
+      .map((img) => img.src.replace(IMAGE_PREFIX, ''));
 
     const jsonData = JSON.stringify({
       title,
