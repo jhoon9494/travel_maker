@@ -1,18 +1,18 @@
 import styled from 'styled-components';
-import { useState, FormEvent, FormEventHandler, useContext, useEffect, useCallback } from 'react';
+import { useState, FormEvent, FormEventHandler, useEffect, useCallback } from 'react';
 import ValidateInput from 'components/organism/ValidateInput';
 import Input from 'components/atoms/Input';
 import axios from 'axios';
-import { userContext } from 'context/ContextProvider';
 import { useNavigate } from 'react-router-dom';
 import Confirm from 'components/atoms/Confirm';
 import Alert from 'components/atoms/Alert';
+import useGetUser from 'hooks/useGetUser';
 import { validatePw } from '../../utils/validate';
 import SubmitBtn from '../../components/atoms/SubmitBtn';
 
 function ChangePw() {
   const navigate = useNavigate();
-  const loggedUser = useContext(userContext);
+  const { state } = useGetUser();
   const [currPw, setCurrPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
@@ -60,7 +60,7 @@ function ChangePw() {
   return (
     <Wrapper>
       <Form onSubmit={handleConfirm}>
-        <div>{loggedUser.id}</div>
+        <div>{state.id}</div>
         <Input
           id="currPw"
           placeholder="현재 비밀번호"

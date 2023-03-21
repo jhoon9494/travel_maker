@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { BiEdit } from 'react-icons/bi';
@@ -6,12 +6,12 @@ import { getUserData } from 'api/user';
 import { IPostImg } from 'interface/post.d';
 import FollowBtn from 'components/atoms/FollowBtn';
 import UserImage from 'components/atoms/UserImage';
-import { userContext } from '../context/ContextProvider';
+import useGetUser from 'hooks/useGetUser';
 import PostBox from '../components/organism/PostBox';
 import Loading from '../components/atoms/Loading';
 
 function UserPage() {
-  const { id: loggedUser } = useContext(userContext);
+  const { state } = useGetUser();
   const { userId } = useParams();
   const navigate = useNavigate();
   const [postData, setPostData] = useState<IPostImg[]>([]);
@@ -62,7 +62,7 @@ function UserPage() {
         <UserInfo>
           <h2>
             {userId}
-            {loggedUser !== userId && (
+            {state.id !== userId && (
               <FollowBtn setText={setFollowText} followStatus={followStatus} userId={userId as string} />
             )}
           </h2>
@@ -90,7 +90,7 @@ function UserPage() {
                 id={data.idx}
                 img={data.postImg}
                 key={`${data.idx}-${index + 1}`}
-                edit={loggedUser === userId}
+                edit={state.id === userId}
                 setDeleteIndex={setDeletePostIndex}
               />
             );
@@ -98,7 +98,7 @@ function UserPage() {
         )}
       </PostContainer>
 
-      {userId === loggedUser && (
+      {userId === state.id && (
         <UploadBtn onClick={() => navigate('/u')}>
           <BiEdit />
         </UploadBtn>

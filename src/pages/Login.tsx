@@ -1,13 +1,13 @@
-import { useState, FormEvent, useContext } from 'react';
+import { useState, FormEvent } from 'react';
 import styled from 'styled-components';
 import Input from 'components/atoms/Input';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from 'api/auth';
-import { userContext } from '../context/ContextProvider';
+import useGetUser from 'hooks/useGetUser';
 
 function Login() {
-  const user = useContext(userContext);
+  const { dispatch } = useGetUser();
   const navigate = useNavigate();
   const [id, setId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
@@ -20,8 +20,8 @@ function Login() {
       setIdError(false);
       setPwError(false);
       await login({ id, password: pw });
-      if (user.setId) user.setId(id);
-      localStorage.setItem('id', id);
+      dispatch({ type: 'signIn', payload: id });
+
       navigate('/main');
     } catch (e: any) {
       if (e.response.data.code === 'USER_NOT_FOUND') {

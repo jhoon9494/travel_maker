@@ -1,19 +1,17 @@
 import styled from 'styled-components';
-import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoX } from 'react-icons/go';
 import axios from 'axios';
 import { ISideBar } from 'interface/organism.d';
-import { userContext } from '../../context/ContextProvider';
+import useGetUser from 'hooks/useGetUser';
 
 function SideBar({ open, setOpen }: ISideBar) {
-  const { id, setId } = useContext(userContext);
+  const { state, dispatch } = useGetUser();
   const navigate = useNavigate();
   const handleLogOut = async () => {
     try {
       await axios.get('/api/logout');
-      localStorage.removeItem('id');
-      if (setId) setId('');
+      dispatch({ type: 'signOut' });
       navigate('/', { replace: true });
     } catch (e: any) {
       console.error(e);
@@ -27,7 +25,7 @@ function SideBar({ open, setOpen }: ISideBar) {
           <GoX />
         </CloseBtn>
         <LinkWrapper>
-          <Link to={`/${id}`}>{id}</Link>
+          <Link to={`/${state.id}`}>{state.id}</Link>
           <Link to="/user">정보수정</Link>
           <button type="button">설정</button>
           <button type="button" onClick={handleLogOut}>

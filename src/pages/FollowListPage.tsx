@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import FollowBtn from 'components/atoms/FollowBtn';
 import infiniteScroll from 'utils/InfiniteScroll';
 import { IFollow } from 'interface/user.d';
-import { userContext } from '../context/ContextProvider';
+import useGetUser from 'hooks/useGetUser';
 import BackSpaceBtn from '../components/atoms/BackSpaceBtn';
 import UserImage from '../components/atoms/UserImage';
 
 function FollowListPage() {
-  const loggedUser = useContext(userContext);
+  const { state } = useGetUser();
   const location = useLocation();
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -81,9 +81,7 @@ function FollowListPage() {
                     <UserLink to={`/${user.userId}`}>
                       <UserImage src={user.profileImg} alt={user.userId} name={user.userId} />
                     </UserLink>
-                    {user.userId !== loggedUser.id && (
-                      <FollowBtn followStatus={user.followStatus} userId={user.userId} />
-                    )}
+                    {user.userId !== state.id && <FollowBtn followStatus={user.followStatus} userId={user.userId} />}
                   </UserItem>
                 );
               }
@@ -92,7 +90,7 @@ function FollowListPage() {
                   <UserLink to={`/${user.userId}`}>
                     <UserImage src={user.profileImg} alt={user.userId} name={user.userId} />
                   </UserLink>
-                  {user.userId !== loggedUser.id && <FollowBtn followStatus={user.followStatus} userId={user.userId} />}
+                  {user.userId !== state.id && <FollowBtn followStatus={user.followStatus} userId={user.userId} />}
                 </UserItem>
               );
             })}

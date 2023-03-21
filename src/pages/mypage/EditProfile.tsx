@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { FormEventHandler, useState, FormEvent, ChangeEvent, useEffect, useContext, useCallback } from 'react';
+import { FormEventHandler, useState, FormEvent, ChangeEvent, useEffect, useCallback } from 'react';
 import { VscSettingsGear } from 'react-icons/vsc';
 import SubmitBtn from 'components/atoms/SubmitBtn';
-import { userContext } from 'context/ContextProvider';
 import axios from 'axios';
 import Loading from 'components/atoms/Loading';
 import Alert from 'components/atoms/Alert';
 import resizeFn from 'utils/imageResize';
+import useGetUser from 'hooks/useGetUser';
 import Input from '../../components/atoms/Input';
 import ValidateInput from '../../components/organism/ValidateInput';
 import { validatePhone, validateEmail } from '../../utils/validate';
@@ -29,12 +29,12 @@ function EditProfile() {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertText, setAlertText] = useState('');
 
-  const loggedUser = useContext(userContext);
+  const { state } = useGetUser();
 
   const getUserData = useCallback(async () => {
     try {
-      if (loggedUser.id) {
-        const res = await axios.get(`/api/info/${loggedUser.id}`);
+      if (state.id) {
+        const res = await axios.get(`/api/info/${state.id}`);
         setPhone(res.data.phoneNumber);
         setEmail(res.data.email);
         setPreviewImg(res.data.profileImg);
@@ -42,7 +42,7 @@ function EditProfile() {
     } catch (e: any) {
       console.error(e);
     }
-  }, [loggedUser.id]);
+  }, [state.id]);
 
   useEffect(() => {
     getUserData();
@@ -58,7 +58,7 @@ function EditProfile() {
     const userData = new Blob(
       [
         JSON.stringify({
-          id: loggedUser.id,
+          id: state.id,
           email,
           phoneNumber: phone,
           password,
@@ -120,11 +120,7 @@ function EditProfile() {
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit}>
-        <UserImage
-          src={previewImg}
-          alt={loggedUser.id ? loggedUser.id : '유저 이미지'}
-          name={loggedUser.id ? loggedUser.id : '유저 id'}
-        />
+        <UserImage src={previewImg} alt={state.id ? state.id : '유저 이미지'} name={state.id ? state.id : '유저 id'} />
         <ImgDeleteBtn type="button" onClick={() => setConfirmOpen(true)}>
           프로필 이미지 삭제
         </ImgDeleteBtn>

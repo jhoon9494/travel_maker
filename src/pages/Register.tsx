@@ -1,17 +1,17 @@
-import { FormEvent, useState, useContext, useEffect } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ValidateInput from 'components/organism/ValidateInput';
 import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import { register, idCheck } from 'api/auth';
 import Alert from 'components/atoms/Alert';
+import useGetUser from 'hooks/useGetUser';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 import { GlobalColor } from '../styles/GlobalColor';
-import { userContext } from '../context/ContextProvider';
 
 function Register() {
   const navigate = useNavigate();
-  const loggedUser = useContext(userContext);
+  const { dispatch } = useGetUser();
   const [id, setId] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
@@ -43,8 +43,7 @@ function Register() {
     ) {
       try {
         await register(registerData);
-        if (loggedUser.setId) loggedUser.setId(id);
-        localStorage.setItem('id', id);
+        dispatch({ type: 'signIn', payload: id });
         navigate('/main');
       } catch (e: any) {
         console.error(e);

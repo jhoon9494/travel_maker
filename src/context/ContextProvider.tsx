@@ -1,25 +1,37 @@
-import { ReactNode, useState, createContext, Dispatch, SetStateAction, useMemo } from 'react';
+import { ReactNode, createContext, Dispatch, useReducer, useMemo } from 'react';
 
 export const userContext = createContext<{
-  id: string | null;
-  setId: Dispatch<SetStateAction<string | null>> | null;
-}>({
-  id: null,
-  setId: null,
-});
+  state: { id: string };
+  dispatch: Dispatch<{ type: string; payload?: string }>;
+} | null>(null);
 
-type ContextProviderProps = {
-  children: ReactNode;
+const initState = {
+  id: sessionStorage.getItem('id') || '',
 };
 
-function ContextProvider({ children }: ContextProviderProps) {
-  const [id, setId] = useState(localStorage.getItem('id'));
+const reducer = (state: { id: string }, action: { type: string; payload?: string }) => {
+  switch (action.type) {
+    case 'signIn':
+      if (action.payload) sessionStorage.setItem('id', action.payload);
+      return { ...state, id: action.payload ? action.payload : '' };
 
-  const loggedUser = useMemo(() => {
-    return { id, setId };
-  }, [id]);
+    case 'signOut':
+      sessionStorage.removeItem('id');
+      return { ...state, id: '' };
 
-  return <userContext.Provider value={loggedUser}>{children}</userContext.Provider>;
+    default:
+      return state;
+  }
+};
+
+function ContextProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(reducer, initState);
+
+  const value = useMemo(() => {
+    return { state, dispatch };
+  }, [state, dispatch]);
+
+  return <userContext.Provider value={value}>{children}</userContext.Provider>;
 }
 
 export default ContextProvider;

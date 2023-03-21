@@ -1,22 +1,22 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from 'components/organism/Navbar';
 import styled from 'styled-components';
 import Alert from 'components/atoms/Alert';
-import { userContext } from '../context/ContextProvider';
+import useGetUser from 'hooks/useGetUser';
 
 function Layout() {
   const [alert, setAlert] = useState(false);
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
-  const loggedUser = useContext(userContext);
+  const { state } = useGetUser();
 
   useEffect(() => {
-    if (!loggedUser.id) {
+    if (!state.id) {
       setAlert(true);
       setOpen(true);
     }
-  }, [loggedUser]);
+  }, [state]);
 
   useEffect(() => {
     if (!open) {
@@ -27,7 +27,7 @@ function Layout() {
   return (
     <Wrapper>
       <Navbar />
-      <Body>{loggedUser.id && <Outlet />}</Body>
+      <Body>{state.id && <Outlet />}</Body>
       {alert && <Alert text={`로그인한 유저만 이용 가능합니다. \n\n로그인 후 이용해주세요`} open={setOpen} />}
     </Wrapper>
   );

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, FormEvent, useEffect, useCallback, useContext } from 'react';
+import { useState, FormEvent, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackSpaceBtn from 'components/atoms/BackSpaceBtn';
 import ImgPreviewerList from 'components/organism/ImgPreviewerList';
@@ -11,13 +11,13 @@ import SubmitBtn from 'components/atoms/SubmitBtn';
 import { GlobalColor } from 'styles/GlobalColor';
 import { BiBulb } from 'react-icons/bi';
 import axios from 'axios';
-import { userContext } from 'context/ContextProvider';
+import useGetUser from 'hooks/useGetUser';
 import Loading from '../components/atoms/Loading';
 import { IPreviewImg, ITravelTips } from '../interface/post.d';
 
 function Upload() {
   const navigate = useNavigate();
-  const loggedUser = useContext(userContext);
+  const { state } = useGetUser();
   const { id } = useParams();
 
   // 이미지 파일 및 미리보기 부분
@@ -201,7 +201,7 @@ function Upload() {
         },
       });
 
-      navigate(`/${loggedUser.id}`, { replace: true });
+      navigate(`/${state.id}`, { replace: true });
     } catch (e: any) {
       setIsLoading(false);
       console.error(e);
@@ -263,7 +263,7 @@ function Upload() {
         },
       });
       setIsLoading(false);
-      navigate(`/${loggedUser.id}`, { replace: true });
+      navigate(`/${state.id}`, { replace: true });
     } catch (e: any) {
       setIsLoading(false);
       console.error(e);
