@@ -6,6 +6,8 @@ import LazyImg from 'components/atoms/LazyImg';
 import { getAllPost } from 'api/post';
 import { AxiosError } from 'axios';
 import infiniteScroll from 'utils/InfiniteScroll';
+import { formatPostData } from 'utils/formatter';
+import useNavi from 'hooks/useNavi';
 import Loading from '../components/atoms/Loading';
 import { IPostData } from '../interface/post.d';
 
@@ -14,41 +16,23 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
   const [postList, setPostList] = useState<IPostData[]>([]);
-
-  // 무한 스크롤 관련 부분
   const lastIdxRef = useRef<HTMLDivElement>(null);
-
-  const saveScrollYAndNavi = (pathName: string) => {
-    // 상세 게시글페이지 이동 후 이전 게시글 목록 및 스크롤 위치 값을 유지하기 위해 세션스토리지를 이용
-    sessionStorage.setItem('mainPageScrollY', String(window.scrollY));
-    sessionStorage.setItem('postList', JSON.stringify(postList));
-    navigate(pathName);
-  };
+  const { onMovePage, savedPostList } = useNavi(postList, sessionStorage);
 
   const getData = useCallback(
-    async (savedPostList?: string) => {
+    async (saveData?: string) => {
       try {
-        // 유저 페이지, 해시태그 목록 페이지, 게시글 페이지 이동 후 뒤로가기를 눌렀을 때
-        // api요청 없이 세션스토리지에 저장된 목록만 불러오기 위한 코드
-        if (!savedPostList) {
+        if (!saveData) {
           const res = await getAllPost(pageCount);
-          const postData = res.data.map((data: IPostData) => ({
-            idx: data.idx,
-            title: data.title,
-            content: data.content,
-            heart: data.heart,
-            userId: data.userId,
-            figures: data.figures,
-            postImg: data.postImg.split(',')[0],
-            hashtags: data.hashtags?.slice(0, 4),
-          }));
+          const postData = formatPostData(res.data);
           setPostList((prevList) => [...prevList, ...postData]);
         } else {
-          setPostList(JSON.parse(savedPostList));
+          setPostList(JSON.parse(saveData));
         }
-      } catch (e) {
-        if (e instanceof AxiosError) {
-          console.error(e);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error(error);
+          throw error;
         }
       } finally {
         setIsLoading(false);
@@ -58,26 +42,9 @@ function Home() {
   );
 
   useEffect(() => {
-    const getSavedPostList = sessionStorage.getItem('postList');
-    const getScrollY = sessionStorage.getItem('mainPageScrollY');
+    getData(savedPostList || undefined);
+  }, [getData, savedPostList]);
 
-    if (getSavedPostList) {
-      getData(getSavedPostList);
-    } else {
-      getData();
-    }
-
-    // 스크롤 위치 복구
-    if (getSavedPostList) {
-      setTimeout(() => {
-        window.scrollTo({ top: Number(getScrollY) });
-        sessionStorage.removeItem('mainPageScrollY');
-        sessionStorage.removeItem('postList');
-      }, 0);
-    }
-  }, [getData]);
-
-  // postList가 갱신될 때마다 observer 설정
   useEffect(() => {
     let io;
     if (lastIdxRef.current) {
@@ -108,23 +75,23 @@ function Home() {
                   <LazyImg
                     src={data.postImg}
                     alt={`${data.title}-1번째 이미지`}
-                    onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
+                    onClick={() => onMovePage(`/p/${data.idx}`)}
                   />
                 </ImgWrapper>
 
                 <PostText>
                   <h2>
-                    <span onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</span>
+                    <span onClick={() => onMovePage(`/p/${data.idx}`)}>{data.title}</span>
                   </h2>
                   <div>
-                    <span onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</span>
+                    <span onClick={() => onMovePage(`/${data.userId}`)}>{data.userId}</span>
                   </div>
                   <ul>
                     {data.hashtags?.map((tag) => {
                       const tagName = tag.split('#')[1];
                       return (
                         <li key={`${tagName}`}>
-                          <span onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)}>{tag}</span>
+                          <span onClick={() => onMovePage(`/tag/${tagName}`)}>{tag}</span>
                         </li>
                       );
                     })}
@@ -139,23 +106,23 @@ function Home() {
                 <LazyImg
                   src={data.postImg}
                   alt={`${data.title}-1번째 이미지`}
-                  onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}
+                  onClick={() => onMovePage(`/p/${data.idx}`)}
                 />
               </ImgWrapper>
 
               <PostText>
                 <h2>
-                  <span onClick={() => saveScrollYAndNavi(`/p/${data.idx}`)}>{data.title}</span>
+                  <span onClick={() => onMovePage(`/p/${data.idx}`)}>{data.title}</span>
                 </h2>
                 <div>
-                  <span onClick={() => saveScrollYAndNavi(`/${data.userId}`)}>{data.userId}</span>
+                  <span onClick={() => onMovePage(`/${data.userId}`)}>{data.userId}</span>
                 </div>
                 <ul>
                   {data.hashtags?.map((tag) => {
                     const tagName = tag.split('#')[1];
                     return (
                       <li key={`${tagName}`}>
-                        <span onClick={() => saveScrollYAndNavi(`/tag/${tagName}`)}>{tag}</span>
+                        <span onClick={() => onMovePage(`/tag/${tagName}`)}>{tag}</span>
                       </li>
                     );
                   })}

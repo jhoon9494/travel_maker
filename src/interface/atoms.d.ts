@@ -2,7 +2,7 @@ import { ChangeEventHandler, Dispatch, MouseEventHandler, SetStateAction } from 
 import { ITravelTips } from './post.d';
 
 export interface IHeartBtn {
-  heart: number;
+  heart?: number;
   getData: () => void;
 }
 
@@ -54,7 +54,7 @@ export interface ILazyImg {
 
 export interface IScoreBox {
   title: string;
-  score: number;
+  score?: number;
 }
 
 export interface IScoreInput {

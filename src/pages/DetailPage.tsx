@@ -7,42 +7,12 @@ import ImgSlider from 'components/organism/ImgSlider';
 import HeartBtn from 'components/atoms/HeartBtn';
 import TravelTips from 'components/organism/TravelTips';
 import { getPost } from 'api/post';
+import { generateImgList, generateContent } from 'utils/generator';
 import { IPostData } from '../interface/post.d';
 
-const initData: IPostData = {
-  idx: '',
-  postImg: '',
-  recommendRoutes: [],
-  title: '',
-  content: '',
-  hashTags: [],
-  figures: {
-    recommend: 0,
-    emotion: 0,
-    revisit: 0,
-  },
-  heart: 0,
-  userId: '',
-};
-
-// 게시글의 본문 및 해시태그 생성 함수
-function createContent(content: string) {
-  return content.split(/(#[^\s#]+)/g).map((str, idx) => {
-    if (str[0] === '#') {
-      const hashtag = str.split('#')[1];
-      return (
-        <Link to={`/tag/${hashtag}`} key={`${hashtag}-${idx + 1}`}>
-          {str}
-        </Link>
-      );
-    }
-    return str;
-  });
-}
-
 function DetailPage() {
-  const [data, setData] = useState<IPostData>(initData);
-  const [imgList, setImgList] = useState([]);
+  const [data, setData] = useState<IPostData>();
+  const [imgList, setImgList] = useState<string[]>([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -50,8 +20,7 @@ function DetailPage() {
     try {
       const res = await getPost(id as string);
       setData(res.data);
-      const postImgList = res.data.postImg.split(',').filter((src: string) => src.length !== 0);
-      setImgList(postImgList);
+      setImgList(generateImgList(res.data));
     } catch (e: any) {
       if (e.response.data.status === 500) {
         navigate('/*', { replace: true });
@@ -69,24 +38,24 @@ function DetailPage() {
       <DataContainer>
         <PostContainer>
           <ImgSlider img={imgList} />
-          <HeartBtn heart={data.heart} getData={getData} />
-          {data.recommendRoutes?.length !== 0 ? (
-            <TravelTips tips={data.recommendRoutes} />
+          <HeartBtn heart={data?.heart} getData={getData} />
+          {data?.recommendRoutes?.length !== 0 ? (
+            <TravelTips tips={data?.recommendRoutes} />
           ) : (
             <div style={{ height: '40px' }} />
           )}
-          <TextArea>{createContent(data.content)}</TextArea>
+          <TextArea>{generateContent(data?.content)}</TextArea>
         </PostContainer>
 
         <SideContainer>
           <p>
-            <Link to={`/${data.userId}`}>{data.userId}</Link>
+            <Link to={`/${data?.userId}`}>{data?.userId}</Link>
           </p>
-          <h2>{data.title}</h2>
+          <h2>{data?.title}</h2>
           <ScoreContainer>
-            <ScoreBox title="추천도" score={data.figures.recommend} />
-            <ScoreBox title="감성" score={data.figures.emotion} />
-            <ScoreBox title="재방문" score={data.figures.revisit} />
+            <ScoreBox title="추천도" score={data?.figures.recommend} />
+            <ScoreBox title="감성" score={data?.figures.emotion} />
+            <ScoreBox title="재방문" score={data?.figures.revisit} />
           </ScoreContainer>
         </SideContainer>
       </DataContainer>

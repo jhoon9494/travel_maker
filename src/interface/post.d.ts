@@ -16,7 +16,6 @@ export interface IPostData {
   hashtags?: string[];
   title: string;
   content: string;
-  hashTags: string[];
   figures: IFigures;
   heart: number;
   userId: string;

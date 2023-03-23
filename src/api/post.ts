@@ -1,6 +1,8 @@
 import { API } from 'api';
+import { AxiosResponse } from 'axios';
+import { IPostData } from 'interface/post';
 
-export const getAllPost = async (pageCount: number) => {
+export const getAllPost = async (pageCount: number): Promise<AxiosResponse<IPostData[], any>> => {
   return await API({
     method: 'get',
     url: '/api/post/list',
@@ -10,7 +12,7 @@ export const getAllPost = async (pageCount: number) => {
   });
 };
 
-export const getPost = async (id: string) => {
+export const getPost = async (id: string): Promise<AxiosResponse<IPostData, any>> => {
   return await API({
     method: 'get',
     url: `/api/post/detail/${id}`,
