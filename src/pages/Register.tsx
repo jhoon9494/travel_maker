@@ -6,17 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { register, idCheck } from 'api/auth';
 import Alert from 'components/atoms/Alert';
 import useAuth from 'hooks/useAuth';
+import useInput from 'hooks/useInput';
 import { validateId, validateEmail, validatePhone, validatePw } from '../utils/validate';
 import { GlobalColor } from '../styles/GlobalColor';
 
 function Register() {
   const navigate = useNavigate();
   const { dispatch } = useAuth();
-  const [id, setId] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [pw, setPw] = useState<string>('');
-  const [confirmPw, setConfirmPw] = useState<string>('');
+  const [registerData, onChange] = useInput({ id: '', email: '', phone: '', pw: '', confirmPw: '' });
   const [checkId, setCheckId] = useState(false);
 
   // Alert 부분
@@ -25,25 +22,25 @@ function Register() {
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const registerData = {
-      id,
-      password: pw,
-      email,
-      phoneNumber: phone,
+    const signUpData = {
+      id: registerData.id,
+      password: registerData.pw,
+      email: registerData.email,
+      phoneNumber: registerData.phone,
       profileImg: '/icons/default_profile.svg',
     };
 
     if (
-      validateId(id) &&
+      validateId(registerData.id) &&
       checkId &&
-      validateEmail(email) &&
-      validatePhone(phone) &&
-      validatePw(pw) &&
-      pw === confirmPw
+      validateEmail(registerData.email) &&
+      validatePhone(registerData.phone) &&
+      validatePw(registerData.pw) &&
+      registerData.pw === registerData.confirmPw
     ) {
       try {
-        await register(registerData);
-        dispatch({ type: 'signIn', payload: id });
+        await register(signUpData);
+        dispatch({ type: 'signIn', payload: registerData.id });
         navigate('/main');
       } catch (e: any) {
         console.error(e);
@@ -51,16 +48,22 @@ function Register() {
     } else if (!checkId) {
       setAlertOpen(true);
       setAlertText('아이디가 중복되었는지 확인해주세요');
-    } else if (!validateId(id) || validateEmail(email) || validatePhone(phone) || validatePw(pw) || pw === confirmPw) {
+    } else if (
+      !validateId(registerData.id) ||
+      validateEmail(registerData.email) ||
+      validatePhone(registerData.phone) ||
+      validatePw(registerData.pw) ||
+      registerData.pw === registerData.confirmPw
+    ) {
       setAlertOpen(true);
       setAlertText('입력한 내용을 다시 확인해주세요');
     }
   };
 
   const handleIdCheck = async () => {
-    if (validateId(id)) {
+    if (validateId(registerData.id)) {
       try {
-        await idCheck(id);
+        await idCheck(registerData.id);
         setCheckId(true);
       } catch (e: any) {
         if (e.response.data.code === 'ID_EXISTS') {
@@ -73,7 +76,7 @@ function Register() {
 
   useEffect(() => {
     setCheckId(false);
-  }, [id]);
+  }, [registerData.id]);
 
   return (
     <Container>
@@ -84,14 +87,15 @@ function Register() {
         <IdWrapper>
           <ValidateInput
             id="id"
+            name="id"
             label="아이디"
             placeholder="아이디"
             type="text"
             size="large"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            value={registerData.id}
+            onChange={onChange}
             validateValue="6자 이상 · 12자 이내"
-            validationCheck={validateId(id)}
+            validationCheck={validateId(registerData.id)}
           />
           <CheckBtn onClick={handleIdCheck} type="button" disabled={checkId}>
             {checkId ? '사용가능' : '중복확인'}
@@ -100,57 +104,51 @@ function Register() {
 
         <ValidateInput
           id="email"
+          name="email"
           label="이메일"
           placeholder="이메일"
           type="email"
           size="large"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={registerData.email}
+          onChange={onChange}
           validateValue="@ 포함"
-          validationCheck={validateEmail(email)}
+          validationCheck={validateEmail(registerData.email)}
         />
         <ValidateInput
           id="phone"
+          name="phone"
           label="휴대전화"
           placeholder="휴대전화"
           type="tel"
           size="large"
-          value={phone}
-          onChange={(e) => {
-            // 하이픈 자동입력
-            const phoneNumber: string[] = [];
-            phoneNumber.push(e.target.value);
-            if (e.target.value.length === 3 || e.target.value.length === 8) {
-              if (e.target.value.length > phone.length) {
-                phoneNumber.push('-');
-              }
-            }
-            setPhone(phoneNumber.join(''));
-          }}
-          validateValue="(-) 없이"
-          validationCheck={validatePhone(phone)}
+          value={registerData.phone}
+          onChange={onChange}
+          validateValue="(-) 포함"
+          validationCheck={validatePhone(registerData.phone)}
         />
         <ValidateInput
           id="password"
+          name="pw"
           label="비밀번호"
           placeholder="비밀번호"
           type="password"
           size="large"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
+          value={registerData.pw}
+          onChange={onChange}
           validateValue="8자 이상"
-          validationCheck={validatePw(pw)}
+          validationCheck={validatePw(registerData.pw)}
         />
         <ValidateInput
           id="confirmPw"
+          name="confirmPw"
           label="비밀번호 확인"
           placeholder="비밀번호 확인"
           type="password"
           size="large"
-          value={confirmPw}
-          onChange={(e) => setConfirmPw(e.target.value)}
+          value={registerData.confirmPw}
+          onChange={onChange}
           validateValue="비밀번호와 동일"
-          validationCheck={confirmPw.length >= 8 && pw === confirmPw}
+          validationCheck={registerData.confirmPw.length >= 8 && registerData.pw === registerData.confirmPw}
         />
         <SubmitBtn value="가입하기" />
       </form>

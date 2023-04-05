@@ -5,12 +5,12 @@ import SubmitBtn from 'components/atoms/SubmitBtn';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from 'api/auth';
 import useAuth from 'hooks/useAuth';
+import useInput from 'hooks/useInput';
 
 function Login() {
   const { dispatch } = useAuth();
   const navigate = useNavigate();
-  const [id, setId] = useState<string>('');
-  const [pw, setPw] = useState<string>('');
+  const [loginData, onChange] = useInput({ id: '', pw: '' });
   const [idError, setIdError] = useState<boolean>(false);
   const [pwError, setPwError] = useState<boolean>(false);
 
@@ -19,8 +19,8 @@ function Login() {
     try {
       setIdError(false);
       setPwError(false);
-      await login({ id, password: pw });
-      dispatch({ type: 'signIn', payload: id });
+      await login({ id: loginData.id, password: loginData.pw });
+      dispatch({ type: 'signIn', payload: loginData.id });
 
       navigate('/main');
     } catch (e: any) {
@@ -41,8 +41,9 @@ function Login() {
           placeholder="아이디"
           size="large"
           type="text"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
+          value={loginData.id}
+          name="id"
+          onChange={onChange}
         />
         <ErrorMessage visible={idError}>가입된 유저가 아닙니다.</ErrorMessage>
         <Input
@@ -50,8 +51,9 @@ function Login() {
           placeholder="비밀번호"
           size="large"
           type="password"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
+          value={loginData.pw}
+          name="pw"
+          onChange={onChange}
         />
         <ErrorMessage visible={pwError}>비밀번호를 다시 확인해주세요.</ErrorMessage>
         <SubmitBtn value="로그인" />
