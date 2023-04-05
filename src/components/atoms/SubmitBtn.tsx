@@ -1,9 +1,13 @@
 import styled from 'styled-components';
 import { GlobalColor } from '../../styles/GlobalColor';
 
-export default function SubmitBtn({ value }: { value: string }) {
-  return <ButtonContainer>{value}</ButtonContainer>;
+export default function SubmitBtn({ value, isDisabled }: { value: string; isDisabled?: boolean }) {
+  return <ButtonContainer disabled={isDisabled}>{value}</ButtonContainer>;
 }
+
+SubmitBtn.defaultProps = {
+  isDisabled: false,
+};
 
 const ButtonContainer = styled.button`
   width: 400px;
@@ -14,4 +18,8 @@ const ButtonContainer = styled.button`
   font-weight: bold;
   border-radius: 5px;
   background-color: ${GlobalColor.mainColor};
+
+  :disabled {
+    cursor: not-allowed;
+  }
 `;

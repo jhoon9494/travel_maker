@@ -1,10 +1,10 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
 interface IInitValue {
   [key: string]: any;
 }
 
-type returnType = [IInitValue, (e: ChangeEvent<HTMLInputElement>) => void];
+type returnType = [IInitValue, (e: ChangeEvent<HTMLInputElement>) => void, Dispatch<SetStateAction<IInitValue>>];
 
 export default function useInput(initValue: IInitValue): returnType {
   const [value, setValue] = useState(initValue);
@@ -13,5 +13,5 @@ export default function useInput(initValue: IInitValue): returnType {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
 
-  return [value, onChange];
+  return [value, onChange, setValue];
 }

@@ -1,5 +1,7 @@
+import { AxiosResponse } from 'axios';
 import { IPostImg } from 'interface/post';
 import { API } from './index';
+import { IRegister } from '../interface/auth.d';
 
 export const getUserData = async (userId?: string) => {
   let postData: IPostImg[] = [];
@@ -52,4 +54,11 @@ export const getUserData = async (userId?: string) => {
   });
 
   return { postData, userData };
+};
+
+export const getProfileData = async (userId: string): Promise<AxiosResponse<IRegister, any>> => {
+  return await API({
+    method: 'get',
+    url: `/api/info/${userId}`,
+  });
 };
