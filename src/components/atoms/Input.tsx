@@ -1,11 +1,19 @@
 import styled, { css } from 'styled-components';
 import { IInput } from 'interface/atoms';
 
-function Input({ id, label, placeholder, size, type, value, onChange }: IInput) {
+function Input({ id, label, placeholder, size, type, value, onChange, name }: IInput) {
   return (
     <Container>
       {label && <Label htmlFor={id}>{label}</Label>}
-      <InputContainer id={id} placeholder={placeholder} type={type} sz={size} value={value} onChange={onChange} />
+      <InputContainer
+        id={id}
+        placeholder={placeholder}
+        type={type}
+        sz={size}
+        value={value}
+        onChange={onChange}
+        name={name}
+      />
     </Container>
   );
 }

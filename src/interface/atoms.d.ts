@@ -43,6 +43,7 @@ export interface IInput {
   label?: string;
   size?: string;
   value: string;
+  name: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
 }
 

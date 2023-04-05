@@ -12,6 +12,7 @@ function ValidateInput({
   validateValue,
   validationCheck,
   value,
+  name,
   onChange,
 }: IValidateInput) {
   return (
@@ -23,6 +24,7 @@ function ValidateInput({
         size={size}
         label={label}
         value={value}
+        name={name}
         onChange={onChange}
       />
       <ValidateCheckBox text={validateValue} check={validationCheck} />
