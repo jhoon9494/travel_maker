@@ -20,7 +20,6 @@ import axios from 'axios';
 
 function App() {
   axios.defaults.withCredentials = true;
-  axios.defaults.baseURL = process.env.REACT_APP_BACKEND_API_URL;
 
   return (
     <>
