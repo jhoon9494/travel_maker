@@ -20,31 +20,32 @@ Typescript와 Java Spring Boot를 연습하기 위해 진행한 프로젝트입�
 | <a href="https://github.com/jhoon9494">Github Link</a>                | <a href="https://github.com/kjjee99">Github Link</a>                |
 | <a href="https://github.com/jhoon9494/travel_maker">🗂️</a> Repository | <a href="https://github.com/kjjee99/travel_maker">🗂️</a> Repository |
 
-## 🚀 주요 기능
+## 🚀 기능 구현 wiki
 
 - Front End <a href="https://github.com/jhoon9494/travel_maker/wiki">wiki</a> <br/>
 - Back End <a href="https://github.com/kjjee99/travel_maker/wiki">wiki</a> <br/>
 
+## 📷 데모영상
 ### 로그인 및 회원가입
 
-<img src="https://user-images.githubusercontent.com/82688516/221464371-ac72f450-4cea-4ffe-a9a9-cd1f57fb347b.png" alt="login&register" width="700px" />
+![로그인](https://user-images.githubusercontent.com/82688516/229127159-a9eb74d1-ae1b-4f90-9124-f9a49802c4fc.gif)
+![회원가입](https://user-images.githubusercontent.com/82688516/229127168-03022874-0598-49fd-84f2-5a04d0d7c5b4.gif)
 
-### 유저 팔로우
 
-<img src="https://user-images.githubusercontent.com/82688516/221467446-cdf5b3de-e2f8-4eb5-afd2-b6690e57bcf1.png" alt="login&register" width="700px" />
+### 팔로우 및 검색
+![팔로우 및 검색](https://user-images.githubusercontent.com/82688516/229127234-8ef80d96-6a17-426d-b218-44770b6d0a31.gif)
 
-### 게시글 관련
 
-<img src="https://user-images.githubusercontent.com/82688516/221467407-67721c20-f9f3-4334-addc-bad9ab0c7445.png" alt="login&register" width="700px" />
-<img src="https://user-images.githubusercontent.com/82688516/221467458-bab37148-e30b-4977-8486-f9ca710e414f.png" alt="login&register" width="700px" />
+### 게시글
+![상세 페이지](https://user-images.githubusercontent.com/82688516/229127286-a0ffdbf3-2073-4c4a-a75e-f658b0b9a1c0.gif)
+
 
 ### 게시글 업로드
+![게시글 업로드 -1](https://user-images.githubusercontent.com/82688516/229127310-37c16803-25e4-4ac6-81d6-3c7077f1a59f.gif)
+![게시글 업로드 -2](https://user-images.githubusercontent.com/82688516/229127316-6ba17fac-eff0-4b67-89d1-bce5bd47bc75.gif)
 
-<img src="https://user-images.githubusercontent.com/82688516/221467354-4252456d-15ff-412b-9c49-6efdcc75ff4d.png" alt="login&register" width="700px" />
-
-### 게시글 수정 및 삭제
-
-<img src="https://user-images.githubusercontent.com/82688516/221467487-e4dd4abb-22cd-49d1-a973-12a998867f1e.png" alt="login&register" width="700px" />
+### 게시글 수정
+![게시글 수정](https://user-images.githubusercontent.com/82688516/229127334-ea72f53e-02eb-4c36-a4ec-ece03765ba63.gif)
 
 ## ⚒️ 사용 기술
 
