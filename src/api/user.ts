@@ -15,7 +15,7 @@ export const getUserData = async (userId?: string) => {
 
   const res = await Promise.allSettled([
     API.get(`/api/post/user/list/${userId}`),
-    API.get(`/api/info/${userId}`),
+    getProfileData(userId),
     API.get(`/api/follow/check/${userId}`),
   ]);
   res.forEach((resData, index) => {
@@ -56,10 +56,21 @@ export const getUserData = async (userId?: string) => {
   return { postData, userData };
 };
 
-export const getProfileData = async (userId: string): Promise<AxiosResponse<IRegister, any>> => {
+export const getProfileData = async (userId?: string): Promise<AxiosResponse<IRegister, any>> => {
   return await API({
     method: 'get',
     url: `/api/info/${userId}`,
+  });
+};
+
+export const editProfile = async (formData: FormData) => {
+  return await API({
+    method: 'post',
+    url: '/api/user',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 };
 

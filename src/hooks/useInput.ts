@@ -1,6 +1,6 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
-interface IInitValue {
+export interface IInitValue {
   [key: string]: any;
 }
 

@@ -2,21 +2,46 @@ import styled from 'styled-components';
 import { FormEventHandler, useState, FormEvent, ChangeEvent, useEffect, useCallback } from 'react';
 import { VscSettingsGear } from 'react-icons/vsc';
 import SubmitBtn from 'components/atoms/SubmitBtn';
-import axios from 'axios';
 import Loading from 'components/atoms/Loading';
 import Alert from 'components/atoms/Alert';
 import resizeFn from 'utils/imageResize';
 import useAuth from 'hooks/useAuth';
-import useInput from 'hooks/useInput';
-import { getProfileData } from 'api/user';
+import useInput, { IInitValue } from 'hooks/useInput';
+import { editProfile, getProfileData } from 'api/user';
 import Input from '../../components/atoms/Input';
 import ValidateInput from '../../components/organism/ValidateInput';
 import { validatePhone, validateEmail } from '../../utils/validate';
 import UserImage from '../../components/atoms/UserImage';
 import Confirm from '../../components/atoms/Confirm';
 
-function EditProfile() {
+function setFormData(id: string, profileData: IInitValue, profileImg: File | null) {
   const DEFAULT_PROFILE_URL = '/icons/default_profile.svg';
+  const formData = new FormData();
+  const userData = new Blob(
+    [
+      JSON.stringify({
+        id,
+        email: profileData.email,
+        phoneNumber: profileData.phone,
+        password: profileData.password,
+      }),
+    ],
+    { type: 'application/json' },
+  );
+
+  formData.append('user', userData);
+  if (profileData.previewImg === DEFAULT_PROFILE_URL) {
+    // 프로필 이미지가 기본 이미지 그대로인 경우
+    formData.append('profileImg', DEFAULT_PROFILE_URL);
+  } else {
+    // 프로필 이미지, 회원 정보 모두 수정 or 프로필 이미지 (기본 이미지 X) 변경 X + 회원 정보만 수정
+    formData.append('profileImg', profileImg || '');
+  }
+
+  return formData;
+}
+
+function EditProfile() {
   const [profileData, onChange, setProfileData] = useInput({ phone: '', email: '', password: '', previewImg: '' });
   const [profileImg, setProfileImg] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,16 +55,14 @@ function EditProfile() {
 
   const getUserData = useCallback(async () => {
     try {
-      if (state.id) {
-        const { data } = await getProfileData(state.id);
-        setProfileData((prevData) => ({
-          ...prevData,
-          phone: data.phoneNumber,
-          email: data.email,
-          previewImg: data.profileImg,
-          password: '',
-        }));
-      }
+      const { data } = await getProfileData(state.id);
+      setProfileData((prevData) => ({
+        ...prevData,
+        phone: data.phoneNumber,
+        email: data.email,
+        previewImg: data.profileImg,
+        password: '',
+      }));
     } catch (e: any) {
       console.error(e);
       throw new Error(e);
@@ -55,36 +78,10 @@ function EditProfile() {
     setIsLoading(true);
     // 메모리 누수 방지를 위해 revokeObjectURL 메소드로 url을 무효화 시켜줌
     URL.revokeObjectURL(profileData.previewImg);
-
-    const formData = new FormData();
-    const userData = new Blob(
-      [
-        JSON.stringify({
-          id: state.id,
-          email: profileData.email,
-          phoneNumber: profileData.phone,
-          password: profileData.password,
-        }),
-      ],
-      { type: 'application/json' },
-    );
-
-    formData.append('user', userData);
-    // FIXME  profileImg가 파일로 안들어가는 경우 에러발생해서 정상적으로 수정안됨
-    if (profileData.previewImg === DEFAULT_PROFILE_URL) {
-      // 프로필 이미지가 기본 이미지 그대로인 경우
-      formData.append('profileImg', DEFAULT_PROFILE_URL);
-    } else {
-      // 프로필 이미지, 회원 정보 모두 수정 or 프로필 이미지 (기본 이미지 X) 변경 X + 회원 정보만 수정
-      formData.append('profileImg', profileImg || '');
-    }
+    const formData = setFormData(state.id, profileData, profileImg);
 
     try {
-      await axios.post('/api/user', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await editProfile(formData);
       getUserData();
     } catch (error: any) {
       if (error.response.data.status === 401) {
