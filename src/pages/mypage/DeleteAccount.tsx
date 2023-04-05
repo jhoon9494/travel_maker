@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Alert from 'components/atoms/Alert';
+import { deleteUser } from 'api/user';
 import Input from '../../components/atoms/Input';
 
 function DeleteAccount() {
@@ -18,18 +18,7 @@ function DeleteAccount() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(
-        '/api/sign-out',
-        {
-          password: pw,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
+      await deleteUser(pw);
       navigate('/', { replace: true });
     } catch (e: any) {
       if (e.response.data.status === 401) {
@@ -53,6 +42,7 @@ function DeleteAccount() {
             <p>회원 탈퇴를 위해서 비밀번호를 입력해주세요.</p>
             <Input
               id="userPassword"
+              name="pw"
               placeholder="비밀번호를 입력해주세요"
               type="password"
               value={pw}

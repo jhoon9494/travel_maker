@@ -62,3 +62,25 @@ export const getProfileData = async (userId: string): Promise<AxiosResponse<IReg
     url: `/api/info/${userId}`,
   });
 };
+
+export const deleteUser = async (password: string) => {
+  return await API({
+    method: 'post',
+    url: '/api/sign-out',
+    data: { password },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+export const changePassword = async (currPw: string, newPw: string) => {
+  return await API({
+    method: 'post',
+    url: '/api/user/pass',
+    data: { nowPassword: currPw, newPassword: newPw },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
