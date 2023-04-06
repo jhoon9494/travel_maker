@@ -1,16 +1,23 @@
 export const initState = {
   id: sessionStorage.getItem('id') || '',
 };
+interface State {
+  id: string;
+}
 
-export const reducer = (state: { id: string }, action: { type: string; payload?: string }) => {
+type Action = { type: 'signIn'; payload: string } | { type: 'signOut' };
+
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'signIn':
-      if (action.payload) sessionStorage.setItem('id', action.payload);
-      return { ...state, id: action.payload ? action.payload : '' };
+    case 'signIn': {
+      sessionStorage.setItem('id', action.payload);
+      return { ...state, id: action.payload };
+    }
 
-    case 'signOut':
+    case 'signOut': {
       sessionStorage.removeItem('id');
       return { ...state, id: '' };
+    }
 
     default:
       return state;
